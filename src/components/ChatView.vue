@@ -33,20 +33,39 @@ const sendMessage = async () => {
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    const serverUrl = import.meta.env.PROD 
-      ? 'https://sprint-commander.netlify.app/api/chat'
-      : 'http://localhost:3000/api/chat';
+    // Use Vite's environment variable to determine the server URL
+    const serverUrl = import.meta.env.VITE_API_URL || 
+      (import.meta.env.PROD 
+        ? 'https://sprint-commander.netlify.app/api/chat'
+        : 'http://localhost:3000/api/chat');
       
     const response = await axios.post(serverUrl, {
       roleId: props.member.id,
       history: chatHistory.value,
       message: userMessage
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      timeout: 30000 // 30 second timeout
     });
 
-    chatHistory.value.push({ role: 'assistant', content: response.data.reply });
-  } catch (err) {
-    error.value = 'Entschuldigung, ich konnte keine Antwort generieren.';
+    if (response.data && response.data.reply) {
+      chatHistory.value.push({ role: 'assistant', content: response.data.reply });
+    } else {
+      throw new Error('Invalid response format from server');
+    }
+  } catch (err: any) {
     console.error('Chat error:', err);
+    if (err.code === 'ECONNABORTED') {
+      error.value = 'Die Verbindung zum Server hat zu lange gedauert. Bitte versuchen Sie es erneut.';
+    } else if (err.response) {
+      error.value = `Server-Fehler: ${err.response.status}. Bitte versuchen Sie es später erneut.`;
+    } else if (err.request) {
+      error.value = 'Keine Verbindung zum Server möglich. Bitte überprüfen Sie Ihre Internetverbindung.';
+    } else {
+      error.value = 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+    }
   } finally {
     isLoading.value = false;
   }
