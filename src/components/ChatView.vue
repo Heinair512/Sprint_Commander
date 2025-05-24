@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import axios from 'axios';
 
-defineProps<{
+const props = defineProps<{
   member: {
     id: string;
     name: string;
@@ -15,21 +16,35 @@ const emit = defineEmits(['close']);
 
 const message = ref('');
 const chatHistory = ref([
-  { sender: 'member', text: 'Hallo! Wie kann ich helfen?' },
+  { role: 'assistant', content: props.member.quote }
 ]);
+const isLoading = ref(false);
+const error = ref('');
 
-const sendMessage = () => {
-  if (message.value.trim()) {
-    chatHistory.value.push({ sender: 'user', text: message.value });
-    message.value = '';
-    
-    // Einfache "KI"-Antwort simulieren
-    setTimeout(() => {
-      chatHistory.value.push({ 
-        sender: 'member', 
-        text: 'Ich verstehe. Lass mich darüber nachdenken...' 
-      });
-    }, 1000);
+const sendMessage = async () => {
+  if (!message.value.trim() || isLoading.value) return;
+
+  const userMessage = message.value;
+  message.value = '';
+  isLoading.value = true;
+  error.value = '';
+
+  // Add user message to chat
+  chatHistory.value.push({ role: 'user', content: userMessage });
+
+  try {
+    const response = await axios.post('/api/chat', {
+      roleId: props.member.id,
+      history: chatHistory.value,
+      message: userMessage
+    });
+
+    chatHistory.value.push({ role: 'assistant', content: response.data.reply });
+  } catch (err) {
+    error.value = 'Entschuldigung, ich konnte keine Antwort generieren.';
+    console.error('Chat error:', err);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -50,9 +65,17 @@ const handleClose = () => {
         v-for="(msg, index) in chatHistory" 
         :key="index" 
         :class="['chat-bubble mb-4 p-3 max-w-xs rounded-lg', 
-                msg.sender === 'user' ? 'ml-auto bg-crt-sepia' : 'bg-crt-brown text-crt-lightsep']"
+                msg.role === 'user' ? 'ml-auto bg-crt-sepia' : 'bg-crt-brown text-crt-lightsep']"
       >
-        {{ msg.text }}
+        {{ msg.content }}
+      </div>
+      
+      <div v-if="isLoading" class="typing-indicator">
+        <span>.</span><span>.</span><span>.</span>
+      </div>
+      
+      <div v-if="error" class="error-message bg-red-500 text-white p-2 rounded mt-2">
+        {{ error }}
       </div>
     </div>
     
@@ -63,8 +86,15 @@ const handleClose = () => {
         class="flex-grow p-3 bg-crt-lightsep border-2 border-crt-darkbrown"
         placeholder="Nachricht eingeben..."
         @keyup.enter="sendMessage"
+        :disabled="isLoading"
       />
-      <button @click="sendMessage" class="retro-button">Senden</button>
+      <button 
+        @click="sendMessage" 
+        class="retro-button"
+        :disabled="isLoading"
+      >
+        {{ isLoading ? '...' : 'Senden' }}
+      </button>
     </div>
   </div>
 </template>
@@ -104,5 +134,34 @@ const handleClose = () => {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.75rem;
   outline: none;
+}
+
+.typing-indicator {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.typing-indicator span {
+  animation: typing 1s infinite;
+  margin: 0 2px;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
