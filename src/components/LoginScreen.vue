@@ -114,7 +114,7 @@ const handleLogin = async () => {
           class="retro-button w-full"
           :disabled="isLoading"
         >
-          {{ isLoading ? '🔄 Compiling Access Tokens...' : '▶️ Initialize Sprint' }}
+          {{ isLoading ? '🔄 Compiling Access Tokens...' : '▶️ Commander Go' }}
         </button>
       </form>
       
