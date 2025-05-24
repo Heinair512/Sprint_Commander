@@ -22,7 +22,7 @@ defineProps<{
   } | null;
 }>();
 
-const emit = defineEmits(['make-decision', 'close-chat']);
+const emit = defineEmits(['make-decision', 'close-chat', 'navigate']);
 
 const handleDecision = (effect) => {
   emit('make-decision', effect);
@@ -30,6 +30,10 @@ const handleDecision = (effect) => {
 
 const handleCloseChat = () => {
   emit('close-chat');
+};
+
+const handleNavigate = (direction) => {
+  emit('navigate', direction);
 };
 </script>
 
@@ -43,7 +47,8 @@ const handleCloseChat = () => {
     <EventCard 
       v-else 
       :event="currentEvent" 
-      @decision="handleDecision" 
+      @decision="handleDecision"
+      @navigate="handleNavigate"
     />
   </div>
 </template>

@@ -159,17 +159,6 @@ const closeActionFeedback = () => {
       
       <!-- Hauptbereich -->
       <div class="main-area flex-grow md:w-1/2 lg:w-3/5 p-4">
-        <div class="event-navigation flex justify-between items-center mb-4">
-          <button 
-            @click="navigateEvent('prev')"
-            class="retro-button px-4"
-          >←</button>
-          <button 
-            @click="navigateEvent('next')"
-            class="retro-button px-4"
-          >→</button>
-        </div>
-        
         <ActionFeedback
           v-if="showActionFeedback"
           :message="currentEvent.id === 'event-1' 
@@ -196,7 +185,8 @@ const closeActionFeedback = () => {
           :showChat="showChat" 
           :activeTeamMember="activeTeamMember"
           @make-decision="makeDecision" 
-          @close-chat="closeChat" 
+          @close-chat="closeChat"
+          @navigate="navigateEvent"
         />
       </div>
       
@@ -227,11 +217,6 @@ const closeActionFeedback = () => {
 
 .main-area {
   transition: all 0.3s ease;
-}
-
-.event-navigation {
-  position: relative;
-  z-index: 10;
 }
 
 /* Pixel art style for toast notifications */

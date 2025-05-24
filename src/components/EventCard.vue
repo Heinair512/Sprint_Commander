@@ -11,17 +11,33 @@ defineProps<{
   }
 }>();
 
-const emit = defineEmits(['decision']);
+const emit = defineEmits(['decision', 'navigate']);
 
 const makeDecision = (effect) => {
   emit('decision', effect);
+};
+
+const navigate = (direction: 'prev' | 'next') => {
+  emit('navigate', direction);
 };
 </script>
 
 <template>
   <div class="event-card h-full flex flex-col">
-    <div class="event-title bg-crt-brown text-crt-glow p-3 text-center uppercase mb-4">
-      {{ event.title }}
+    <div class="event-title-container bg-crt-brown text-crt-glow p-3 mb-4 flex items-center justify-between">
+      <button 
+        @click="navigate('prev')"
+        class="nav-arrow px-2 hover:text-crt-sepia transition-colors"
+      >←</button>
+      
+      <div class="event-title uppercase text-center flex-grow">
+        {{ event.title }}
+      </div>
+      
+      <button 
+        @click="navigate('next')"
+        class="nav-arrow px-2 hover:text-crt-sepia transition-colors"
+      >→</button>
     </div>
     
     <div class="event-content flex-grow bg-crt-lightsep p-4 mb-4 pixel-border">
@@ -66,11 +82,21 @@ const makeDecision = (effect) => {
   margin: 0 auto;
 }
 
-.event-title {
+.event-title-container {
   border-radius: 4px;
   font-size: 1.2rem;
   text-shadow: 0 0 5px theme('colors.crt.glow');
   animation: text-flicker 8s infinite;
+}
+
+.nav-arrow {
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-arrow:hover {
+  transform: scale(1.1);
 }
 
 .event-description {
@@ -85,13 +111,13 @@ const makeDecision = (effect) => {
   box-shadow: 0 0 10px rgba(92, 67, 33, 0.3);
 }
 
-.pixelated {
+.pixel-event-image {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
 
-.pixel-event-image {
+.pixelated {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
