@@ -1,9 +1,18 @@
 <script setup lang="ts">
-import GameView from './views/GameView.vue'
+import { ref } from 'vue';
+import GameView from './views/GameView.vue';
+import LoginScreen from './components/LoginScreen.vue';
+
+const isAuthenticated = ref(false);
+
+const handleLoginSuccess = () => {
+  isAuthenticated.value = true;
+};
 </script>
 
 <template>
-  <div class="crt-screen">
+  <LoginScreen v-if="!isAuthenticated" @login-success="handleLoginSuccess" />
+  <div v-else class="crt-screen">
     <div class="crt-overlay"></div>
     <GameView />
   </div>
