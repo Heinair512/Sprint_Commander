@@ -13,7 +13,6 @@ import news from '../data/news.json';
 
 const toast = useToast();
 const score = ref(825);
-const scoreColor = ref('');
 const missionTitle = ref('Black Friday');
 const level = ref('Jira Login');
 const activeTeamMember = ref(null);
@@ -22,17 +21,39 @@ const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 
-// Watch score changes to trigger color animation
-watch(score, (newScore, oldScore) => {
-  if (newScore > oldScore) {
-    scoreColor.value = 'text-green-500';
-  } else if (newScore < oldScore) {
-    scoreColor.value = 'text-red-500';
+const makeDecision = (effect) => {
+  const scoreElement = document.querySelector('.score');
+  
+  if (effect === 5) { // "Team alarmieren" Option
+    score.value += 50;
+    scoreElement?.classList.add('success');
+    setTimeout(() => scoreElement?.classList.remove('success'), 1000);
+    
+    toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      className: "pixel-toast success-toast",
+    });
+    showTeamChat.value = true;
+  } else if (effect === -10) { // "Abwarten" Option
+    score.value -= 50;
+    scoreElement?.classList.add('error');
+    setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+    
+    toast.error("Mutig, aber: dumm. -50 Punkte", {
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      className: "pixel-toast error-toast",
+    });
+    showActionFeedback.value = true;
   }
-  setTimeout(() => {
-    scoreColor.value = '';
-  }, 1000);
-});
+};
 
 const selectTeamMember = (member) => {
   activeTeamMember.value = member;
@@ -42,32 +63,6 @@ const selectTeamMember = (member) => {
 const closeChat = () => {
   showChat.value = false;
   activeTeamMember.value = null;
-};
-
-const makeDecision = (effect) => {
-  if (effect === 5) { // "Team alarmieren" Option
-    score.value += 50;
-    toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      className: "pixel-toast",
-    });
-    showTeamChat.value = true;
-  } else if (effect === -10) { // "Abwarten" Option
-    score.value -= 50;
-    toast.error("Mutig, aber: dumm. -50 Punkte", {
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      className: "pixel-toast",
-    });
-    showActionFeedback.value = true;
-  }
 };
 
 const closeTeamChat = () => {
@@ -85,7 +80,6 @@ const closeActionFeedback = () => {
       :missionTitle="missionTitle" 
       :score="score" 
       :level="level"
-      :class="scoreColor"
     />
     
     <div class="flex-grow flex flex-col md:flex-row">
@@ -152,24 +146,22 @@ const closeActionFeedback = () => {
   transition: all 0.3s ease;
 }
 
-/* Score color transition */
-.text-green-500, .text-red-500 {
-  transition: color 0.5s ease;
-}
-
 /* Pixel art style for toast notifications */
 .pixel-toast {
   font-family: 'Press Start 2P', monospace !important;
   font-size: 0.8rem !important;
-  background-color: theme('colors.crt.sepia') !important;
-  color: theme('colors.crt.darkbrown') !important;
   border: 3px solid theme('colors.crt.darkbrown') !important;
   border-radius: 4px !important;
   padding: 1rem !important;
   image-rendering: pixelated !important;
 }
 
-.Vue-Toastification__toast--error {
+.success-toast {
+  background-color: #90EE90 !important;
+  color: #2F4F2F !important;
+}
+
+.error-toast {
   background-color: #8B0000 !important;
   color: #FFFFFF !important;
 }

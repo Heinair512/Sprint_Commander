@@ -22,7 +22,7 @@ defineProps<{
     </div>
     
     <div class="score-level text-right text-xs md:text-sm">
-      <div class="transition-colors duration-500">Score: {{ score }}</div>
+      <div class="score transition-colors duration-500">Score: {{ score }}</div>
       <div>Level: {{ level }}</div>
     </div>
   </header>
@@ -38,5 +38,17 @@ defineProps<{
 .game-title {
   color: #5c4321;
   text-shadow: 2px 2px 0px rgba(252, 239, 180, 0.4);
+}
+
+.score {
+  position: relative;
+}
+
+.score.success {
+  color: #90EE90;
+}
+
+.score.error {
+  color: #8B0000;
 }
 </style>
