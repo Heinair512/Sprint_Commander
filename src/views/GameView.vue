@@ -16,42 +16,106 @@ const score = ref(825);
 const missionTitle = ref('Black Friday');
 const level = ref('Jira Login');
 const activeTeamMember = ref(null);
-const currentEvent = ref(events[0]);
+const currentEventIndex = ref(0);
+const currentEvent = ref(events[currentEventIndex.value]);
 const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 
-const makeDecision = (effect) => {
+const navigateEvent = (direction: 'prev' | 'next') => {
+  if (direction === 'prev') {
+    currentEventIndex.value = currentEventIndex.value > 0 ? currentEventIndex.value - 1 : events.length - 1;
+  } else {
+    currentEventIndex.value = currentEventIndex.value < events.length - 1 ? currentEventIndex.value + 1 : 0;
+  }
+  currentEvent.value = events[currentEventIndex.value];
+  showTeamChat.value = false;
+  showActionFeedback.value = false;
+};
+
+const makeDecision = (effect: number) => {
   const scoreElement = document.querySelector('.score');
   
-  if (effect === 5) { // "Team alarmieren" Option
-    score.value += 50;
-    scoreElement?.classList.add('success');
-    setTimeout(() => scoreElement?.classList.remove('success'), 1000);
-    
-    toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      className: "pixel-toast success-toast",
-    });
-    showTeamChat.value = true;
-  } else if (effect === -10) { // "Abwarten" Option
-    score.value -= 50;
-    scoreElement?.classList.add('error');
-    setTimeout(() => scoreElement?.classList.remove('error'), 1000);
-    
-    toast.error("Mutig, aber: dumm. -50 Punkte", {
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      className: "pixel-toast error-toast",
-    });
-    showActionFeedback.value = true;
+  switch(currentEvent.value.id) {
+    case 'event-1':
+      if (effect === 5) { // "Team alarmieren"
+        score.value += 50;
+        scoreElement?.classList.add('success');
+        setTimeout(() => scoreElement?.classList.remove('success'), 1000);
+        
+        toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
+          timeout: 3000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          className: "pixel-toast success-toast",
+        });
+        showTeamChat.value = true;
+      } else { // "Abwarten"
+        score.value -= 50;
+        scoreElement?.classList.add('error');
+        setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+        
+        toast.error("Mutig, aber: dumm. -50 Punkte", {
+          timeout: 3000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          className: "pixel-toast error-toast",
+        });
+        showActionFeedback.value = true;
+      }
+      break;
+      
+    case 'event-2':
+      if (effect === 5) { // "Zurück in die Refinement-Runde"
+        score.value += 50;
+        scoreElement?.classList.add('success');
+        setTimeout(() => scoreElement?.classList.remove('success'), 1000);
+        
+        toast.success("Kluge Entscheidung! Qualität vor Quantität -> +50 Punkte", {
+          timeout: 3000,
+          className: "pixel-toast success-toast",
+        });
+        showTeamChat.value = true;
+      } else { // "Alles reinnehmen"
+        score.value -= 50;
+        scoreElement?.classList.add('error');
+        setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+        
+        toast.error("Oh je, das wird stressig! -50 Punkte", {
+          timeout: 3000,
+          className: "pixel-toast error-toast",
+        });
+        showActionFeedback.value = true;
+      }
+      break;
+      
+    case 'event-3':
+      if (effect === 10) { // "Velocity der letzten Sprints"
+        score.value += 50;
+        scoreElement?.classList.add('success');
+        setTimeout(() => scoreElement?.classList.remove('success'), 1000);
+        
+        toast.success("Datenbasierte Entscheidung! Super! -> +50 Punkte", {
+          timeout: 3000,
+          className: "pixel-toast success-toast",
+        });
+        showTeamChat.value = true;
+      } else { // "Mehr Stories"
+        score.value -= 50;
+        scoreElement?.classList.add('error');
+        setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+        
+        toast.error("Übermut tut selten gut! -50 Punkte", {
+          timeout: 3000,
+          className: "pixel-toast error-toast",
+        });
+        showActionFeedback.value = true;
+      }
+      break;
   }
 };
 
@@ -95,10 +159,29 @@ const closeActionFeedback = () => {
       
       <!-- Hauptbereich -->
       <div class="main-area flex-grow md:w-1/2 lg:w-3/5 p-4">
+        <div class="event-navigation flex justify-between items-center mb-4">
+          <button 
+            @click="navigateEvent('prev')"
+            class="retro-button px-4"
+          >←</button>
+          <button 
+            @click="navigateEvent('next')"
+            class="retro-button px-4"
+          >→</button>
+        </div>
+        
         <ActionFeedback
           v-if="showActionFeedback"
-          message="Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat."
-          tip="Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig."
+          :message="currentEvent.id === 'event-1' 
+            ? 'Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat.'
+            : currentEvent.id === 'event-2'
+            ? 'Das Team ist überfordert und die Qualität leidet. Mehrere kritische Bugs haben es in die Produktion geschafft.'
+            : 'Das Team ist demotiviert und der Sprint ist gescheitert. Die Velocity ist auf einem Allzeittief.'"
+          :tip="currentEvent.id === 'event-1'
+            ? 'Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig.'
+            : currentEvent.id === 'event-2'
+            ? 'Lieber weniger Features richtig umsetzen als viele Features schlecht.'
+            : 'Vertraue den Daten und der Erfahrung des Teams.'"
           @close="closeActionFeedback"
         />
         <TeamChat 
@@ -144,6 +227,11 @@ const closeActionFeedback = () => {
 
 .main-area {
   transition: all 0.3s ease;
+}
+
+.event-navigation {
+  position: relative;
+  z-index: 10;
 }
 
 /* Pixel art style for toast notifications */
