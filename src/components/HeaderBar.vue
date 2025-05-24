@@ -22,7 +22,7 @@ defineProps<{
     </div>
     
     <div class="score-level text-right text-xs md:text-sm">
-      <div>Score: {{ score }}</div>
+      <div class="transition-colors duration-500">Score: {{ score }}</div>
       <div>Level: {{ level }}</div>
     </div>
   </header>

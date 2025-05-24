@@ -1,23 +1,38 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import HeaderBar from '../components/HeaderBar.vue';
 import TeamPortrait from '../components/TeamPortrait.vue';
 import MainView from '../components/MainView.vue';
 import NewsTicker from '../components/NewsTicker.vue';
 import TeamChat from '../components/TeamChat.vue';
+import ActionFeedback from '../components/ActionFeedback.vue';
 import team from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
 
 const toast = useToast();
 const score = ref(825);
+const scoreColor = ref('');
 const missionTitle = ref('Black Friday');
 const level = ref('Jira Login');
 const activeTeamMember = ref(null);
 const currentEvent = ref(events[0]);
 const showChat = ref(false);
 const showTeamChat = ref(false);
+const showActionFeedback = ref(false);
+
+// Watch score changes to trigger color animation
+watch(score, (newScore, oldScore) => {
+  if (newScore > oldScore) {
+    scoreColor.value = 'text-green-500';
+  } else if (newScore < oldScore) {
+    scoreColor.value = 'text-red-500';
+  }
+  setTimeout(() => {
+    scoreColor.value = '';
+  }, 1000);
+});
 
 const selectTeamMember = (member) => {
   activeTeamMember.value = member;
@@ -31,7 +46,7 @@ const closeChat = () => {
 
 const makeDecision = (effect) => {
   if (effect === 5) { // "Team alarmieren" Option
-    score.value += 50; // Bonus points for good decision
+    score.value += 50;
     toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
       timeout: 3000,
       closeOnClick: true,
@@ -41,20 +56,37 @@ const makeDecision = (effect) => {
       className: "pixel-toast",
     });
     showTeamChat.value = true;
-  } else {
-    score.value += effect;
-    showChat.value = false;
+  } else if (effect === -10) { // "Abwarten" Option
+    score.value -= 50;
+    toast.error("Mutig, aber: dumm. -50 Punkte", {
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      className: "pixel-toast",
+    });
+    showActionFeedback.value = true;
   }
 };
 
 const closeTeamChat = () => {
   showTeamChat.value = false;
 };
+
+const closeActionFeedback = () => {
+  showActionFeedback.value = false;
+};
 </script>
 
 <template>
   <div class="game-container bg-crt-bg min-h-screen flex flex-col">
-    <HeaderBar :missionTitle="missionTitle" :score="score" :level="level" />
+    <HeaderBar 
+      :missionTitle="missionTitle" 
+      :score="score" 
+      :level="level"
+      :class="scoreColor"
+    />
     
     <div class="flex-grow flex flex-col md:flex-row">
       <!-- Linke Teammitglieder -->
@@ -69,8 +101,14 @@ const closeTeamChat = () => {
       
       <!-- Hauptbereich -->
       <div class="main-area flex-grow md:w-1/2 lg:w-3/5 p-4">
+        <ActionFeedback
+          v-if="showActionFeedback"
+          message="Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat."
+          tip="Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig."
+          @close="closeActionFeedback"
+        />
         <TeamChat 
-          v-if="showTeamChat"
+          v-else-if="showTeamChat"
           :event="currentEvent"
           :team="team"
           @close="closeTeamChat"
@@ -114,6 +152,11 @@ const closeTeamChat = () => {
   transition: all 0.3s ease;
 }
 
+/* Score color transition */
+.text-green-500, .text-red-500 {
+  transition: color 0.5s ease;
+}
+
 /* Pixel art style for toast notifications */
 .pixel-toast {
   font-family: 'Press Start 2P', monospace !important;
@@ -124,5 +167,10 @@ const closeTeamChat = () => {
   border-radius: 4px !important;
   padding: 1rem !important;
   image-rendering: pixelated !important;
+}
+
+.Vue-Toastification__toast--error {
+  background-color: #8B0000 !important;
+  color: #FFFFFF !important;
 }
 </style>
