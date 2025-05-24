@@ -53,7 +53,7 @@ function startAnimation() {
   
   function animate() {
     // Tickerposition aktualisieren
-    tickerPosition.value -= 1.5; // Geschwindigkeit der Animation
+    tickerPosition.value -= 1.35; // Reduced from 1.5 to 1.35 (10% slower)
     
     // Wenn der Ticker vollständig aus dem Sichtbereich ist, wieder von vorne beginnen
     if (tickerPosition.value < -tickerWidth.value) {
