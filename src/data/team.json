@@ -1,0 +1,6 @@
+[
+  { "id": "dev", "name": "Lars Byte", "role": "Developer", "portrait": "/assets/portraits/dev.png", "quote": "Das deployt sich nicht von allein." },
+  { "id": "ux", "name": "Grace Grid", "role": "UX Designer", "portrait": "/assets/portraits/ux.png", "quote": "Kann das bitte mehr wie ein Knopf aussehen?" },
+  { "id": "coach", "name": "Scrumlius", "role": "Coach", "portrait": "/assets/portraits/coach.png", "quote": "Was sagt das Inspect & Adapt dazu?" },
+  { "id": "stake", "name": "Maggie Money", "role": "Stakeholder", "portrait": "/assets/portraits/stake.png", "quote": "Das muss bis Montag fertig sein." }
+]

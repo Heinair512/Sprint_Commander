@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Press Start 2P', monospace;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #5c4321;
+  background-color: #2b2b29;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* CRT Effect */
+.crt-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+  background-size: 100% 4px;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.crt-overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 60%, rgba(0, 0, 0, 0.25) 100%);
+  pointer-events: none;
+}
+
+.crt-frame {
+  position: relative;
+  border-radius: 8px;
+  background-color: theme('colors.crt.sepia');
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.pixel-border {
+  border-style: solid;
+  border-width: 4px;
+  border-color: theme('colors.crt.darkbrown');
+  border-radius: 8px;
+  image-rendering: pixelated;
+}
+
+.retro-button {
+  background-color: theme('colors.crt.sepia');
+  border: 3px solid theme('colors.crt.darkbrown');
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: theme('colors.crt.darkbrown');
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retro-button:hover {
+  background-color: theme('colors.crt.lightsep');
+  transform: translateY(-2px);
+  box-shadow: 0 2px 0 theme('colors.crt.darkbrown');
+}
+
+.retro-button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+/* Enhanced CRT flicker effect */
+@keyframes crt-flicker {
+  0% { opacity: 0.97; }
+  3% { opacity: 0.99; }
+  5% { opacity: 0.96; }
+  10% { opacity: 1; }
+  25% { opacity: 0.99; }
+  30% { opacity: 1; }
+  35% { opacity: 0.98; }
+  50% { opacity: 1; }
+  70% { opacity: 0.99; }
+  75% { opacity: 0.98; }
+  80% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+.crt-screen {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: theme('colors.crt.bg');
+  overflow: hidden;
+  animation: crt-flicker 10s infinite;
+}
+
+/* Enhanced image rendering for pixel art */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}

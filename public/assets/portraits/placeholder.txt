@@ -1,0 +1,2 @@
+In einer tatsächlichen Implementierung würden hier Pixel-Art-Porträts der Teammitglieder gespeichert sein.
+In diesem Prototyp verwenden wir einfache Fallback-Darstellungen der Portraits.

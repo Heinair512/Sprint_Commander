@@ -1,0 +1,29 @@
+[
+  {
+    "id": "event-1",
+    "title": "Production Outage",
+    "description": "Ein Drittanbieter-Service ist ausgefallen. Was sollen wir tun?",
+    "options": [
+      { "label": "Team alarmieren", "effect": 5 },
+      { "label": "Abwarten", "effect": -10 }
+    ]
+  },
+  {
+    "id": "event-2",
+    "title": "Feature Scope Creep",
+    "description": "Der Stakeholder hat 3 Extra-Wünsche – ohne Extra-Zeit.",
+    "options": [
+      { "label": "Alles reinnehmen", "effect": -10 },
+      { "label": "Zurück in die Refinement-Runde", "effect": 5 }
+    ]
+  },
+  {
+    "id": "event-3",
+    "title": "Sprint Planning",
+    "description": "Das Team ist unsicher, wie viel es schaffen kann. Was tun?",
+    "options": [
+      { "label": "Velocity der letzten Sprints als Maßstab", "effect": 10 },
+      { "label": "Mehr Stories reinnehmen als beim letzten Mal", "effect": -5 }
+    ]
+  }
+]

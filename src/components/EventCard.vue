@@ -1,0 +1,111 @@
+<script setup lang="ts">
+defineProps<{
+  event: {
+    id: string;
+    title: string;
+    description: string;
+    options: Array<{
+      label: string;
+      effect: number;
+    }>
+  }
+}>();
+
+const emit = defineEmits(['decision']);
+
+const makeDecision = (effect) => {
+  emit('decision', effect);
+};
+</script>
+
+<template>
+  <div class="event-card h-full flex flex-col">
+    <div class="event-title bg-crt-brown text-crt-glow p-3 text-center uppercase mb-4">
+      {{ event.title }}
+    </div>
+    
+    <div class="event-content flex-grow bg-crt-lightsep p-4 mb-4 pixel-border">
+      <div class="event-description mb-8 text-center">
+        {{ event.description }}
+      </div>
+      
+      <div class="event-illustration mb-8 flex justify-center">
+        <div class="w-40 h-40 bg-crt-sepia flex items-center justify-center pixelated overflow-hidden">
+          <div 
+            class="pixel-event-image"
+            :style="{
+              backgroundImage: `url(/assets/events/${event.id}.png)`,
+              width: '100%',
+              height: '100%',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              imageRendering: 'pixelated'
+            }"
+          ></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="event-options flex flex-col md:flex-row gap-4 justify-center">
+      <button 
+        v-for="(option, index) in event.options" 
+        :key="index" 
+        class="retro-button"
+        @click="makeDecision(option.effect)"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.event-card {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.event-title {
+  border-radius: 4px;
+  font-size: 1.2rem;
+  text-shadow: 0 0 5px theme('colors.crt.glow');
+  animation: text-flicker 8s infinite;
+}
+
+.event-description {
+  line-height: 1.6;
+}
+
+.event-illustration {
+  image-rendering: pixelated;
+  border: 3px solid theme('colors.crt.brown');
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(92, 67, 33, 0.3);
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.pixel-event-image {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+@keyframes text-flicker {
+  0% { opacity: 1; }
+  3% { opacity: 0.95; }
+  6% { opacity: 1; }
+  8% { opacity: 0.97; }
+  10% { opacity: 1; }
+  50% { opacity: 1; }
+  52% { opacity: 0.97; }
+  54% { opacity: 1; }
+  100% { opacity: 1; }
+}
+</style>
