@@ -14,7 +14,10 @@ defineProps<{
         <div class="w-6 h-0.5 bg-crt-darkbrown mb-1"></div>
         <div class="w-6 h-0.5 bg-crt-darkbrown"></div>
       </button>
-      <div class="mission-title text-xs md:text-sm">Mission: {{ missionTitle }}</div>
+      <div class="mission-title text-xs md:text-sm flex flex-col items-start">
+        <span>Mission:</span>
+        <span>{{ missionTitle }}</span>
+      </div>
     </div>
     
     <div class="game-title text-center text-lg md:text-xl font-bold tracking-wider">
@@ -38,6 +41,10 @@ defineProps<{
 .game-title {
   color: #5c4321;
   text-shadow: 2px 2px 0px rgba(252, 239, 180, 0.4);
+}
+
+.mission-title {
+  line-height: 1.5;
 }
 
 .score {
