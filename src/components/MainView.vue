@@ -38,7 +38,7 @@ const handleNavigate = (direction) => {
 </script>
 
 <template>
-  <div class="main-view h-[512px] crt-frame p-4">
+  <div class="main-view h-full crt-frame p-4">
     <ChatView 
       v-if="showChat && activeTeamMember" 
       :member="activeTeamMember" 
@@ -55,6 +55,7 @@ const handleNavigate = (direction) => {
 
 <style scoped>
 .main-view {
+  min-height: 400px;
   max-width: 600px;
   margin: 0 auto;
   image-rendering: pixelated;
