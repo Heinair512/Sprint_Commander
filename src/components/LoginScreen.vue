@@ -114,11 +114,6 @@ const handleLogin = async () => {
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </button>
       </form>
-      
-      <div class="mt-6 text-center text-xs text-crt-brown">
-        <p>Standard Login:</p>
-        <p>sprintcommander@tfn.io / SprintIT</p>
-      </div>
     </div>
   </div>
 </template>
