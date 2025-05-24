@@ -8,13 +8,17 @@ const isAuthenticated = ref(false);
 const handleLoginSuccess = () => {
   isAuthenticated.value = true;
 };
+
+const handleLogout = () => {
+  isAuthenticated.value = false;
+};
 </script>
 
 <template>
   <LoginScreen v-if="!isAuthenticated" @login-success="handleLoginSuccess" />
   <div v-else class="crt-screen">
     <div class="crt-overlay"></div>
-    <GameView />
+    <GameView @logout="handleLogout" />
   </div>
 </template>
 

@@ -11,6 +11,7 @@ import team from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
 
+const emit = defineEmits(['logout']);
 const toast = useToast();
 const score = ref(825);
 const missionTitle = ref('Black Friday');
@@ -21,6 +22,17 @@ const currentEvent = ref(events[currentEventIndex.value]);
 const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
+
+const handleLogout = () => {
+  emit('logout');
+  toast.success('Erfolgreich ausgeloggt!', {
+    timeout: 2000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+  });
+};
 
 const navigateEvent = (direction: 'prev' | 'next') => {
   if (direction === 'prev') {
@@ -38,7 +50,7 @@ const makeDecision = (effect: number) => {
   
   switch(currentEvent.value.id) {
     case 'event-1':
-      if (effect === 5) { // "Team alarmieren"
+      if (effect === 5) {
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
@@ -52,7 +64,7 @@ const makeDecision = (effect: number) => {
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else { // "Abwarten"
+      } else {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
@@ -70,7 +82,7 @@ const makeDecision = (effect: number) => {
       break;
       
     case 'event-2':
-      if (effect === 5) { // "Zurück in die Refinement-Runde"
+      if (effect === 5) {
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
@@ -80,7 +92,7 @@ const makeDecision = (effect: number) => {
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else { // "Alles reinnehmen"
+      } else {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
@@ -94,7 +106,7 @@ const makeDecision = (effect: number) => {
       break;
       
     case 'event-3':
-      if (effect === 10) { // "Velocity der letzten Sprints"
+      if (effect === 10) {
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
@@ -104,7 +116,7 @@ const makeDecision = (effect: number) => {
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else { // "Mehr Stories"
+      } else {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
@@ -144,6 +156,7 @@ const closeActionFeedback = () => {
       :missionTitle="missionTitle" 
       :score="score" 
       :level="level"
+      @logout="handleLogout"
     />
     
     <div class="flex-grow flex flex-col md:flex-row">

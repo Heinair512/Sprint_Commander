@@ -1,19 +1,43 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 defineProps<{
   missionTitle: string;
   score: number;
   level: string;
 }>();
+
+const emit = defineEmits(['logout']);
+const showMenu = ref(false);
+
+const handleLogout = () => {
+  emit('logout');
+};
+
+const toggleMenu = () => {
+  showMenu.value = !showMenu.value;
+};
 </script>
 
 <template>
   <header class="header-bar p-2 bg-crt-sepia text-crt-darkbrown border-b-4 border-crt-darkbrown flex items-center justify-between">
-    <div class="flex items-center space-x-4">
-      <button class="burger-menu p-1">
+    <div class="flex items-center space-x-4 relative">
+      <button class="burger-menu p-1" @click="toggleMenu">
         <div class="w-6 h-0.5 bg-crt-darkbrown mb-1"></div>
         <div class="w-6 h-0.5 bg-crt-darkbrown mb-1"></div>
         <div class="w-6 h-0.5 bg-crt-darkbrown"></div>
       </button>
+      
+      <!-- Burger Menu Dropdown -->
+      <div v-if="showMenu" class="absolute top-full left-0 mt-2 w-48 bg-crt-sepia border-2 border-crt-darkbrown rounded shadow-lg z-50">
+        <button 
+          @click="handleLogout" 
+          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
+        >
+          Logout
+        </button>
+      </div>
+      
       <div class="mission-title text-xs md:text-sm flex flex-col items-start">
         <span>Mission:</span>
         <span>{{ missionTitle }}</span>
@@ -57,5 +81,14 @@ defineProps<{
 
 .score.error {
   color: #8B0000;
+}
+
+.burger-menu {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.burger-menu:hover {
+  transform: scale(1.1);
 }
 </style>
