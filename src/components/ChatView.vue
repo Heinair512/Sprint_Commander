@@ -33,7 +33,11 @@ const sendMessage = async () => {
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    const response = await axios.post('http://localhost:3000/api/chat', {
+    const serverUrl = import.meta.env.PROD 
+      ? 'https://sprint-commander.netlify.app/api/chat'
+      : 'http://localhost:3000/api/chat';
+      
+    const response = await axios.post(serverUrl, {
       roleId: props.member.id,
       history: chatHistory.value,
       message: userMessage
