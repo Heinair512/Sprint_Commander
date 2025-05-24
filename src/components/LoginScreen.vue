@@ -31,13 +31,13 @@ const handleLogin = async () => {
   
   // Validate email
   if (!validateEmail(email.value)) {
-    error.value = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+    error.value = '🚫 Diese E-Mail sieht aus wie ein Legacy-Code... Bitte korrigieren!';
     return;
   }
   
   // Validate password
   if (!validatePassword(password.value)) {
-    error.value = 'Das Passwort muss mindestens 6 Zeichen lang sein.';
+    error.value = '🔒 Passwort zu kurz! Mindestens 6 Zeichen für Production-Ready Security!';
     return;
   }
   
@@ -48,7 +48,7 @@ const handleLogin = async () => {
     await new Promise(resolve => setTimeout(resolve, 800));
     
     if (email.value === defaultUser.email && password.value === defaultUser.password) {
-      toast.success('Login erfolgreich!', {
+      toast.success('🚀 Login erfolgreich! Sprint kann starten!', {
         timeout: 2000,
         closeOnClick: true,
         pauseOnFocusLoss: true,
@@ -57,13 +57,13 @@ const handleLogin = async () => {
       });
       emit('login-success');
     } else {
-      error.value = 'Ungültige E-Mail oder Passwort.';
-      toast.error('Login fehlgeschlagen!', {
+      error.value = '⚠️ Authentication Failed: 404 - User not found in Production!';
+      toast.error('💥 Login-Bug detected! Hotfix needed!', {
         timeout: 3000,
       });
     }
   } catch (err) {
-    error.value = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+    error.value = '🐛 Critical System Error: Timeout in Authentication Microservice!';
     console.error('Login error:', err);
   } finally {
     isLoading.value = false;
@@ -76,29 +76,32 @@ const handleLogin = async () => {
     <div class="crt-frame bg-crt-sepia p-8 rounded-lg shadow-lg max-w-md w-full">
       <div class="text-center mb-8">
         <h1 class="text-2xl text-crt-darkbrown mb-2">SPRINT COMMANDER</h1>
-        <p class="text-sm text-crt-brown">Authentifizierung erforderlich</p>
+        <p class="text-sm text-crt-brown">🔐 System Access Required</p>
+        <p class="text-xs text-crt-brown mt-2">Initializing Authentication Protocol v2.0</p>
       </div>
       
       <form @submit.prevent="handleLogin" class="space-y-6">
         <div>
-          <label for="email" class="block text-sm text-crt-darkbrown mb-2">E-Mail</label>
+          <label for="email" class="block text-sm text-crt-darkbrown mb-2">📧 User Identity Token</label>
           <input
             id="email"
             v-model="email"
             type="email"
             class="w-full p-3 bg-crt-lightsep border-2 border-crt-darkbrown rounded focus:outline-none focus:border-crt-brown"
             :disabled="isLoading"
+            placeholder="commander@sprint.ops"
           />
         </div>
         
         <div>
-          <label for="password" class="block text-sm text-crt-darkbrown mb-2">Passwort</label>
+          <label for="password" class="block text-sm text-crt-darkbrown mb-2">🔑 Access Code</label>
           <input
             id="password"
             v-model="password"
             type="password"
             class="w-full p-3 bg-crt-lightsep border-2 border-crt-darkbrown rounded focus:outline-none focus:border-crt-brown"
             :disabled="isLoading"
+            placeholder="****************"
           />
         </div>
         
@@ -111,9 +114,13 @@ const handleLogin = async () => {
           class="retro-button w-full"
           :disabled="isLoading"
         >
-          {{ isLoading ? 'Logging in...' : 'Login' }}
+          {{ isLoading ? '🔄 Compiling Access Tokens...' : '▶️ Initialize Sprint' }}
         </button>
       </form>
+      
+      <p class="text-xs text-center mt-4 text-crt-brown">
+        🛡️ Secure Connection Established | v2.5.0-beta
+      </p>
     </div>
   </div>
 </template>
