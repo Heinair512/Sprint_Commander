@@ -33,7 +33,7 @@ const sendMessage = async () => {
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    const response = await axios.post('/api/chat', {
+    const response = await axios.post('http://localhost:3000/api/chat', {
       roleId: props.member.id,
       history: chatHistory.value,
       message: userMessage
