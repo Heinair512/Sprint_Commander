@@ -94,6 +94,31 @@ body {
   box-shadow: none;
 }
 
+/* Toast Styling */
+.Vue-Toastification__toast {
+  font-family: 'Press Start 2P', monospace !important;
+  background-color: theme('colors.crt.sepia') !important;
+  color: theme('colors.crt.darkbrown') !important;
+  border: 4px solid theme('colors.crt.darkbrown') !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 0 theme('colors.crt.darkbrown') !important;
+  padding: 1rem !important;
+  image-rendering: pixelated !important;
+}
+
+.Vue-Toastification__toast--success {
+  background-color: theme('colors.crt.sepia') !important;
+}
+
+.Vue-Toastification__close-button {
+  color: theme('colors.crt.darkbrown') !important;
+  font-family: 'Press Start 2P', monospace !important;
+}
+
+.Vue-Toastification__icon {
+  display: none !important;
+}
+
 /* Enhanced CRT flicker effect */
 @keyframes crt-flicker {
   0% { opacity: 0.97; }

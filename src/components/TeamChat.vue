@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 
 const props = defineProps<{
   event: {
@@ -26,10 +26,33 @@ const chatHistory = ref([
   { sender: 'stake', text: 'Wir verlieren GELD! Jede Minute!' }
 ]);
 
+const chatContainer = ref<HTMLElement | null>(null);
+
+const scrollToBottom = async () => {
+  await nextTick();
+  if (chatContainer.value) {
+    chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+  }
+};
+
 const sendMessage = () => {
   if (message.value.trim()) {
     chatHistory.value.push({ sender: 'user', text: message.value });
     message.value = '';
+    scrollToBottom();
+    
+    // Simulate team response after a short delay
+    setTimeout(() => {
+      const responses = [
+        { sender: 'dev', text: 'Ich sehe erhöhte Error-Raten in den Logs!' },
+        { sender: 'coach', text: 'Lasst uns einen War Room aufsetzen!' },
+        { sender: 'ux', text: 'Support-Tickets steigen exponentiell!' },
+        { sender: 'stake', text: 'Brauchen wir einen Rollback?' }
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      chatHistory.value.push(randomResponse);
+      scrollToBottom();
+    }, 1000);
   }
 };
 
@@ -45,7 +68,10 @@ const handleClose = () => {
       <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
-    <div class="chat-messages bg-crt-lightsep p-4 rounded mb-4 h-96 overflow-y-auto">
+    <div 
+      ref="chatContainer"
+      class="chat-messages bg-crt-lightsep p-4 rounded mb-4 h-96 overflow-y-auto"
+    >
       <div 
         v-for="(msg, index) in chatHistory" 
         :key="index"
@@ -78,11 +104,34 @@ const handleClose = () => {
 <style scoped>
 .chat-message {
   word-break: break-word;
+  transition: all 0.3s ease;
+}
+
+.chat-message:hover {
+  transform: scale(1.02);
 }
 
 .chat-input input {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.75rem;
   outline: none;
+}
+
+.chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.crt.darkbrown') theme('colors.crt.lightsep');
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: theme('colors.crt.lightsep');
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: theme('colors.crt.darkbrown');
+  border-radius: 4px;
 }
 </style>
