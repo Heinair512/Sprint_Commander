@@ -40,13 +40,13 @@ const navigate = (direction: 'prev' | 'next') => {
       >→</button>
     </div>
     
-    <div class="event-content flex-grow bg-crt-lightsep p-4 mb-4 pixel-border">
-      <div class="event-description mb-8 text-center">
+    <div class="event-content flex-grow bg-crt-lightsep p-4 mb-2 pixel-border">
+      <div class="event-description mb-6 text-center">
         {{ event.description }}
       </div>
       
-      <div class="event-illustration mb-8 flex justify-center">
-        <div class="w-40 h-40 bg-crt-sepia flex items-center justify-center pixelated overflow-hidden">
+      <div class="event-illustration mb-6 flex justify-center">
+        <div class="w-32 h-32 bg-crt-sepia flex items-center justify-center pixelated overflow-hidden">
           <div 
             class="pixel-event-image"
             :style="{
@@ -63,11 +63,11 @@ const navigate = (direction: 'prev' | 'next') => {
       </div>
     </div>
     
-    <div class="event-options flex flex-col md:flex-row gap-4 justify-center">
+    <div class="event-options flex flex-col gap-2">
       <button 
         v-for="(option, index) in event.options" 
         :key="index" 
-        class="retro-button"
+        class="retro-button text-sm py-2"
         @click="makeDecision(option.effect)"
       >
         {{ option.label }}
@@ -101,6 +101,7 @@ const navigate = (direction: 'prev' | 'next') => {
 
 .event-description {
   line-height: 1.6;
+  font-size: 0.9rem;
 }
 
 .event-illustration {
@@ -121,6 +122,11 @@ const navigate = (direction: 'prev' | 'next') => {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+}
+
+.retro-button {
+  width: 100%;
+  font-size: 0.8rem;
 }
 
 @keyframes text-flicker {
