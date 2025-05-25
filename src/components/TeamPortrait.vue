@@ -67,7 +67,7 @@ watch(moodValue, (newValue, oldValue) => {
         class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
         :class="moodClass"
       >
-        {{ moodDisplay }}
+        Stimmung: {{ moodDisplay }}
       </div>
     </div>
   </div>
