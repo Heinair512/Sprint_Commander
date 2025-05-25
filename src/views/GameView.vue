@@ -1,4 +1,3 @@
-<script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useScoreStore } from '../stores/scoreStore';
@@ -93,10 +92,6 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        // Developer: Stressed but proud to help
-        // UX: Concerned about user impact
-        // Coach: Positive about quick response
-        // Stakeholder: Happy about quick action
         updateMoods({
           dev: { team: -15, stakeholder: 20 },    // Stressed but doing important work
           ux: { team: -10, stakeholder: 15 },     // Worried about users but glad to help
