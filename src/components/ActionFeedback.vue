@@ -21,6 +21,17 @@ const emit = defineEmits(['close']);
         <div class="tip-header text-crt-brown mb-2 font-bold">Tipp für die Zukunft:</div>
         <p class="text-sm italic mb-4">{{ tip }}</p>
         
+        <template v-if="message.includes('Outage')">
+          <div class="additional-tips mt-6 space-y-6">
+            <div class="tip-item">
+              <h3 class="font-bold mb-2">Incident Response</h3>
+              <p class="text-sm">
+                Ein strukturierter Incident Response Plan hilft beim schnellen und effektiven Handeln in Krisensituationen.
+              </p>
+            </div>
+          </div>
+        </template>
+
         <template v-if="message.includes('Feature')">
           <div class="additional-tips mt-6 space-y-6">
             <div class="tip-item">
@@ -51,42 +62,6 @@ const emit = defineEmits(['close']);
                   class="text-blue-600 hover:text-blue-800 underline"
                 >
                   ▶️ Jobs-to-be-Done Guide
-                </a>
-              </p>
-            </div>
-          </div>
-        </template>
-
-        <template v-if="message.includes('Feature Request')">
-          <div class="additional-tips mt-6 space-y-6">
-            <div class="tip-item">
-              <h3 class="font-bold mb-2">Jobs-to-be-Done-Interviews</h3>
-              <p class="text-sm">
-                Sieh dir an, wie Bob Moesta im Video den JTBD-Interviewprozess erklärt – perfekt, um echte Nutzerbedürfnisse herauszuarbeiten.
-                <br>
-                <a 
-                  href="https://www.youtube.com/watch?v=xQV7HVyAJjc"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:text-blue-800 underline"
-                >
-                  ▶️ Jobs-to-be-Done-Interviews
-                </a>
-              </p>
-            </div>
-            
-            <div class="tip-item">
-              <h3 class="font-bold mb-2">Kano-Modell</h3>
-              <p class="text-sm">
-                Mit dem Kano-Modell erkennst du, welche Features Begeisterung bringen und welche Basisanforderungen sind.
-                <br>
-                <a 
-                  href="https://www.youtube.com/watch?v=Vcnw5ohg8to"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:text-blue-800 underline"
-                >
-                  ▶️ Kano-Modell Tutorial
                 </a>
               </p>
             </div>
