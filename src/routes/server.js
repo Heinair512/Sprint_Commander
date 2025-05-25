@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// CORS configuration
+// CORS configuration with more permissive settings for development
 const corsOptions = {
   origin: [
     'https://sprint-commander.netlify.app',
@@ -24,8 +24,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Mount the chat router under /api prefix
-app.use('/api/chat', chatRouter);
+// Mount the chat router at the root path
+app.use('/', chatRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
