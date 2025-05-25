@@ -92,6 +92,42 @@ const emit = defineEmits(['close']);
             </div>
           </div>
         </template>
+
+        <template v-if="message.includes('Sprint')">
+          <div class="additional-tips mt-6 space-y-6">
+            <div class="tip-item">
+              <h3 class="font-bold mb-2">Tipp A (Struktur & Effizienz)</h3>
+              <p class="text-sm">
+                Ein klarer Sprint-Plan mit Zeitlimit verhindert endlose Diskussionen. Gute Best-Practices findest du in Atlassians Guide zum Sprint Planning.
+                <br>
+                <a 
+                  href="https://www.atlassian.com/agile/scrum/sprint-planning"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:text-blue-800 underline"
+                >
+                  📄 Sprint Planning Guide
+                </a>
+              </p>
+            </div>
+            
+            <div class="tip-item">
+              <h3 class="font-bold mb-2">Tipp B (Moderation & Facilitation)</h3>
+              <p class="text-sm">
+                Wie man ein effektives Kick-off für den Sprint plant und alle Beteiligten einbindet, zeigt dir dieses Video von Atlassian Jira Software.
+                <br>
+                <a 
+                  href="https://www.youtube.com/watch?v=69z4KZ2faxE"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:text-blue-800 underline"
+                >
+                  ▶️ Sprint Kick-off Tutorial
+                </a>
+              </p>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
