@@ -45,7 +45,7 @@ const emit = defineEmits(['close']);
                 Eine strukturierte Retrospektive sichert langfristige Verbesserung. Sieh dir an, wie Atlassian "5 Whys" für Root-Cause-Analysen nutzt.
                 <br>
                 <a 
-                  href="https://www.youtube.com/watch?v=QMIjxVjO9as"
+                  href="https://www.youtube.com/watch?v=-_nN_YTDsuk&t=7s"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-blue-600 hover:text-blue-800 underline"
