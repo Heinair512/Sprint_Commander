@@ -49,7 +49,7 @@ watch(moodValue, (newValue, oldValue) => {
 </script>
 
 <template>
-  <div class="team-portrait-container relative">
+  <div class="team-portrait-container">
     <!-- Speech Bubble -->
     <div 
       v-if="showSpeechBubble" 
@@ -59,11 +59,13 @@ watch(moodValue, (newValue, oldValue) => {
     </div>
     
     <div class="portrait-wrapper">
-      <div 
-        class="pixel-portrait cursor-pointer transition-transform hover:scale-105" 
-        :style="{ backgroundImage: `url(${member.portrait})` }"
-      ></div>
+      <img 
+        :src="member.portrait" 
+        :alt="member.name"
+        class="pixel-portrait cursor-pointer transition-transform hover:scale-105"
+      />
     </div>
+    
     <div class="portrait-info mt-2">
       <div 
         class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
@@ -83,23 +85,21 @@ watch(moodValue, (newValue, oldValue) => {
   width: 100%;
   max-width: 256px;
   margin-bottom: 1rem;
+  position: relative;
 }
 
 .portrait-wrapper {
   width: 100%;
-  padding-bottom: 100%; /* Creates a square aspect ratio */
-  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 3px solid theme('colors.crt.darkbrown');
+  border-radius: 8px;
 }
 
 .pixel-portrait {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  object-fit: contain;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
