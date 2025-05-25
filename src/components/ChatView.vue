@@ -33,13 +33,10 @@ const sendMessage = async () => {
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    // Use Vite's environment variable to determine the server URL
-    const serverUrl = import.meta.env.VITE_API_URL || 
-      (import.meta.env.PROD 
-        ? 'https://sprint-commander.netlify.app/api/chat'
-        : 'http://localhost:3000/api/chat');
-      
-    const response = await axios.post(serverUrl, {
+    // Use environment variable for API URL
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://sprint-commander.netlify.app';
+    
+    const response = await axios.post(`${apiUrl}/chat`, {
       roleId: props.member.id,
       history: chatHistory.value,
       message: userMessage
