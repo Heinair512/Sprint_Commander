@@ -16,10 +16,12 @@ const scoreStore = useScoreStore();
 const showSpeechBubble = ref(false);
 const speechBubbleText = ref('');
 
+const memberScore = computed(() => scoreStore.getMemberScore(props.member.id));
+
 const moodValue = computed(() => {
   return props.member.role === 'Stakeholder' 
-    ? scoreStore.stakeholderSatisfaction 
-    : scoreStore.teamMorale;
+    ? memberScore.value.stakeholderSatisfaction 
+    : memberScore.value.teamMorale;
 });
 
 const moodDisplay = computed(() => {
@@ -34,7 +36,6 @@ const moodClass = computed(() => {
   return 'bg-gray-800';
 });
 
-// Watch for changes in mood value
 watch(moodValue, (newValue, oldValue) => {
   if (oldValue !== undefined && newValue !== oldValue) {
     const change = newValue - oldValue;
@@ -50,7 +51,6 @@ watch(moodValue, (newValue, oldValue) => {
 
 <template>
   <div class="team-portrait-container relative">
-    <!-- Speech Bubble -->
     <div 
       v-if="showSpeechBubble" 
       class="speech-bubble absolute -top-12 left-1/2 transform -translate-x-1/2"

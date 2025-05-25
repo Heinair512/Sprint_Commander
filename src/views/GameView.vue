@@ -49,17 +49,27 @@ const navigateEvent = (direction: 'prev' | 'next') => {
 };
 
 const resetMoods = () => {
-  scoreStore.updateTeamMorale(0);
-  scoreStore.updateStakeholderSatisfaction(0);
+  scoreStore.resetAllScores();
 };
 
 const updateMoods = (teamChange: number, stakeholderChange: number) => {
-  const currentTeamMorale = scoreStore.teamMorale;
-  const currentStakeholderSatisfaction = scoreStore.stakeholderSatisfaction;
-  
-  scoreStore.updateTeamMorale(Math.max(-100, Math.min(100, currentTeamMorale + teamChange)));
-  scoreStore.updateStakeholderSatisfaction(Math.max(-100, Math.min(100, currentStakeholderSatisfaction + stakeholderChange)));
-  
+  // Update individual team member scores
+  team.forEach(member => {
+    const currentScore = scoreStore.getMemberScore(member.id);
+    const isStakeholder = member.role === 'Stakeholder';
+    
+    // Calculate individual variations (±20% random adjustment)
+    const randomFactor = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+    const adjustedTeamChange = Math.round(teamChange * randomFactor);
+    const adjustedStakeChange = Math.round(stakeholderChange * randomFactor);
+    
+    scoreStore.updateMemberScore(
+      member.id,
+      currentScore.teamMorale + (isStakeholder ? adjustedStakeChange : adjustedTeamChange),
+      currentScore.stakeholderSatisfaction + (isStakeholder ? adjustedTeamChange : adjustedStakeChange)
+    );
+  });
+
   // Clear any existing timeout
   if (scoreResetTimeout.value) {
     clearTimeout(scoreResetTimeout.value);
