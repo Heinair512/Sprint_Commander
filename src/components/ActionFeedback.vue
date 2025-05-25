@@ -19,7 +19,43 @@ const emit = defineEmits(['close']);
       
       <div class="tip-section border-t-4 border-crt-brown pt-4 mt-6">
         <div class="tip-header text-crt-brown mb-2 font-bold">Tipp für die Zukunft:</div>
-        <p class="text-sm italic">{{ tip }}</p>
+        <p class="text-sm italic mb-4">{{ tip }}</p>
+        
+        <template v-if="message.includes('Outage')">
+          <div class="additional-tips mt-6 space-y-6">
+            <div class="tip-item">
+              <h3 class="font-bold mb-2">Tipp A (Schnelle Reaktion)</h3>
+              <p class="text-sm">
+                Google SRE empfiehlt dieses Incident Response Playbook als Goldstandard für akute Ausfälle.
+                <br>
+                <a 
+                  href="https://landing.google.com/sre/playbook/incident-response/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:text-blue-800 underline"
+                >
+                  📄 Incident Response Playbook
+                </a>
+              </p>
+            </div>
+            
+            <div class="tip-item">
+              <h3 class="font-bold mb-2">Tipp B (Post-Mortem & Lernen)</h3>
+              <p class="text-sm">
+                Eine strukturierte Retrospektive sichert langfristige Verbesserung. Sieh dir an, wie Atlassian "5 Whys" für Root-Cause-Analysen nutzt.
+                <br>
+                <a 
+                  href="https://www.youtube.com/watch?v=QMIjxVjO9as"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:text-blue-800 underline"
+                >
+                  ▶️ 5 Whys Analysis Tutorial
+                </a>
+              </p>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -35,5 +71,21 @@ const emit = defineEmits(['close']);
   background-color: rgba(92, 67, 33, 0.1);
   padding: 1rem;
   border-radius: 4px;
+}
+
+.tip-item {
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 1rem;
+  border-radius: 4px;
+  border-left: 4px solid theme('colors.crt.brown');
+}
+
+a {
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
 }
 </style>
