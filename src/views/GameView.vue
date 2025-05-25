@@ -37,7 +37,9 @@ const handleLogout = () => {
   });
 };
 
-const navigateEvent = (direction: 'prev' | 'next') => {
+type Direction = 'prev' | 'next';
+
+const navigateEvent = (direction: Direction) => {
   if (direction === 'prev') {
     currentEventIndex.value = currentEventIndex.value > 0 ? currentEventIndex.value - 1 : events.length - 1;
   } else {
