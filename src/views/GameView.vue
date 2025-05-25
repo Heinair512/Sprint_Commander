@@ -52,22 +52,24 @@ const resetMoods = () => {
   scoreStore.resetAllScores();
 };
 
-const updateMoods = (teamChange: number, stakeholderChange: number) => {
+const updateMoods = (moodChanges: Record<string, { team: number; stakeholder: number }>) => {
   // Update individual team member scores
   team.forEach(member => {
     const currentScore = scoreStore.getMemberScore(member.id);
-    const isStakeholder = member.role === 'Stakeholder';
+    const changes = moodChanges[member.id];
     
-    // Calculate individual variations (±20% random adjustment)
-    const randomFactor = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
-    const adjustedTeamChange = Math.round(teamChange * randomFactor);
-    const adjustedStakeChange = Math.round(stakeholderChange * randomFactor);
-    
-    scoreStore.updateMemberScore(
-      member.id,
-      currentScore.teamMorale + (isStakeholder ? adjustedStakeChange : adjustedTeamChange),
-      currentScore.stakeholderSatisfaction + (isStakeholder ? adjustedTeamChange : adjustedStakeChange)
-    );
+    if (changes) {
+      // Calculate individual variations (±20% random adjustment)
+      const randomFactor = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+      const adjustedTeamChange = Math.round(changes.team * randomFactor);
+      const adjustedStakeChange = Math.round(changes.stakeholder * randomFactor);
+      
+      scoreStore.updateMemberScore(
+        member.id,
+        currentScore.teamMorale + adjustedTeamChange,
+        currentScore.stakeholderSatisfaction + adjustedStakeChange
+      );
+    }
   });
 
   // Clear any existing timeout
@@ -85,13 +87,22 @@ const makeDecision = (effect: number) => {
   const scoreElement = document.querySelector('.score');
   
   switch(currentEvent.value.id) {
-    case 'event-1':
-      if (effect === 5) {
+    case 'event-1': // Production Outage
+      if (effect === 5) { // Team alarmieren
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        updateMoods(-10, 15); // Team ist gestresst, Stakeholder zufrieden
+        // Developer: Stressed but proud to help
+        // UX: Concerned about user impact
+        // Coach: Positive about quick response
+        // Stakeholder: Happy about quick action
+        updateMoods({
+          dev: { team: -15, stakeholder: 20 },    // Stressed but doing important work
+          ux: { team: -10, stakeholder: 15 },     // Worried about users but glad to help
+          coach: { team: 5, stakeholder: 10 },    // Appreciates proactive response
+          stake: { team: 15, stakeholder: 25 }    // Very happy about quick reaction
+        });
         
         toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
           timeout: 3000,
@@ -102,12 +113,17 @@ const makeDecision = (effect: number) => {
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else {
+      } else { // Abwarten
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
-        updateMoods(5, -20); // Team entspannt, Stakeholder sehr unzufrieden
+        updateMoods({
+          dev: { team: 5, stakeholder: -20 },     // Relaxed but knows it's wrong
+          ux: { team: -5, stakeholder: -25 },     // Worried about user experience
+          coach: { team: -15, stakeholder: -20 }, // Concerned about lack of action
+          stake: { team: -25, stakeholder: -30 }  // Very unhappy about inaction
+        });
         
         toast.error("Mutig, aber: dumm. -50 Punkte", {
           timeout: 3000,
@@ -121,25 +137,35 @@ const makeDecision = (effect: number) => {
       }
       break;
       
-    case 'event-2':
-      if (effect === 5) {
+    case 'event-2': // Feature Scope Creep
+      if (effect === 5) { // Zurück in die Refinement-Runde
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        updateMoods(15, -10); // Team zufrieden, Stakeholder unzufrieden
+        updateMoods({
+          dev: { team: 20, stakeholder: -5 },     // Happy about maintainable scope
+          ux: { team: 15, stakeholder: -10 },     // Glad to focus on quality
+          coach: { team: 25, stakeholder: 5 },    // Very happy about proper process
+          stake: { team: -15, stakeholder: -20 }  // Unhappy about delay
+        });
         
         toast.success("Kluge Entscheidung! Qualität vor Quantität -> +50 Punkte", {
           timeout: 3000,
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else {
+      } else { // Alles reinnehmen
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
-        updateMoods(-15, 10); // Team sehr unzufrieden, Stakeholder zufrieden
+        updateMoods({
+          dev: { team: -25, stakeholder: 5 },     // Very stressed about workload
+          ux: { team: -20, stakeholder: -5 },     // Worried about quality
+          coach: { team: -15, stakeholder: -10 }, // Concerned about team
+          stake: { team: 20, stakeholder: 15 }    // Happy about features
+        });
         
         toast.error("Oh je, das wird stressig! -50 Punkte", {
           timeout: 3000,
@@ -149,25 +175,35 @@ const makeDecision = (effect: number) => {
       }
       break;
       
-    case 'event-3':
-      if (effect === 10) {
+    case 'event-3': // Sprint Planning
+      if (effect === 10) { // Velocity als Maßstab
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        updateMoods(10, 5); // Alle zufrieden
+        updateMoods({
+          dev: { team: 20, stakeholder: 10 },     // Happy about realistic planning
+          ux: { team: 15, stakeholder: 5 },       // Appreciates achievable goals
+          coach: { team: 25, stakeholder: 15 },   // Very happy about data-driven approach
+          stake: { team: 5, stakeholder: -5 }     // Slightly concerned about pace
+        });
         
         toast.success("Datenbasierte Entscheidung! Super! -> +50 Punkte", {
           timeout: 3000,
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else {
+      } else { // Mehr Stories
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
-        updateMoods(-20, -10); // Alle unzufrieden
+        updateMoods({
+          dev: { team: -25, stakeholder: -15 },   // Very unhappy about unrealistic goals
+          ux: { team: -20, stakeholder: -10 },    // Worried about quality
+          coach: { team: -25, stakeholder: -20 }, // Very concerned about team pressure
+          stake: { team: 15, stakeholder: 10 }    // Happy about ambition
+        });
         
         toast.error("Übermut tut selten gut! -50 Punkte", {
           timeout: 3000,
