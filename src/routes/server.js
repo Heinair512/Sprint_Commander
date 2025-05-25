@@ -24,8 +24,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Mount the chat router
-app.use('/api', chatRouter);
+// Mount the chat router under /api prefix
+app.use('/api/chat', chatRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
