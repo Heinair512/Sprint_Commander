@@ -65,7 +65,7 @@ const emit = defineEmits(['close']);
         </div>
         
         <!-- Feature Scope Creep Tips -->
-        <div v-if="message.includes('Feature')" class="tips-container space-y-6">
+        <div v-if="message.includes('Feature') || message.includes('Bugs')" class="tips-container space-y-6">
           <div class="tip-item bg-white/50 p-4 rounded">
             <h4 class="font-bold mb-2">MoSCoW-Priorisierung</h4>
             <p class="text-sm mb-2">
