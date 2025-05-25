@@ -21,42 +21,6 @@ const emit = defineEmits(['close']);
         <div class="tip-header text-crt-brown mb-2 font-bold">Tipp für die Zukunft:</div>
         <p class="text-sm italic mb-4">{{ tip }}</p>
         
-        <template v-if="message.includes('Outage')">
-          <div class="additional-tips mt-6 space-y-6">
-            <div class="tip-item">
-              <h3 class="font-bold mb-2">Tipp A (Schnelle Reaktion)</h3>
-              <p class="text-sm">
-                Google SRE empfiehlt dieses Incident Response Playbook als Goldstandard für akute Ausfälle.
-                <br>
-                <a 
-                  href="https://sre.google/resources/practices-and-processes/incident-management-guide/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:text-blue-800 underline"
-                >
-                  📄 Incident Response Playbook
-                </a>
-              </p>
-            </div>
-            
-            <div class="tip-item">
-              <h3 class="font-bold mb-2">Tipp B (Post-Mortem & Lernen)</h3>
-              <p class="text-sm">
-                Eine strukturierte Retrospektive sichert langfristige Verbesserung. Sieh dir an, wie Atlassian "5 Whys" für Root-Cause-Analysen nutzt.
-                <br>
-                <a 
-                  href="https://www.youtube.com/watch?v=-_nN_YTDsuk&t=7s"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:text-blue-800 underline"
-                >
-                  ▶️ 5 Whys Analysis Tutorial
-                </a>
-              </p>
-            </div>
-          </div>
-        </template>
-
         <template v-if="message.includes('Feature')">
           <div class="additional-tips mt-6 space-y-6">
             <div class="tip-item">
@@ -87,42 +51,6 @@ const emit = defineEmits(['close']);
                   class="text-blue-600 hover:text-blue-800 underline"
                 >
                   ▶️ Jobs-to-be-Done Guide
-                </a>
-              </p>
-            </div>
-          </div>
-        </template>
-
-        <template v-if="message.includes('Sprint')">
-          <div class="additional-tips mt-6 space-y-6">
-            <div class="tip-item">
-              <h3 class="font-bold mb-2">Tipp A (Struktur & Effizienz)</h3>
-              <p class="text-sm">
-                Ein klarer Sprint-Plan mit Zeitlimit verhindert endlose Diskussionen. Gute Best-Practices findest du in Atlassians Guide zum Sprint Planning.
-                <br>
-                <a 
-                  href="https://www.atlassian.com/agile/scrum/sprint-planning"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:text-blue-800 underline"
-                >
-                  📄 Sprint Planning Guide
-                </a>
-              </p>
-            </div>
-            
-            <div class="tip-item">
-              <h3 class="font-bold mb-2">Tipp B (Moderation & Facilitation)</h3>
-              <p class="text-sm">
-                Wie man ein effektives Kick-off für den Sprint plant und alle Beteiligten einbindet, zeigt dir dieses Video von Atlassian Jira Software.
-                <br>
-                <a 
-                  href="https://www.youtube.com/watch?v=69z4KZ2faxE"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:text-blue-800 underline"
-                >
-                  ▶️ Sprint Kick-off Tutorial
                 </a>
               </p>
             </div>
