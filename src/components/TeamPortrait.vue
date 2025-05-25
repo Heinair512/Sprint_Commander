@@ -63,13 +63,11 @@ watch(moodValue, (newValue, oldValue) => {
       :style="{ backgroundImage: `url(${member.portrait})` }"
     ></div>
     <div class="portrait-info mt-2">
-      <div class="name text-sm text-crt-darkbrown">{{ member.name }}</div>
-      <div class="role text-xs text-crt-brown">{{ member.role }}</div>
       <div 
-        class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded mt-1"
+        class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
         :class="moodClass"
       >
-        Stimmung: {{ moodDisplay }}
+        {{ moodDisplay }}
       </div>
     </div>
   </div>
