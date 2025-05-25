@@ -58,10 +58,12 @@ watch(moodValue, (newValue, oldValue) => {
       {{ speechBubbleText }}
     </div>
     
-    <div 
-      class="pixel-portrait cursor-pointer transition-transform hover:scale-105" 
-      :style="{ backgroundImage: `url(${member.portrait})` }"
-    ></div>
+    <div class="portrait-wrapper">
+      <div 
+        class="pixel-portrait cursor-pointer transition-transform hover:scale-105" 
+        :style="{ backgroundImage: `url(${member.portrait})` }"
+      ></div>
+    </div>
     <div class="portrait-info mt-2">
       <div 
         class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
@@ -78,12 +80,23 @@ watch(moodValue, (newValue, oldValue) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 256px;
+  width: 100%;
+  max-width: 256px;
+  margin-bottom: 1rem;
+}
+
+.portrait-wrapper {
+  width: 100%;
+  padding-bottom: 100%; /* Creates a square aspect ratio */
+  position: relative;
 }
 
 .pixel-portrait {
-  width: 256px;
-  height: 256px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
