@@ -33,10 +33,9 @@ const sendMessage = async () => {
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    // Use environment variable for API URL
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://sprint-commander.netlify.app';
+    const apiUrl = `${import.meta.env.VITE_API_URL}/api/chat`;
     
-    const response = await axios.post(`${apiUrl}/chat`, {
+    const response = await axios.post(apiUrl, {
       roleId: props.member.id,
       history: chatHistory.value,
       message: userMessage
