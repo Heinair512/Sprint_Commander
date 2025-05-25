@@ -266,7 +266,7 @@ const closeActionFeedback = () => {
           :tip="currentEvent.id === 'event-1'
             ? 'Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig.'
             : currentEvent.id === 'event-2'
-            ? 'Die Standard Antwort sollte "Nein" sein. Sonst verlierst du den Fokus und gehst das Risiko ein, am Ende gar nichts fertig zu haben.'
+            ? 'Die Standard Antwort sollte \'Nein\' sein. Sonst verlierst du den Fokus und gehst das Risiko ein, am Ende gar nichts fertig zu haben.'
             : 'Vertraue den Daten und der Erfahrung des Teams.'"
           @close="closeActionFeedback"
         />
