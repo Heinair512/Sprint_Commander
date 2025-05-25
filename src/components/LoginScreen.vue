@@ -77,8 +77,7 @@ const handleLogin = async () => {
       <div class="text-center mb-8">
         <h1 class="text-2xl text-crt-darkbrown mb-2">SPRINT COMMANDER</h1>
         <p class="text-sm text-crt-brown">
-          <img src="/assets/icons/lock.png" class="inline-block w-4 h-4 pixelated" alt="lock" />
-          System Access Required
+          🔒 System Access Required
         </p>
         <p class="text-xs text-crt-brown mt-2">Initializing Authentication Protocol v2.0</p>
       </div>
@@ -86,8 +85,7 @@ const handleLogin = async () => {
       <form @submit.prevent="handleLogin" class="space-y-6">
         <div>
           <label for="email" class="block text-sm text-crt-darkbrown mb-2">
-            <img src="/assets/icons/mail.png" class="inline-block w-4 h-4 pixelated mr-2" alt="mail" />
-            User Identity Token
+            📧 User Identity Token
           </label>
           <input
             id="email"
@@ -101,8 +99,7 @@ const handleLogin = async () => {
         
         <div>
           <label for="password" class="block text-sm text-crt-darkbrown mb-2">
-            <img src="/assets/icons/key.png" class="inline-block w-4 h-4 pixelated mr-2" alt="key" />
-            Access Code
+            🔑 Access Code
           </label>
           <input
             id="password"
@@ -115,7 +112,6 @@ const handleLogin = async () => {
         </div>
         
         <div v-if="error" class="text-red-600 text-sm text-center">
-          <img src="/assets/icons/error.png" class="inline-block w-4 h-4 pixelated mr-2" alt="error" />
           {{ error }}
         </div>
         
@@ -125,19 +121,16 @@ const handleLogin = async () => {
           :disabled="isLoading"
         >
           <template v-if="isLoading">
-            <img src="/assets/icons/loading.png" class="inline-block w-4 h-4 pixelated animate-spin mr-2" alt="loading" />
-            Compiling Access Tokens...
+            ⌛ Compiling Access Tokens...
           </template>
           <template v-else>
-            <img src="/assets/icons/play.png" class="inline-block w-4 h-4 pixelated mr-2" alt="play" />
-            Commander Go
+            ▶️ Commander Go
           </template>
         </button>
       </form>
       
       <p class="text-xs text-center mt-4 text-crt-brown">
-        <img src="/assets/icons/shield.png" class="inline-block w-4 h-4 pixelated mr-1" alt="shield" />
-        Secure Connection Established | v2.5.0-beta
+        🛡️ Secure Connection Established | v2.5.0-beta
       </p>
     </div>
   </div>
