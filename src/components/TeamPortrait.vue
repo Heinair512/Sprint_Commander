@@ -63,6 +63,7 @@ watch(moodValue, (newValue, oldValue) => {
         :src="member.portrait" 
         :alt="member.name"
         class="pixel-portrait cursor-pointer transition-transform hover:scale-105"
+        draggable="false"
       />
     </div>
     
@@ -90,20 +91,23 @@ watch(moodValue, (newValue, oldValue) => {
 
 .portrait-wrapper {
   width: 100%;
-  aspect-ratio: 1;
-  overflow: hidden;
+  padding-bottom: 100%;
+  position: relative;
   border: 3px solid theme('colors.crt.darkbrown');
   border-radius: 8px;
+  overflow: hidden;
 }
 
 .pixel-portrait {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  transition: transform 0.2s ease;
 }
 
 .portrait-info {
