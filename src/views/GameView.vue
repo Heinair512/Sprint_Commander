@@ -33,6 +33,7 @@ const handleLogout = () => {
     pauseOnFocusLoss: true,
     pauseOnHover: true,
     draggable: true,
+    icon: '/assets/mood/happy.png'
   });
 };
 
@@ -65,7 +66,7 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        updateMoods(-10, 15); // Team ist gestresst, Stakeholder zufrieden
+        updateMoods(-10, 15);
         
         toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
           timeout: 3000,
@@ -73,7 +74,7 @@ const makeDecision = (effect: number) => {
           pauseOnFocusLoss: true,
           pauseOnHover: true,
           draggable: true,
-          className: "pixel-toast success-toast",
+          icon: '/assets/mood/happy.png'
         });
         showTeamChat.value = true;
       } else {
@@ -81,7 +82,7 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
-        updateMoods(5, -20); // Team entspannt, Stakeholder sehr unzufrieden
+        updateMoods(5, -20);
         
         toast.error("Mutig, aber: dumm. -50 Punkte", {
           timeout: 3000,
@@ -89,7 +90,7 @@ const makeDecision = (effect: number) => {
           pauseOnFocusLoss: true,
           pauseOnHover: true,
           draggable: true,
-          className: "pixel-toast error-toast",
+          icon: '/assets/mood/sad.png'
         });
         showActionFeedback.value = true;
       }
@@ -101,11 +102,11 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        updateMoods(15, -10); // Team zufrieden, Stakeholder unzufrieden
+        updateMoods(15, -10);
         
         toast.success("Kluge Entscheidung! Qualität vor Quantität -> +50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast success-toast",
+          icon: '/assets/mood/happy.png'
         });
         showTeamChat.value = true;
       } else {
@@ -113,11 +114,11 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
-        updateMoods(-15, 10); // Team sehr unzufrieden, Stakeholder zufrieden
+        updateMoods(-15, 10);
         
         toast.error("Oh je, das wird stressig! -50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast error-toast",
+          icon: '/assets/mood/sad.png'
         });
         showActionFeedback.value = true;
       }
@@ -129,11 +130,11 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        updateMoods(10, 5); // Alle zufrieden
+        updateMoods(10, 5);
         
         toast.success("Datenbasierte Entscheidung! Super! -> +50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast success-toast",
+          icon: '/assets/mood/happy.png'
         });
         showTeamChat.value = true;
       } else {
@@ -141,11 +142,11 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
-        updateMoods(-20, -10); // Alle unzufrieden
+        updateMoods(-20, -10);
         
         toast.error("Übermut tut selten gut! -50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast error-toast",
+          icon: '/assets/mood/sad.png'
         });
         showActionFeedback.value = true;
       }
@@ -272,5 +273,12 @@ const closeActionFeedback = () => {
 .error-toast {
   background-color: #8B0000 !important;
   color: #FFFFFF !important;
+}
+
+/* Override Vue-Toastification icon styles */
+.Vue-Toastification__icon {
+  width: 24px !important;
+  height: 24px !important;
+  image-rendering: pixelated !important;
 }
 </style>
