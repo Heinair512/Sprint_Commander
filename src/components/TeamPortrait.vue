@@ -34,18 +34,11 @@ const moodClass = computed(() => {
   return 'bg-gray-800';
 });
 
-const moodIcon = computed(() => {
-  const value = moodValue.value;
-  if (value > 0) return '/assets/mood/happy.png';
-  if (value < 0) return '/assets/mood/sad.png';
-  return '/assets/mood/neutral.png';
-});
-
 // Watch for changes in mood value
 watch(moodValue, (newValue, oldValue) => {
   if (oldValue !== undefined && newValue !== oldValue) {
     const change = newValue - oldValue;
-    speechBubbleText.value = change > 0 ? '+' : '-';
+    speechBubbleText.value = change > 0 ? '😊' : '😠';
     showSpeechBubble.value = true;
     
     setTimeout(() => {
@@ -62,11 +55,7 @@ watch(moodValue, (newValue, oldValue) => {
       v-if="showSpeechBubble" 
       class="speech-bubble absolute -top-12 left-1/2 transform -translate-x-1/2"
     >
-      <img 
-        :src="speechBubbleText === '+' ? '/assets/mood/happy.png' : '/assets/mood/sad.png'"
-        class="w-8 h-8 pixelated"
-        alt="mood"
-      />
+      {{ speechBubbleText }}
     </div>
     
     <div 
@@ -75,14 +64,10 @@ watch(moodValue, (newValue, oldValue) => {
     ></div>
     <div class="portrait-info mt-2">
       <div 
-        class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded flex items-center gap-2"
+        class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
         :class="moodClass"
       >
-        <span>Stimmung:</span>
-        <div class="flex items-center gap-1">
-          <img :src="moodIcon" class="w-4 h-4 pixelated" alt="mood" />
-          <span>{{ moodDisplay }}</span>
-        </div>
+        Stimmung: {{ moodDisplay }}
       </div>
     </div>
   </div>
@@ -114,7 +99,7 @@ watch(moodValue, (newValue, oldValue) => {
 }
 
 .mood-label {
-  display: inline-flex;
+  display: inline-block;
   font-family: 'Press Start 2P', monospace;
   transition: background-color 0.3s ease;
 }
@@ -124,6 +109,7 @@ watch(moodValue, (newValue, oldValue) => {
   border: 2px solid theme('colors.crt.darkbrown');
   padding: 0.5rem;
   border-radius: 1rem;
+  font-size: 1.5rem;
   z-index: 10;
   animation: pop-in 0.3s ease-out;
 }
@@ -137,12 +123,6 @@ watch(moodValue, (newValue, oldValue) => {
   border-width: 10px 10px 0;
   border-style: solid;
   border-color: theme('colors.crt.darkbrown') transparent transparent;
-}
-
-.pixelated {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
 }
 
 @keyframes pop-in {
