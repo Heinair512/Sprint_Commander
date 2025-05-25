@@ -24,6 +24,7 @@ const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const scoreStore = useScoreStore();
+const scoreResetTimeout = ref<number | null>(null);
 
 const handleLogout = () => {
   emit('logout');
@@ -47,12 +48,27 @@ const navigateEvent = (direction: 'prev' | 'next') => {
   showActionFeedback.value = false;
 };
 
+const resetMoods = () => {
+  scoreStore.updateTeamMorale(0);
+  scoreStore.updateStakeholderSatisfaction(0);
+};
+
 const updateMoods = (teamChange: number, stakeholderChange: number) => {
   const currentTeamMorale = scoreStore.teamMorale;
   const currentStakeholderSatisfaction = scoreStore.stakeholderSatisfaction;
   
   scoreStore.updateTeamMorale(Math.max(-100, Math.min(100, currentTeamMorale + teamChange)));
   scoreStore.updateStakeholderSatisfaction(Math.max(-100, Math.min(100, currentStakeholderSatisfaction + stakeholderChange)));
+  
+  // Clear any existing timeout
+  if (scoreResetTimeout.value) {
+    clearTimeout(scoreResetTimeout.value);
+  }
+  
+  // Set new timeout to reset moods after 20 seconds
+  scoreResetTimeout.value = window.setTimeout(() => {
+    resetMoods();
+  }, 20000);
 };
 
 const makeDecision = (effect: number) => {
