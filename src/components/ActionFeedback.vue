@@ -56,6 +56,42 @@ const emit = defineEmits(['close']);
             </div>
           </div>
         </template>
+
+        <template v-if="message.includes('Feature')">
+          <div class="additional-tips mt-6 space-y-6">
+            <div class="tip-item">
+              <h3 class="font-bold mb-2">Tipp A (Nutzerzentrierte Ideen)</h3>
+              <p class="text-sm">
+                Nutze das Jobs-to-be-Done Interview-Format, um echte Bedürfnisse herauszufinden. Ein gutes Einführungsvideo von JTBD-Experte Bob Moesta.
+                <br>
+                <a 
+                  href="https://www.youtube.com/watch?v=jkav2qxZJro"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:text-blue-800 underline"
+                >
+                  ▶️ Jobs-to-be-Done Interview Guide
+                </a>
+              </p>
+            </div>
+            
+            <div class="tip-item">
+              <h3 class="font-bold mb-2">Tipp B (Priorisierung)</h3>
+              <p class="text-sm">
+                Das Kano-Modell hilft, Begeisterungs- von Basisfaktoren zu unterscheiden. Schneller Crash-Kurs hier.
+                <br>
+                <a 
+                  href="https://www.youtube.com/watch?v=qv2VVy9PKS8"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:text-blue-800 underline"
+                >
+                  ▶️ Kano Model Tutorial
+                </a>
+              </p>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
