@@ -29,7 +29,7 @@ const emit = defineEmits(['close']);
                 Google SRE empfiehlt dieses Incident Response Playbook als Goldstandard für akute Ausfälle.
                 <br>
                 <a 
-                  href="https://landing.google.com/sre/playbook/incident-response/"
+                  href="https://sre.google/resources/practices-and-processes/incident-management-guide/"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-blue-600 hover:text-blue-800 underline"
