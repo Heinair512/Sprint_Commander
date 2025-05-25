@@ -76,17 +76,13 @@ const handleLogin = async () => {
     <div class="crt-frame bg-crt-sepia p-8 rounded-lg shadow-lg max-w-md w-full">
       <div class="text-center mb-8">
         <h1 class="text-2xl text-crt-darkbrown mb-2">SPRINT COMMANDER</h1>
-        <p class="text-sm text-crt-brown">
-          🔒 System Access Required
-        </p>
+        <p class="text-sm text-crt-brown">🔐 System Access Required</p>
         <p class="text-xs text-crt-brown mt-2">Initializing Authentication Protocol v2.0</p>
       </div>
       
       <form @submit.prevent="handleLogin" class="space-y-6">
         <div>
-          <label for="email" class="block text-sm text-crt-darkbrown mb-2">
-            📧 User Identity Token
-          </label>
+          <label for="email" class="block text-sm text-crt-darkbrown mb-2">📧 User Identity Token</label>
           <input
             id="email"
             v-model="email"
@@ -98,9 +94,7 @@ const handleLogin = async () => {
         </div>
         
         <div>
-          <label for="password" class="block text-sm text-crt-darkbrown mb-2">
-            🔑 Access Code
-          </label>
+          <label for="password" class="block text-sm text-crt-darkbrown mb-2">🔑 Access Code</label>
           <input
             id="password"
             v-model="password"
@@ -120,12 +114,7 @@ const handleLogin = async () => {
           class="retro-button w-full"
           :disabled="isLoading"
         >
-          <template v-if="isLoading">
-            ⌛ Compiling Access Tokens...
-          </template>
-          <template v-else>
-            ▶️ Commander Go
-          </template>
+          {{ isLoading ? '🔄 Compiling Access Tokens...' : '▶️ Commander Go' }}
         </button>
       </form>
       
