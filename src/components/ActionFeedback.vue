@@ -57,7 +57,7 @@ const emit = defineEmits(['close']);
           </div>
         </template>
 
-        <template v-else-if="message.includes('Feature Request')">
+        <template v-if="message.includes('Feature Request')">
           <div class="additional-tips mt-6 space-y-6">
             <div class="tip-item">
               <h3 class="font-bold mb-2">Jobs-to-be-Done-Interviews</h3>
@@ -93,7 +93,7 @@ const emit = defineEmits(['close']);
           </div>
         </template>
 
-        <template v-else-if="message.includes('Sprint')">
+        <template v-if="message.includes('Sprint')">
           <div class="additional-tips mt-6 space-y-6">
             <div class="tip-item">
               <h3 class="font-bold mb-2">Struktur & Effizienz</h3>
