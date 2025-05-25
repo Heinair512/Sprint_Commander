@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useScoreStore } from '../stores/scoreStore';
 
 const props = defineProps<{
@@ -13,6 +13,8 @@ const props = defineProps<{
 }>();
 
 const scoreStore = useScoreStore();
+const showSpeechBubble = ref(false);
+const speechBubbleText = ref('');
 
 const moodValue = computed(() => {
   return props.member.role === 'Stakeholder' 
@@ -31,10 +33,31 @@ const moodClass = computed(() => {
   if (value < 0) return 'bg-red-800';
   return 'bg-gray-800';
 });
+
+// Watch for changes in mood value
+watch(moodValue, (newValue, oldValue) => {
+  if (oldValue !== undefined && newValue !== oldValue) {
+    const change = newValue - oldValue;
+    speechBubbleText.value = change > 0 ? '😊' : '😠';
+    showSpeechBubble.value = true;
+    
+    setTimeout(() => {
+      showSpeechBubble.value = false;
+    }, 2000);
+  }
+});
 </script>
 
 <template>
-  <div class="team-portrait-container">
+  <div class="team-portrait-container relative">
+    <!-- Speech Bubble -->
+    <div 
+      v-if="showSpeechBubble" 
+      class="speech-bubble absolute -top-12 left-1/2 transform -translate-x-1/2"
+    >
+      {{ speechBubbleText }}
+    </div>
+    
     <div 
       class="pixel-portrait cursor-pointer transition-transform hover:scale-105" 
       :style="{ backgroundImage: `url(${member.portrait})` }"
@@ -81,5 +104,37 @@ const moodClass = computed(() => {
   display: inline-block;
   font-family: 'Press Start 2P', monospace;
   transition: background-color 0.3s ease;
+}
+
+.speech-bubble {
+  background: theme('colors.crt.lightsep');
+  border: 2px solid theme('colors.crt.darkbrown');
+  padding: 0.5rem;
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  z-index: 10;
+  animation: pop-in 0.3s ease-out;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: theme('colors.crt.darkbrown') transparent transparent;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: translate(-50%, 20px) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
 }
 </style>

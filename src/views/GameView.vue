@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
+import { useScoreStore } from '../stores/scoreStore';
 import HeaderBar from '../components/HeaderBar.vue';
 import TeamPortrait from '../components/TeamPortrait.vue';
 import MainView from '../components/MainView.vue';
@@ -22,6 +23,7 @@ const currentEvent = ref(events[currentEventIndex.value]);
 const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
+const scoreStore = useScoreStore();
 
 const handleLogout = () => {
   emit('logout');
@@ -45,6 +47,14 @@ const navigateEvent = (direction: 'prev' | 'next') => {
   showActionFeedback.value = false;
 };
 
+const updateMoods = (teamChange: number, stakeholderChange: number) => {
+  const currentTeamMorale = scoreStore.teamMorale;
+  const currentStakeholderSatisfaction = scoreStore.stakeholderSatisfaction;
+  
+  scoreStore.updateTeamMorale(Math.max(-100, Math.min(100, currentTeamMorale + teamChange)));
+  scoreStore.updateStakeholderSatisfaction(Math.max(-100, Math.min(100, currentStakeholderSatisfaction + stakeholderChange)));
+};
+
 const makeDecision = (effect: number) => {
   const scoreElement = document.querySelector('.score');
   
@@ -54,6 +64,8 @@ const makeDecision = (effect: number) => {
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
+        
+        updateMoods(-10, 15); // Team ist gestresst, Stakeholder zufrieden
         
         toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
           timeout: 3000,
@@ -68,6 +80,8 @@ const makeDecision = (effect: number) => {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+        
+        updateMoods(5, -20); // Team entspannt, Stakeholder sehr unzufrieden
         
         toast.error("Mutig, aber: dumm. -50 Punkte", {
           timeout: 3000,
@@ -87,6 +101,8 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
+        updateMoods(15, -10); // Team zufrieden, Stakeholder unzufrieden
+        
         toast.success("Kluge Entscheidung! Qualität vor Quantität -> +50 Punkte", {
           timeout: 3000,
           className: "pixel-toast success-toast",
@@ -96,6 +112,8 @@ const makeDecision = (effect: number) => {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+        
+        updateMoods(-15, 10); // Team sehr unzufrieden, Stakeholder zufrieden
         
         toast.error("Oh je, das wird stressig! -50 Punkte", {
           timeout: 3000,
@@ -111,6 +129,8 @@ const makeDecision = (effect: number) => {
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
+        updateMoods(10, 5); // Alle zufrieden
+        
         toast.success("Datenbasierte Entscheidung! Super! -> +50 Punkte", {
           timeout: 3000,
           className: "pixel-toast success-toast",
@@ -120,6 +140,8 @@ const makeDecision = (effect: number) => {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+        
+        updateMoods(-20, -10); // Alle unzufrieden
         
         toast.error("Übermut tut selten gut! -50 Punkte", {
           timeout: 3000,
