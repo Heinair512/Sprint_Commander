@@ -60,33 +60,33 @@ const emit = defineEmits(['close']);
         <template v-if="message.includes('Feature')">
           <div class="additional-tips mt-6 space-y-6">
             <div class="tip-item">
-              <h3 class="font-bold mb-2">Tipp A (Nutzerzentrierte Ideen)</h3>
+              <h3 class="font-bold mb-2">MoSCoW-Priorisierung</h3>
               <p class="text-sm">
-                Nutze das Jobs-to-be-Done Interview-Format, um echte Bedürfnisse herauszufinden. Ein gutes Einführungsvideo von JTBD-Experte Bob Moesta.
+                Bevor neue Wünsche blind aufgenommen werden, hilft die MoSCoW-Priorisierung. Schau dir dieses Video an, um zu lernen, wie du Must-, Should-, Could- und Won't-Haves sauber trennst.
                 <br>
                 <a 
-                  href="https://www.youtube.com/watch?v=jkav2qxZJro"
+                  href="https://www.youtube.com/watch?v=XVx5FKZb6l4"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-blue-600 hover:text-blue-800 underline"
                 >
-                  ▶️ Jobs-to-be-Done Interview Guide
+                  ▶️ MoSCoW Priorisierung Tutorial
                 </a>
               </p>
             </div>
             
             <div class="tip-item">
-              <h3 class="font-bold mb-2">Tipp B (Priorisierung)</h3>
+              <h3 class="font-bold mb-2">Jobs-to-be-Done-Theorie</h3>
               <p class="text-sm">
-                Das Kano-Modell hilft, Begeisterungs- von Basisfaktoren zu unterscheiden. Schneller Crash-Kurs hier.
+                Um Wünsche wirklich aus Anwender-Jobs abzuleiten, lohnt ein Blick in die Jobs-to-be-Done-Theorie. Sehr praxisnah erklärt von Alan Klement.
                 <br>
                 <a 
-                  href="https://www.youtube.com/watch?v=qv2VVy9PKS8"
+                  href="https://www.youtube.com/watch?v=cdhra0UYILk"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-blue-600 hover:text-blue-800 underline"
                 >
-                  ▶️ Kano Model Tutorial
+                  ▶️ Jobs-to-be-Done Guide
                 </a>
               </p>
             </div>
