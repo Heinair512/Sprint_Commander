@@ -19,10 +19,9 @@ const speechBubbleText = ref('');
 const memberScore = computed(() => scoreStore.getMemberScore(props.member.id));
 
 const moodValue = computed(() => {
-  const score = memberScore.value;
   return props.member.role === 'Stakeholder' 
-    ? score.teamMorale + score.stakeholderSatisfaction 
-    : score.teamMorale + score.stakeholderSatisfaction;
+    ? memberScore.value.stakeholderSatisfaction 
+    : memberScore.value.teamMorale;
 });
 
 const moodDisplay = computed(() => {
