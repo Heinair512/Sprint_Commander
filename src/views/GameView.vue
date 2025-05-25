@@ -1,3 +1,4 @@
+<script setup>
 import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useScoreStore } from '../stores/scoreStore';
