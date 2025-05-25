@@ -49,7 +49,7 @@ watch(moodValue, (newValue, oldValue) => {
 </script>
 
 <template>
-  <div class="team-portrait-container">
+  <div class="team-portrait-container relative">
     <!-- Speech Bubble -->
     <div 
       v-if="showSpeechBubble" 
@@ -58,15 +58,10 @@ watch(moodValue, (newValue, oldValue) => {
       {{ speechBubbleText }}
     </div>
     
-    <div class="portrait-wrapper">
-      <img 
-        :src="member.portrait" 
-        :alt="member.name"
-        class="pixel-portrait cursor-pointer transition-transform hover:scale-105"
-        draggable="false"
-      />
-    </div>
-    
+    <div 
+      class="pixel-portrait cursor-pointer transition-transform hover:scale-105" 
+      :style="{ backgroundImage: `url(${member.portrait})` }"
+    ></div>
     <div class="portrait-info mt-2">
       <div 
         class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
@@ -83,31 +78,19 @@ watch(moodValue, (newValue, oldValue) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  max-width: 256px;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.portrait-wrapper {
-  width: 100%;
-  padding-bottom: 100%;
-  position: relative;
-  border: 3px solid theme('colors.crt.darkbrown');
-  border-radius: 8px;
-  overflow: hidden;
+  width: 256px;
 }
 
 .pixel-portrait {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 256px;
+  height: 256px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+  transition: transform 0.2s ease;
 }
 
 .portrait-info {
