@@ -8,10 +8,16 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// CORS configuration
+// Enhanced CORS configuration to handle both HTTP and HTTPS
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  optionsSuccessStatus: 200
+  origin: [
+    'http://localhost:5173',     // Local development
+    'https://localhost:5173',    // Local development with HTTPS
+    process.env.FRONTEND_URL     // Production URL
+  ].filter(Boolean),             // Remove undefined/null values
+  optionsSuccessStatus: 200,
+  credentials: true,             // Allow credentials
+  methods: ['GET', 'POST']       // Explicitly specify allowed methods
 };
 
 app.use(cors(corsOptions));

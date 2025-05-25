@@ -33,10 +33,10 @@ const sendMessage = async () => {
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    // Use Netlify Functions endpoint in production, fallback to local dev server
+    // Enhanced server URL handling
     const serverUrl = import.meta.env.PROD 
       ? '/.netlify/functions/chat'
-      : 'http://localhost:3000/api/chat';
+      : `${window.location.protocol}//${window.location.hostname}:3000/api/chat`;
       
     const response = await axios.post(serverUrl, {
       roleId: props.member.id,
@@ -46,7 +46,8 @@ const sendMessage = async () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      timeout: 30000 // 30 second timeout
+      timeout: 30000, // 30 second timeout
+      withCredentials: true // Enable credentials
     });
 
     if (response.data && response.data.reply) {
@@ -62,6 +63,10 @@ const sendMessage = async () => {
       error.value = `Server-Fehler: ${err.response.status}. Bitte versuchen Sie es später erneut.`;
     } else if (err.request) {
       error.value = 'Keine Verbindung zum Server möglich. Bitte überprüfen Sie Ihre Internetverbindung.';
+      // Retry logic for development server
+      if (!import.meta.env.PROD) {
+        error.value += ' Stellen Sie sicher, dass der Entwicklungsserver läuft (npm run server).';
+      }
     } else {
       error.value = 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
     }
