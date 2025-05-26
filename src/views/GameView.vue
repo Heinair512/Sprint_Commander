@@ -53,14 +53,12 @@ const resetMoods = () => {
 };
 
 const updateMoods = (moodChanges: Record<string, { team: number; stakeholder: number }>) => {
-  // Update individual team member scores
   team.forEach(member => {
     const currentScore = scoreStore.getMemberScore(member.id);
     const changes = moodChanges[member.id];
     
     if (changes) {
-      // Calculate individual variations (±20% random adjustment)
-      const randomFactor = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+      const randomFactor = 0.8 + Math.random() * 0.4;
       const adjustedTeamChange = Math.round(changes.team * randomFactor);
       const adjustedStakeChange = Math.round(changes.stakeholder * randomFactor);
       
@@ -72,12 +70,10 @@ const updateMoods = (moodChanges: Record<string, { team: number; stakeholder: nu
     }
   });
 
-  // Clear any existing timeout
   if (scoreResetTimeout.value) {
     clearTimeout(scoreResetTimeout.value);
   }
   
-  // Set new timeout to reset moods after 20 seconds
   scoreResetTimeout.value = window.setTimeout(() => {
     resetMoods();
   }, 20000);
@@ -87,21 +83,17 @@ const makeDecision = (effect: number) => {
   const scoreElement = document.querySelector('.score');
   
   switch(currentEvent.value.id) {
-    case 'event-1': // Production Outage
-      if (effect === 5) { // Team alarmieren
+    case 'event-1':
+      if (effect === 5) {
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
-        // Developer: Stressed but proud to help
-        // UX: Concerned about user impact
-        // Coach: Positive about quick response
-        // Stakeholder: Happy about quick action
         updateMoods({
-          dev: { team: -15, stakeholder: 20 },    // Stressed but doing important work
-          ux: { team: -10, stakeholder: 15 },     // Worried about users but glad to help
-          coach: { team: 5, stakeholder: 10 },    // Appreciates proactive response
-          stake: { team: 15, stakeholder: 25 }    // Very happy about quick reaction
+          dev: { team: -15, stakeholder: 20 },
+          ux: { team: -10, stakeholder: 15 },
+          coach: { team: 5, stakeholder: 10 },
+          stake: { team: 15, stakeholder: 25 }
         });
         
         toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
@@ -113,16 +105,16 @@ const makeDecision = (effect: number) => {
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else { // Abwarten
+      } else {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
         updateMoods({
-          dev: { team: 5, stakeholder: -20 },     // Relaxed but knows it's wrong
-          ux: { team: -5, stakeholder: -25 },     // Worried about user experience
-          coach: { team: -15, stakeholder: -20 }, // Concerned about lack of action
-          stake: { team: -25, stakeholder: -30 }  // Very unhappy about inaction
+          dev: { team: 5, stakeholder: -20 },
+          ux: { team: -5, stakeholder: -25 },
+          coach: { team: -15, stakeholder: -20 },
+          stake: { team: -25, stakeholder: -30 }
         });
         
         toast.error("Mutig, aber: dumm. -50 Punkte", {
@@ -137,17 +129,17 @@ const makeDecision = (effect: number) => {
       }
       break;
       
-    case 'event-2': // Feature Scope Creep
-      if (effect === 5) { // Zurück in die Refinement-Runde
+    case 'event-2':
+      if (effect === 5) {
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
         updateMoods({
-          dev: { team: 20, stakeholder: -5 },     // Happy about maintainable scope
-          ux: { team: 15, stakeholder: -10 },     // Glad to focus on quality
-          coach: { team: 25, stakeholder: 5 },    // Very happy about proper process
-          stake: { team: -15, stakeholder: -20 }  // Unhappy about delay
+          dev: { team: 20, stakeholder: -5 },
+          ux: { team: 15, stakeholder: -10 },
+          coach: { team: 25, stakeholder: 5 },
+          stake: { team: -15, stakeholder: -20 }
         });
         
         toast.success("Kluge Entscheidung! Qualität vor Quantität -> +50 Punkte", {
@@ -155,16 +147,16 @@ const makeDecision = (effect: number) => {
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else { // Alles reinnehmen
+      } else {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
         updateMoods({
-          dev: { team: -25, stakeholder: 5 },     // Very stressed about workload
-          ux: { team: -20, stakeholder: -5 },     // Worried about quality
-          coach: { team: -15, stakeholder: -10 }, // Concerned about team
-          stake: { team: 20, stakeholder: 15 }    // Happy about features
+          dev: { team: -25, stakeholder: 5 },
+          ux: { team: -20, stakeholder: -5 },
+          coach: { team: -15, stakeholder: -10 },
+          stake: { team: 20, stakeholder: 15 }
         });
         
         toast.error("Oh je, das wird stressig! -50 Punkte", {
@@ -175,17 +167,17 @@ const makeDecision = (effect: number) => {
       }
       break;
       
-    case 'event-3': // Sprint Planning
-      if (effect === 10) { // Velocity als Maßstab
+    case 'event-3':
+      if (effect === 10) {
         score.value += 50;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
         updateMoods({
-          dev: { team: 20, stakeholder: 10 },     // Happy about realistic planning
-          ux: { team: 15, stakeholder: 5 },       // Appreciates achievable goals
-          coach: { team: 25, stakeholder: 15 },   // Very happy about data-driven approach
-          stake: { team: 5, stakeholder: -5 }     // Slightly concerned about pace
+          dev: { team: 20, stakeholder: 10 },
+          ux: { team: 15, stakeholder: 5 },
+          coach: { team: 25, stakeholder: 15 },
+          stake: { team: 5, stakeholder: -5 }
         });
         
         toast.success("Datenbasierte Entscheidung! Super! -> +50 Punkte", {
@@ -193,16 +185,16 @@ const makeDecision = (effect: number) => {
           className: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else { // Mehr Stories
+      } else {
         score.value -= 50;
         scoreElement?.classList.add('error');
         setTimeout(() => scoreElement?.classList.remove('error'), 1000);
         
         updateMoods({
-          dev: { team: -25, stakeholder: -15 },   // Very unhappy about unrealistic goals
-          ux: { team: -20, stakeholder: -10 },    // Worried about quality
-          coach: { team: -25, stakeholder: -20 }, // Very concerned about team pressure
-          stake: { team: 15, stakeholder: 10 }    // Happy about ambition
+          dev: { team: -25, stakeholder: -15 },
+          ux: { team: -20, stakeholder: -10 },
+          coach: { team: -25, stakeholder: -20 },
+          stake: { team: 15, stakeholder: 10 }
         });
         
         toast.error("Übermut tut selten gut! -50 Punkte", {
@@ -243,62 +235,64 @@ const closeActionFeedback = () => {
       @logout="handleLogout"
     />
     
-    <div class="flex-grow flex flex-col md:flex-row">
-      <!-- Linke Teammitglieder -->
-      <div class="team-left w-full md:w-1/4 lg:w-1/5 flex flex-row md:flex-col justify-around md:justify-start p-4">
-        <TeamPortrait 
-          v-for="member in team.slice(0, 2)" 
-          :key="member.id" 
-          :member="member" 
-          @click="selectTeamMember(member)"
-        />
+    <div class="flex-grow flex flex-col lg:flex-row p-2 sm:p-4 gap-4">
+      <!-- Left team members -->
+      <div class="team-left w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
+        <div v-for="member in team.slice(0, 2)" 
+             :key="member.id"
+             class="team-member-container transform hover:scale-105 transition-transform duration-200 cursor-pointer"
+             @click="selectTeamMember(member)">
+          <TeamPortrait :member="member" />
+        </div>
       </div>
       
-      <!-- Hauptbereich -->
-      <div class="main-area flex-grow md:w-1/2 lg:w-3/5 p-4">
-        <ActionFeedback
-          v-if="showActionFeedback"
-          :message="currentEvent.id === 'event-1' 
-            ? 'Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat.'
-            : currentEvent.id === 'event-2'
-            ? 'Das Team ist überfordert und die Qualität leidet. Mehrere kritische Bugs haben es in die Produktion geschafft.'
-            : 'Das Team ist demotiviert und der Sprint ist gescheitert. Die Velocity ist auf einem Allzeittief.'"
-          :tip="currentEvent.id === 'event-1'
-            ? 'Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig.'
-            : currentEvent.id === 'event-2'
-            ? 'Die Standard Antwort sollte \'Nein\' sein. Sonst verlierst du den Fokus und gehst das Risiko ein, am Ende gar nichts fertig zu haben.'
-            : 'Vertraue den Daten und der Erfahrung des Teams.'"
-          @close="closeActionFeedback"
-        />
-        <TeamChat 
-          v-else-if="showTeamChat"
-          :event="currentEvent"
-          :team="team"
-          @close="closeTeamChat"
-        />
-        <MainView 
-          v-else
-          :currentEvent="currentEvent" 
-          :showChat="showChat" 
-          :activeTeamMember="activeTeamMember"
-          @make-decision="makeDecision" 
-          @close-chat="closeChat"
-          @navigate="navigateEvent"
-        />
+      <!-- Main area -->
+      <div class="main-area flex-grow lg:w-1/2 xl:w-3/5">
+        <div class="max-w-4xl mx-auto h-full">
+          <ActionFeedback
+            v-if="showActionFeedback"
+            :message="currentEvent.id === 'event-1' 
+              ? 'Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat.'
+              : currentEvent.id === 'event-2'
+              ? 'Das Team ist überfordert und die Qualität leidet. Mehrere kritische Bugs haben es in die Produktion geschafft.'
+              : 'Das Team ist demotiviert und der Sprint ist gescheitert. Die Velocity ist auf einem Allzeittief.'"
+            :tip="currentEvent.id === 'event-1'
+              ? 'Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig.'
+              : currentEvent.id === 'event-2'
+              ? 'Die Standard Antwort sollte \'Nein\' sein. Sonst verlierst du den Fokus und gehst das Risiko ein, am Ende gar nichts fertig zu haben.'
+              : 'Vertraue den Daten und der Erfahrung des Teams.'"
+            @close="closeActionFeedback"
+          />
+          <TeamChat 
+            v-else-if="showTeamChat"
+            :event="currentEvent"
+            :team="team"
+            @close="closeTeamChat"
+          />
+          <MainView 
+            v-else
+            :currentEvent="currentEvent" 
+            :showChat="showChat" 
+            :activeTeamMember="activeTeamMember"
+            @make-decision="makeDecision" 
+            @close-chat="closeChat"
+            @navigate="navigateEvent"
+          />
+        </div>
       </div>
       
-      <!-- Rechte Teammitglieder -->
-      <div class="team-right w-full md:w-1/4 lg:w-1/5 flex flex-row md:flex-col justify-around md:justify-start p-4">
-        <TeamPortrait 
-          v-for="member in team.slice(2, 4)" 
-          :key="member.id" 
-          :member="member" 
-          @click="selectTeamMember(member)"
-        />
+      <!-- Right team members -->
+      <div class="team-right w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
+        <div v-for="member in team.slice(2, 4)" 
+             :key="member.id"
+             class="team-member-container transform hover:scale-105 transition-transform duration-200 cursor-pointer"
+             @click="selectTeamMember(member)">
+          <TeamPortrait :member="member" />
+        </div>
       </div>
     </div>
     
-    <NewsTicker :news="news" />
+    <NewsTicker :news="news" class="mt-auto" />
   </div>
 </template>
 
@@ -308,15 +302,20 @@ const closeActionFeedback = () => {
   background-size: 100% 4px;
 }
 
-.team-left, .team-right {
+.team-member-container {
+  @apply bg-crt-sepia/10 rounded-lg p-2;
+}
+
+@media (max-width: 1024px) {
+  .team-member-container {
+    @apply flex justify-center items-center;
+  }
+}
+
+.team-left, .team-right, .main-area {
   transition: all 0.3s ease;
 }
 
-.main-area {
-  transition: all 0.3s ease;
-}
-
-/* Pixel art style for toast notifications */
 .pixel-toast {
   font-family: 'Press Start 2P', monospace !important;
   font-size: 0.8rem !important;
@@ -334,5 +333,12 @@ const closeActionFeedback = () => {
 .error-toast {
   background-color: #8B0000 !important;
   color: #FFFFFF !important;
+}
+
+@media (max-width: 640px) {
+  .pixel-toast {
+    font-size: 0.7rem !important;
+    padding: 0.75rem !important;
+  }
 }
 </style>
