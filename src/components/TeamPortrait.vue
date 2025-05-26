@@ -68,6 +68,7 @@ watch(moodValue, (newValue, oldValue) => {
     </div>
     
     <div class="portrait-info mt-2">
+      <div class="member-name text-xs mb-1 text-crt-darkbrown">{{ member.name }}</div>
       <div 
         class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
         :class="moodClass"
@@ -96,6 +97,10 @@ watch(moodValue, (newValue, oldValue) => {
 
 .portrait-info {
   @apply w-full text-center;
+}
+
+.member-name {
+  @apply font-mono truncate;
 }
 
 .mood-label {
@@ -141,6 +146,10 @@ watch(moodValue, (newValue, oldValue) => {
   .mood-label {
     font-size: 8px;
     padding: 4px 8px;
+  }
+  
+  .member-name {
+    font-size: 8px;
   }
 }
 </style>
