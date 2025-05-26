@@ -50,7 +50,7 @@ watch(moodValue, (newValue, oldValue) => {
 </script>
 
 <template>
-  <div class="team-portrait-container relative">
+  <div class="team-portrait-container">
     <div 
       v-if="showSpeechBubble" 
       class="speech-bubble absolute -top-8 lg:-top-12 left-1/2 transform -translate-x-1/2"
@@ -60,9 +60,10 @@ watch(moodValue, (newValue, oldValue) => {
     
     <div class="pixel-portrait">
       <img 
-        :src="member.portrait" 
+        :src="member.portrait"
         :alt="member.name"
-        class="w-full h-full object-cover pixelated"
+        class="w-full h-full object-contain pixelated"
+        loading="lazy"
       />
     </div>
     
@@ -79,11 +80,12 @@ watch(moodValue, (newValue, oldValue) => {
 
 <style scoped>
 .team-portrait-container {
-  @apply flex flex-col items-center w-full max-w-[256px] mx-auto;
+  @apply flex flex-col items-center w-full max-w-[256px] mx-auto relative;
 }
 
 .pixel-portrait {
-  @apply w-full aspect-square bg-crt-sepia rounded-lg overflow-hidden;
+  @apply w-full aspect-square bg-crt-sepia/20 rounded-lg overflow-hidden flex items-center justify-center;
+  border: 2px solid theme('colors.crt.sepia');
 }
 
 .pixelated {
