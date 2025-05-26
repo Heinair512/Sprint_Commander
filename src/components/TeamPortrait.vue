@@ -58,15 +58,14 @@ watch(moodValue, (newValue, oldValue) => {
       {{ speechBubbleText }}
     </div>
     
-    <div 
-      class="pixel-portrait cursor-pointer transition-transform hover:scale-105" 
-      :style="{
-        backgroundImage: `url(${member.portrait.startsWith('/') ? member.portrait : '/' + member.portrait})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }"
-    ></div>
+    <div class="pixel-portrait">
+      <img 
+        :src="member.portrait" 
+        :alt="member.name"
+        class="w-full h-full object-cover pixelated"
+      />
+    </div>
+    
     <div class="portrait-info mt-2">
       <div 
         class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
@@ -84,14 +83,13 @@ watch(moodValue, (newValue, oldValue) => {
 }
 
 .pixel-portrait {
-  @apply w-full aspect-square;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  @apply w-full aspect-square bg-crt-sepia rounded-lg overflow-hidden;
+}
+
+.pixelated {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  transition: transform 0.2s ease;
 }
 
 .portrait-info {
