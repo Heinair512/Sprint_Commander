@@ -8,9 +8,11 @@ import MainView from '../components/MainView.vue';
 import NewsTicker from '../components/NewsTicker.vue';
 import TeamChat from '../components/TeamChat.vue';
 import ActionFeedback from '../components/ActionFeedback.vue';
-import team from '../data/team.json';
+import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
+
+const team = teamData.team; // Access the team array from the imported data
 
 const emit = defineEmits(['logout']);
 const toast = useToast();
