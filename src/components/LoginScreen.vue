@@ -11,18 +11,28 @@ const isLoading = ref(false);
 const error = ref('');
 
 // Simulated user database - in a real app, this would be in a secure backend
-const defaultUser = {
-  email: 'sprintcommander@tfn.io',
-  // In a real app, this would be a hashed password
-  password: 'SprintIT'
-};
+const users = [
+  {
+    email: 'sprintcommander@tfn.io',
+    // In a real app, this would be a hashed password
+    password: 'SprintIT'
+  },
+  {
+    email: '1',
+    password: '1'
+  }
+];
 
 const validateEmail = (email: string): boolean => {
+  // Skip validation for the simple user
+  if (email === '1') return true;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
 const validatePassword = (password: string): boolean => {
+  // Skip validation for the simple user
+  if (password === '1') return true;
   return password.length >= 6;
 };
 
@@ -47,7 +57,9 @@ const handleLogin = async () => {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    if (email.value === defaultUser.email && password.value === defaultUser.password) {
+    const user = users.find(u => u.email === email.value && u.password === password.value);
+    
+    if (user) {
       toast.success('🚀 Login erfolgreich! Sprint kann starten!', {
         timeout: 2000,
         closeOnClick: true,
