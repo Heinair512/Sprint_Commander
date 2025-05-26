@@ -60,7 +60,12 @@ watch(moodValue, (newValue, oldValue) => {
     
     <div 
       class="pixel-portrait cursor-pointer transition-transform hover:scale-105" 
-      :style="{ backgroundImage: `url(${member.portrait})` }"
+      :style="{
+        backgroundImage: `url(${member.portrait.startsWith('/') ? member.portrait : '/' + member.portrait})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }"
     ></div>
     <div class="portrait-info mt-2">
       <div 
