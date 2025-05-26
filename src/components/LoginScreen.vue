@@ -10,11 +10,9 @@ const password = ref('');
 const isLoading = ref(false);
 const error = ref('');
 
-// Simulated user database - in a real app, this would be in a secure backend
 const users = [
   {
     email: 'sprintcommander@tfn.io',
-    // In a real app, this would be a hashed password
     password: 'SprintIT'
   },
   {
@@ -23,27 +21,13 @@ const users = [
   }
 ];
 
-const validateEmail = (email: string): boolean => {
-  // Skip validation for the simple user
-  if (email === '1') return true;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
 const validatePassword = (password: string): boolean => {
-  // Skip validation for the simple user
   if (password === '1') return true;
   return password.length >= 6;
 };
 
 const handleLogin = async () => {
   error.value = '';
-  
-  // Validate email
-  if (!validateEmail(email.value)) {
-    error.value = '🚫 Diese E-Mail sieht aus wie ein Legacy-Code... Bitte korrigieren!';
-    return;
-  }
   
   // Validate password
   if (!validatePassword(password.value)) {
@@ -98,7 +82,7 @@ const handleLogin = async () => {
           <input
             id="email"
             v-model="email"
-            type="email"
+            type="text"
             class="w-full p-3 bg-crt-lightsep border-2 border-crt-darkbrown rounded focus:outline-none focus:border-crt-brown"
             :disabled="isLoading"
             placeholder="commander@sprint.ops"
