@@ -80,7 +80,7 @@ watch(moodValue, (newValue, oldValue) => {
 
 .pixel-portrait {
   @apply w-full aspect-square;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   image-rendering: pixelated;
