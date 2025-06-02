@@ -55,7 +55,11 @@ const sendMessage = async () => {
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    const response = await axios.post('/chat', {
+    const endpoint = import.meta.env.DEV
+      ? 'http://localhost:8888/chat'
+      : '/chat';
+
+    const response = await axios.post(endpoint, {
       roleId: props.member.id,
       eventId: props.currentEvent.id,
       eventDescription: props.currentEvent.description,

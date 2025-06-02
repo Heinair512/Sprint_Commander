@@ -8,10 +8,6 @@ const basePrompts = {
   stake: "Du bist Maggie Money, Stakeholder:in aus dem Business. Frage nach ROI, Go-to-Market, Verkaufsargumenten und Deadline-Druck."
 };
 
-// Debug logging for environment variables
-console.log('OPENAI_API_KEY (masked):', process.env.OPENAI_API_KEY ? '*****' + process.env.OPENAI_API_KEY.slice(-5) : 'Not set');
-console.log('Environment variables available:', Object.keys(process.env));
-
 export async function handler(event) {
   // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
@@ -33,12 +29,27 @@ export async function handler(event) {
   }
 
   try {
-    const { roleId, eventId, eventDescription, history, message } = JSON.parse(event.body);
-    
-    if (!roleId || !message) {
+    if (!event.body) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing required parameters' })
+        body: JSON.stringify({ error: 'No body in request' })
+      };
+    }
+
+    const { roleId, eventId, eventDescription, history, message } = JSON.parse(event.body);
+    
+    if (!roleId || !Array.isArray(history) || !message) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Missing required fields: roleId, history, or message' })
+      };
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      console.log('WARN: OPENAI_API_KEY is not set');
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'API key not set' })
       };
     }
 
