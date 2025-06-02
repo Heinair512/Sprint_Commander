@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
+import { useChatStore } from '../stores/chat';
 
 const props = defineProps<{
-  member: {
-    id: string;
-    name: string;
-    role: string;
-    portrait: string;
-    quote: string;
-  };
+  poId: string;
+  memberId: string;
   currentEvent: {
     id: string;
     title: string;
@@ -24,71 +20,85 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const message = ref('');
-const chatHistory = ref<Array<{ role: string; content: string }>>([]);
 const isLoading = ref(false);
 const error = ref('');
+const chatStore = useChatStore();
 
-const generateInitialMessage = () => {
-  const initialText = {
-    dev: `Entwickler Lars Byte hier. Ich analysiere gerade Event "${props.currentEvent?.title || ''}" technisch: ${props.currentEvent?.description || ''}`,
-    ux: `UX-Designerin Grace Grid hier. Lass uns über die User Experience bei "${props.currentEvent?.title || ''}" sprechen.`,
-    coach: `Agile Coach Scrumlius meldet sich. Event "${props.currentEvent?.title || ''}" braucht einen klaren agilen Ansatz.`,
-    stake: `Stakeholder Maggie Money hier. "${props.currentEvent?.title || ''}" muss schnell ROI generieren.`
-  }[props.member.id] || '';
+// Get full history for AI context
+const fullHistory = computed(() => chatStore.getAllMessages);
 
-  if (initialText) {
-    chatHistory.value = [{ role: 'assistant', content: initialText }];
-  }
-};
+// Get private chat history for display
+const pairKey = computed(() => `${props.poId}-${props.memberId}`);
+const privateHistory = computed(() => chatStore.messagesByPair[pairKey.value] || []);
 
-// Watch for changes in member ID to reset chat
-watch(() => props.member.id, () => {
-  generateInitialMessage();
-}, { immediate: true });
+function getSanitizedFullHistory() {
+  return fullHistory.value
+    .filter(m => m.eventId === props.currentEvent.id)
+    .map(m => ({
+      role: m.senderId === props.memberId ? 'assistant' : 'user',
+      content: m.content
+    }));
+}
 
-const sendMessage = async () => {
-  if (!message.value.trim() || isLoading.value) return;
+async function sendMessage() {
+  const userText = message.value?.trim() ?? '';
+  if (!userText || isLoading.value) return;
 
-  const userMessage = message.value;
-  message.value = '';
   isLoading.value = true;
   error.value = '';
-
-  const sanitizedHistory = chatHistory.value.map(msg => ({
-    role: msg.role || 'user',
-    content: msg.content || ''
-  }));
-
-  chatHistory.value.push({ role: 'user', content: userMessage });
+  message.value = '';
 
   try {
+    // 1. Store PO's message
+    chatStore.addPrivateMessage(
+      props.poId,
+      props.memberId,
+      userText,
+      props.currentEvent.id
+    );
+
+    // 2. Prepare history for AI
+    const historyForAI = getSanitizedFullHistory();
+
+    // 3. Send to chat function
     const payload = {
-      roleId: props.member.id || '',
-      eventId: props.currentEvent?.id || '',
-      eventDescription: props.currentEvent?.description || '',
-      history: sanitizedHistory,
-      message: userMessage || ''
+      roleId: props.memberId,
+      eventId: props.currentEvent.id,
+      eventDescription: props.currentEvent.description ?? '',
+      history: historyForAI,
+      message: userText
     };
 
     const response = await axios.post('/chat', payload, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       timeout: 30000
     });
 
+    // 4. Store AI's reply
     if (response.data?.reply) {
-      chatHistory.value.push({ role: 'assistant', content: response.data.reply });
+      chatStore.addPrivateReply(
+        props.memberId,
+        props.poId,
+        response.data.reply,
+        props.currentEvent.id
+      );
     } else {
-      throw new Error('Invalid response format from server');
+      throw new Error('Invalid response format');
     }
   } catch (err: any) {
     console.error('Chat error:', err);
-    error.value = err.response?.data?.error || 'Ein Fehler ist aufgetreten. Bitte versuche es später erneut.';
+    error.value = err.response?.data?.error || 'Ein Fehler ist aufgetreten';
+    
+    chatStore.addPrivateReply(
+      props.memberId,
+      props.poId,
+      'Fehler beim Abrufen der Antwort.',
+      props.currentEvent.id
+    );
   } finally {
     isLoading.value = false;
   }
-};
+}
 
 const handleClose = () => {
   emit('close');
@@ -98,17 +108,17 @@ const handleClose = () => {
 <template>
   <div class="chat-view h-full flex flex-col">
     <div class="chat-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between mb-4">
-      <div class="member-name text-lg">{{ member.name }}</div>
+      <div class="member-name text-lg">Chat mit {{ props.memberId }}</div>
       <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
     <div class="chat-messages flex-grow bg-crt-lightsep p-4 mb-4 pixel-border overflow-y-auto">
       <div 
-        v-for="(msg, index) in chatHistory" 
-        :key="index" 
+        v-for="msg in privateHistory" 
+        :key="msg.timestamp"
         :class="[
-          'chat-bubble mb-4 p-4 max-w-md rounded-lg',
-          msg.role === 'user' ? 'ml-auto bg-crt-sepia' : member.id
+          'chat-bubble mb-4 p-3 max-w-xs rounded-lg',
+          msg.senderId === props.poId ? 'ml-auto bg-crt-sepia' : props.memberId
         ]"
       >
         {{ msg.content }}
@@ -128,7 +138,7 @@ const handleClose = () => {
         v-model="message" 
         type="text" 
         class="flex-grow p-3 bg-crt-lightsep border-2 border-crt-darkbrown"
-        placeholder="Nachricht eingeben..."
+        :placeholder="`Nachricht an ${props.memberId}...`"
         @keyup.enter="sendMessage"
         :disabled="isLoading"
       />
@@ -163,7 +173,7 @@ const handleClose = () => {
 .typing-indicator {
   padding: 1rem;
   display: flex;
-  justify-content: center;
+  justify-center;
 }
 
 .typing-indicator span {
@@ -187,23 +197,5 @@ const handleClose = () => {
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.chat-messages {
-  scrollbar-width: thin;
-  scrollbar-color: theme('colors.crt.darkbrown') theme('colors.crt.lightsep');
-}
-
-.chat-messages::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: theme('colors.crt.lightsep');
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background-color: theme('colors.crt.darkbrown');
-  border-radius: 3px;
 }
 </style>
