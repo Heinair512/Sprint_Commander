@@ -113,12 +113,13 @@ const handleClose = () => {
   emit('close');
 };
 
-chatHistory.value.push({
+// Initialize with system message
+chatHistory.value = [{
   id: Date.now(),
   sender: 'system',
   senderLabel: 'System',
   text: `🚨 ALARM: ${props.event.title}! 🚨`
-});
+}];
 
 watch(() => chatHistory.value.length, () => {
   scrollToBottom();
@@ -141,9 +142,11 @@ watch(() => chatHistory.value.length, () => {
         :key="msg.id"
         :class="[
           'chat-message mb-4 p-4 rounded-lg max-w-md',
-          msg.sender === 'user' ? 'ml-auto bg-crt-sepia' : 
-          msg.sender === 'system' ? 'mx-auto bg-red-600 text-white' :
-          `chat-bubble ${msg.sender}`
+          {
+            'ml-auto bg-crt-sepia': msg.sender === 'user',
+            'mx-auto bg-red-600 text-white': msg.sender === 'system',
+            [`chat-bubble ${msg.sender}`]: !['user', 'system'].includes(msg.sender)
+          }
         ]"
       >
         <div 
@@ -216,25 +219,5 @@ button:disabled {
 .chat-messages::-webkit-scrollbar-thumb {
   background-color: theme('colors.crt.darkbrown');
   border-radius: 3px;
-}
-
-.chat-bubble {
-  @apply bg-crt-brown text-crt-lightsep;
-}
-
-.chat-bubble.dev {
-  border-left: 3px solid #4CAF50;
-}
-
-.chat-bubble.ux {
-  border-left: 3px solid #2196F3;
-}
-
-.chat-bubble.coach {
-  border-left: 3px solid #FFC107;
-}
-
-.chat-bubble.stake {
-  border-left: 3px solid #F44336;
 }
 </style>
