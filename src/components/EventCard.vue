@@ -13,7 +13,7 @@ defineProps<{
 
 const emit = defineEmits(['decision', 'navigate']);
 
-const makeDecision = (effect) => {
+const makeDecision = (effect: number) => {
   emit('decision', effect);
 };
 

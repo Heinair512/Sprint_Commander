@@ -6,36 +6,35 @@ const props = defineProps<{
 }>();
 
 const joinedNews = ref('');
-const tickerRef = ref(null);
-const containerRef = ref(null);
+const tickerRef = ref<HTMLElement | null>(null);
+const containerRef = ref<HTMLElement | null>(null);
 const tickerWidth = ref(0);
 const containerWidth = ref(0);
-const animationDuration = ref(20);
 const tickerPosition = ref(0);
-const animationId = ref(null);
+const animationId = ref<number | null>(null);
 
 onMounted(() => {
   joinedNews.value = props.news.join(' • ');
   
-  // Starten der Animation nach kurzem Delay, um sicherzustellen, dass DOM bereit ist
+  // Start animation after short delay to ensure DOM is ready
   setTimeout(() => {
     if (tickerRef.value && containerRef.value) {
       tickerWidth.value = tickerRef.value.offsetWidth;
       containerWidth.value = containerRef.value.offsetWidth;
       
-      // Animation starten
+      // Start animation
       startAnimation();
     }
   }, 100);
   
-  // Event-Listener für Fenstergrößenänderungen
+  // Event listener for window resize
   window.addEventListener('resize', handleResize);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
   
-  if (animationId.value) {
+  if (animationId.value !== null) {
     cancelAnimationFrame(animationId.value);
   }
 });
@@ -48,28 +47,28 @@ function handleResize() {
 }
 
 function startAnimation() {
-  // Startposition (außerhalb des sichtbaren Bereichs)
+  // Starting position (outside visible area)
   tickerPosition.value = containerWidth.value;
   
   function animate() {
-    // Tickerposition aktualisieren
+    // Update ticker position
     tickerPosition.value -= 1.35; // Reduced from 1.5 to 1.35 (10% slower)
     
-    // Wenn der Ticker vollständig aus dem Sichtbereich ist, wieder von vorne beginnen
+    // Reset position when ticker is completely out of view
     if (tickerPosition.value < -tickerWidth.value) {
       tickerPosition.value = containerWidth.value;
     }
     
-    // Positionierung anwenden
+    // Apply positioning
     if (tickerRef.value) {
       tickerRef.value.style.transform = `translateX(${tickerPosition.value}px)`;
     }
     
-    // Animation fortsetzen
+    // Continue animation
     animationId.value = requestAnimationFrame(animate);
   }
   
-  // Animation starten
+  // Start animation
   animationId.value = requestAnimationFrame(animate);
 }
 </script>

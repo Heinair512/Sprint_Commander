@@ -24,7 +24,7 @@ defineProps<{
 
 const emit = defineEmits(['make-decision', 'close-chat', 'navigate']);
 
-const handleDecision = (effect) => {
+const handleDecision = (effect: number) => {
   emit('make-decision', effect);
 };
 
@@ -32,7 +32,7 @@ const handleCloseChat = () => {
   emit('close-chat');
 };
 
-const handleNavigate = (direction) => {
+const handleNavigate = (direction: 'prev' | 'next') => {
   emit('navigate', direction);
 };
 </script>

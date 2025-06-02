@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useScoreStore } from '../stores/scoreStore';
 import HeaderBar from '../components/HeaderBar.vue';
@@ -12,21 +12,25 @@ import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
 
-// Define interfaces for our data structures
 interface TeamMember {
   id: string;
   name: string;
   role: string;
-  avatar: string;
+  portrait: string;
+  quote: string;
 }
 
 interface Event {
   id: string;
   title: string;
   description: string;
+  options: Array<{
+    label: string;
+    effect: number;
+  }>;
 }
 
-const team = teamData.team as TeamMember[]; 
+const team = teamData.team as TeamMember[];
 
 const emit = defineEmits(['logout']);
 const toast = useToast();
@@ -118,7 +122,7 @@ const makeDecision = (effect: number) => {
           pauseOnFocusLoss: true,
           pauseOnHover: true,
           draggable: true,
-          className: "pixel-toast success-toast",
+          toastClassName: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
       } else {
@@ -139,7 +143,7 @@ const makeDecision = (effect: number) => {
           pauseOnFocusLoss: true,
           pauseOnHover: true,
           draggable: true,
-          className: "pixel-toast error-toast",
+          toastClassName: "pixel-toast error-toast",
         });
         showActionFeedback.value = true;
       }
@@ -160,7 +164,7 @@ const makeDecision = (effect: number) => {
         
         toast.success("Kluge Entscheidung! Qualität vor Quantität -> +50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast success-toast",
+          toastClassName: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
       } else {
@@ -177,7 +181,7 @@ const makeDecision = (effect: number) => {
         
         toast.error("Oh je, das wird stressig! -50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast error-toast",
+          toastClassName: "pixel-toast error-toast",
         });
         showActionFeedback.value = true;
       }
@@ -198,7 +202,7 @@ const makeDecision = (effect: number) => {
         
         toast.success("Datenbasierte Entscheidung! Super! -> +50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast success-toast",
+          toastClassName: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
       } else {
@@ -215,7 +219,7 @@ const makeDecision = (effect: number) => {
         
         toast.error("Übermut tut selten gut! -50 Punkte", {
           timeout: 3000,
-          className: "pixel-toast error-toast",
+          toastClassName: "pixel-toast error-toast",
         });
         showActionFeedback.value = true;
       }
