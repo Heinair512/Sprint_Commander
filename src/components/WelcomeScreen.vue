@@ -50,25 +50,24 @@ const emit = defineEmits(['close']);
 
 onMounted(() => {
   let index = 0;
-  const baseDelay = 4620; // Base delay increased by 20%
-  
+  const baseDelay = 5500; // Even slower base delay
+
   const showNextGroup = () => {
     if (index >= messages.length) return;
     
-    // Clear messages except for motto section
-    if (index < 16) { // Before motto section
+    // Clear messages for new sections
+    if (index === 0 || index === 6 || index === 15) {
       displayedMessages.value = [];
     }
     
-    const isFirstGroup = index === 0;
-    const isMotto = index >= 16;
-    const groupSize = isFirstGroup ? 2 : 3;
+    const isFirstGroup = index < 2;
+    const isScoreSection = index >= 6 && index < 15;
+    const isMotto = index >= 15;
     
     const showMessagesInGroup = () => {
-      if (index < messages.length && (isFirstGroup ? index < 2 : index < Math.min(messages.length, index + groupSize))) {
+      if (index < messages.length) {
         displayedMessages.value.push(messages[index]);
         
-        // Scroll to bottom with smooth animation
         setTimeout(() => {
           if (chatContainer.value) {
             chatContainer.value.scrollTo({
@@ -80,16 +79,26 @@ onMounted(() => {
         
         index++;
         
-        // Continue showing messages in current group
-        if (!isMotto) {
-          setTimeout(showMessagesInGroup, isFirstGroup ? baseDelay * 1.3 : baseDelay); // 30% longer for first group
+        // Determine next message timing
+        let nextDelay;
+        if (isFirstGroup) {
+          nextDelay = baseDelay * 1.3; // 30% longer for first group
+        } else if (isScoreSection) {
+          nextDelay = baseDelay * 1.2; // 20% longer for score section
+        } else if (isMotto) {
+          nextDelay = baseDelay * 0.8; // Slightly faster for motto section
         } else {
-          // Show motto messages faster
-          setTimeout(showMessagesInGroup, baseDelay / 2);
+          nextDelay = baseDelay;
         }
-      } else if (!isMotto) {
-        // Move to next group after a longer pause
-        setTimeout(showNextGroup, isFirstGroup ? baseDelay * 2.6 : baseDelay * 2); // 30% longer pause after first group
+        
+        if ((isFirstGroup && index < 2) || 
+            (isScoreSection && index < 15) || 
+            (isMotto && index < messages.length)) {
+          setTimeout(showMessagesInGroup, nextDelay);
+        } else if (!isMotto) {
+          // Longer pause before next section
+          setTimeout(showNextGroup, baseDelay * 2);
+        }
       }
     };
     
@@ -107,7 +116,7 @@ const handleClose = () => {
 <template>
   <div class="welcome-screen bg-crt-sepia p-4 rounded-lg shadow-lg max-w-6xl mx-auto h-[80vh]">
     <div class="welcome-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between mb-4 rounded">
-      <div class="text-lg">Willkommen bei Sprint Commander</div>
+      <div class="text-lg">Willkommen beim Sprint Commander</div>
       <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
