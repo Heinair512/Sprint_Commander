@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps<{
   event: {
@@ -62,15 +62,15 @@ const handleClose = () => {
 </script>
 
 <template>
-  <div class="team-chat bg-crt-sepia p-4 rounded-lg shadow-lg max-w-2xl mx-auto">
-    <div class="chat-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between mb-4 rounded">
+  <div class="team-chat h-full flex flex-col bg-crt-sepia rounded-lg shadow-lg">
+    <div class="chat-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between rounded-t-lg">
       <div class="text-lg">🚨 Team Chat: {{ event.title }}</div>
       <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
     <div 
       ref="chatContainer"
-      class="chat-messages bg-crt-lightsep p-4 rounded mb-4 h-96 overflow-y-auto"
+      class="chat-messages flex-grow bg-crt-lightsep p-4 overflow-y-auto"
     >
       <div 
         v-for="(msg, index) in chatHistory" 
@@ -88,7 +88,7 @@ const handleClose = () => {
       </div>
     </div>
     
-    <div class="chat-input flex">
+    <div class="chat-input flex p-4 bg-crt-sepia border-t-2 border-crt-darkbrown">
       <input 
         v-model="message" 
         type="text" 
