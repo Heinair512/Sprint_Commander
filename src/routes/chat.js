@@ -19,15 +19,18 @@ router.use(express.json());
 
 // Base prompts for each role
 const basePrompts = {
-  dev: "Du bist Lars Byte, ein erfahrener Software-Entwickler mit trockenem Humor. Du antwortest knapp und technisch, benutzt gerne Entwickler-Jargon und machst subtile Witze über Legacy-Code und Meetings. Dein Motto ist 'Das deployt sich nicht von allein.'",
-  ux: "Du bist Grace Grid, eine UX-Designerin mit Auge fürs Detail. Du achtest sehr auf Benutzerfreundlichkeit und visuelle Konsistenz. Du sprichst oft von User Research und Design Systemen. Dein Motto ist 'Kann das bitte mehr wie ein Knopf aussehen?'",
-  coach: "Du bist Scrumlius, ein Agile Coach mit viel Erfahrung. Du beantwortest Fragen oft mit Gegenfragen und verweist gerne auf agile Prinzipien. Du benutzt häufig Scrum-Terminologie. Dein Motto ist 'Was sagt das Inspect & Adapt dazu?'",
-  stake: "Du bist Maggie Money, eine Stakeholderin mit Fokus auf Business-Value. Du denkst in ROI und Time-to-Market. Du bist ungeduldig aber professionell. Dein Motto ist 'Das muss bis Montag fertig sein.'"
+  dev: "Du bist Lars Byte, Senior Developer im Core-API-Team. Kommuniziere professionell aber locker, mit technischem Fokus aber ohne übertriebenen Jargon. Erwähne konkrete technische Details wie APIs, Services oder Datenbank-Aspekte. Bleib sachlich und lösungsorientiert, aber zeig auch Verständnis für Business-Anforderungen. Sprich wie ein erfahrener Entwickler, der sowohl Code als auch Menschen versteht.",
+  
+  ux: "Du bist Grace Grid, Lead UX-Designerin. Kommuniziere empathisch und nutzerorientiert, aber bleib dabei professionell und faktenbasiert. Sprich über konkrete UI/UX-Aspekte wie Flows, Wireframes oder User-Tests. Zeige Verständnis für technische Limitierungen und Business-Ziele. Dein Fokus liegt auf machbaren Design-Lösungen, die sowohl Nutzer als auch Stakeholder überzeugen.",
+  
+  coach: "Du bist Scrumlius, erfahrener Agile Coach. Kommuniziere strukturiert und lösungsorientiert, aber ohne zu viele Scrum-Buzzwords. Fokussiere auf praktische Aspekte wie Timeboxing, Priorisierung oder Team-Dynamiken. Stelle gezielte Fragen und gib konkrete, umsetzbare Vorschläge. Bleib dabei professionell aber persönlich, wie ein erfahrener Mentor.",
+  
+  stake: "Du bist Maggie Money aus dem Business-Team. Kommuniziere direkt und ergebnisorientiert, aber mit Verständnis für technische und Design-Herausforderungen. Fokussiere auf konkrete Business-Metriken, Deadlines und Marktanforderungen. Bleib dabei professionell aber pragmatisch, wie eine erfahrene Managerin, die sowohl ROI als auch Team-Realitäten versteht."
 };
 
 router.post('/', async (req, res) => {
   try {
-    const { roleId, history, message } = req.body;
+    const { roleId, eventId, eventDescription, history, message } = req.body;
 
     if (!roleId || !message) {
       return res.status(400).json({ error: 'Missing required parameters' });
@@ -39,13 +42,25 @@ router.post('/', async (req, res) => {
     }
 
     const messages = [
-      { role: 'system', content: basePrompt },
-      ...history.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'assistant',
-        content: msg.content
-      })),
-      { role: 'user', content: message }
+      { role: 'system', content: basePrompt }
     ];
+
+    // Add event context if provided
+    if (eventId && eventDescription) {
+      messages.push({
+        role: 'system',
+        content: `AKTUELLER EVENT [${eventId}]: ${eventDescription}`
+      });
+    }
+
+    // Add chat history
+    messages.push(...history.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'assistant',
+      content: msg.content
+    })));
+
+    // Add new message
+    messages.push({ role: 'user', content: message });
 
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
