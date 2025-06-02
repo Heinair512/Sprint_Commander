@@ -41,26 +41,24 @@ const navigate = (direction: 'prev' | 'next') => {
     </div>
     
     <div class="event-content flex-grow bg-crt-lightsep p-4 mb-2 pixel-border">
-      <div class="flex gap-4">
-        <div class="event-illustration flex-shrink-0">
-          <div class="w-32 h-32 bg-crt-sepia flex items-center justify-center pixelated overflow-hidden">
-            <div 
-              class="pixel-event-image"
-              :style="{
-                backgroundImage: `url(/assets/events/${event.id}.png)`,
-                width: '100%',
-                height: '100%',
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                imageRendering: 'pixelated'
-              }"
-            ></div>
-          </div>
-        </div>
-        
-        <div class="event-description flex-grow text-left">
-          {{ event.description }}
+      <div class="event-description mb-6 text-center">
+        {{ event.description }}
+      </div>
+      
+      <div class="event-illustration mb-6 flex justify-center">
+        <div class="w-32 h-32 bg-crt-sepia flex items-center justify-center pixelated overflow-hidden">
+          <div 
+            class="pixel-event-image"
+            :style="{
+              backgroundImage: `url(/assets/events/${event.id}.png)`,
+              width: '100%',
+              height: '100%',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              imageRendering: 'pixelated'
+            }"
+          ></div>
         </div>
       </div>
     </div>
