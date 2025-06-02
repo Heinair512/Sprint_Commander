@@ -44,13 +44,6 @@ const handleLogin = async () => {
     const user = users.find(u => u.email === email.value && u.password === password.value);
     
     if (user) {
-      toast.success('🚀 Login erfolgreich! Sprint kann starten!', {
-        timeout: 2000,
-        closeOnClick: true,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
       emit('login-success');
     } else {
       error.value = '⚠️ Authentication Failed: 404 - User not found in Production!';
