@@ -18,7 +18,6 @@ interface TeamMember {
   name: string;
   role: string;
   portrait: string;
-  quote: string;
 }
 
 interface Event {
@@ -46,7 +45,6 @@ const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const showTips = ref(false);
 const scoreStore = useScoreStore();
-const scoreResetTimeout = ref<number | null>(null);
 
 const handleLogout = () => {
   emit('logout');
@@ -77,10 +75,6 @@ const navigateEvent = (direction: 'prev' | 'next') => {
   showActionFeedback.value = false;
 };
 
-const resetMoods = () => {
-  scoreStore.resetAllScores();
-};
-
 const updateMoods = (moodChanges: Record<string, { team: number; stakeholder: number }>) => {
   team.forEach(member => {
     const currentScore = scoreStore.getMemberScore(member.id);
@@ -98,21 +92,13 @@ const updateMoods = (moodChanges: Record<string, { team: number; stakeholder: nu
       );
     }
   });
-
-  if (scoreResetTimeout.value) {
-    clearTimeout(scoreResetTimeout.value);
-  }
-  
-  scoreResetTimeout.value = window.setTimeout(() => {
-    resetMoods();
-  }, 20000);
 };
 
 const makeDecision = (effect: number) => {
   const scoreElement = document.querySelector('.score');
   
   switch(currentEvent.value.id) {
-    case 'event-1':
+    case 'event-2': // Production Outage
       if (effect === 5) {
         score.value += 50;
         scoreElement?.classList.add('success');
@@ -127,10 +113,6 @@ const makeDecision = (effect: number) => {
         
         toast.success("Sehr gute Entscheidung, das sollten wir uns angucken -> +50 Punkte", {
           timeout: 3000,
-          closeOnClick: true,
-          pauseOnFocusLoss: true,
-          pauseOnHover: true,
-          draggable: true,
           toastClassName: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
@@ -148,17 +130,13 @@ const makeDecision = (effect: number) => {
         
         toast.error("Mutig, aber: dumm. -50 Punkte", {
           timeout: 3000,
-          closeOnClick: true,
-          pauseOnFocusLoss: true,
-          pauseOnHover: true,
-          draggable: true,
           toastClassName: "pixel-toast error-toast",
         });
         showActionFeedback.value = true;
       }
       break;
       
-    case 'event-2':
+    case 'event-1': // Feature Scope Creep
       if (effect === 5) {
         score.value += 50;
         scoreElement?.classList.add('success');
@@ -196,7 +174,7 @@ const makeDecision = (effect: number) => {
       }
       break;
       
-    case 'event-3':
+    case 'event-3': // Sprint Planning
       if (effect === 10) {
         score.value += 50;
         scoreElement?.classList.add('success');
@@ -283,14 +261,14 @@ const closeActionFeedback = () => {
           <TipsPanel v-if="showTips" />
           <ActionFeedback
             v-else-if="showActionFeedback"
-            :message="currentEvent.id === 'event-1' 
+            :message="currentEvent.id === 'event-2' 
               ? 'Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat.'
-              : currentEvent.id === 'event-2'
+              : currentEvent.id === 'event-1'
               ? 'Das Team ist überfordert und die Qualität leidet. Mehrere kritische Bugs haben es in die Produktion geschafft.'
               : 'Das Team ist demotiviert und der Sprint ist gescheitert. Die Velocity ist auf einem Allzeittief.'"
-            :tip="currentEvent.id === 'event-1'
+            :tip="currentEvent.id === 'event-2'
               ? 'Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig.'
-              : currentEvent.id === 'event-2'
+              : currentEvent.id === 'event-1'
               ? 'Die Standard Antwort sollte \'Nein\' sein. Sonst verlierst du den Fokus und gehst das Risiko ein, am Ende gar nichts fertig zu haben.'
               : 'Vertraue den Daten und der Erfahrung des Teams.'"
             @close="closeActionFeedback"

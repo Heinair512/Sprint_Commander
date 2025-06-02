@@ -40,13 +40,13 @@ const navigate = (direction: 'prev' | 'next') => {
       >→</button>
     </div>
     
-    <div class="event-content flex-grow bg-crt-lightsep p-4 mb-2 pixel-border">
-      <div class="event-description mb-6 text-center">
-        {{ event.description }}
-      </div>
-      
-      <div class="event-illustration mb-6 flex justify-center">
-        <div class="w-32 h-32 bg-crt-sepia flex items-center justify-center pixelated overflow-hidden">
+    <div class="event-content flex-grow bg-crt-lightsep p-6 mb-4 pixel-border">
+      <div class="event-layout flex gap-6">
+        <div class="event-description flex-1 text-left leading-relaxed">
+          {{ event.description }}
+        </div>
+        
+        <div class="event-illustration w-48 h-48 bg-crt-sepia flex items-center justify-center pixelated overflow-hidden">
           <div 
             class="pixel-event-image"
             :style="{
@@ -63,11 +63,11 @@ const navigate = (direction: 'prev' | 'next') => {
       </div>
     </div>
     
-    <div class="event-options flex flex-col gap-2">
+    <div class="event-options flex flex-col gap-3">
       <button 
         v-for="(option, index) in event.options" 
         :key="index" 
-        class="retro-button text-sm py-2"
+        class="retro-button text-sm py-3"
         @click="makeDecision(option.effect)"
       >
         {{ option.label }}
@@ -78,7 +78,7 @@ const navigate = (direction: 'prev' | 'next') => {
 
 <style scoped>
 .event-card {
-  max-width: 560px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -100,16 +100,16 @@ const navigate = (direction: 'prev' | 'next') => {
 }
 
 .event-description {
-  line-height: 1.6;
+  line-height: 1.8;
   font-size: 0.9rem;
 }
 
 .event-illustration {
-  image-rendering: pixelated;
   border: 3px solid theme('colors.crt.brown');
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(92, 67, 33, 0.3);
+  flex-shrink: 0;
 }
 
 .pixel-event-image {
@@ -126,7 +126,7 @@ const navigate = (direction: 'prev' | 'next') => {
 
 .retro-button {
   width: 100%;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 @keyframes text-flicker {
@@ -139,5 +139,22 @@ const navigate = (direction: 'prev' | 'next') => {
   52% { opacity: 0.97; }
   54% { opacity: 1; }
   100% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .event-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .event-illustration {
+    width: 200px;
+    height: 200px;
+    margin: 1rem 0;
+  }
+  
+  .event-description {
+    text-align: center;
+  }
 }
 </style>
