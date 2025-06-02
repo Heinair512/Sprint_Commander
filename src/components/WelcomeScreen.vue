@@ -56,7 +56,12 @@ onMounted(() => {
     if (index >= messages.length) return;
     
     // Clear messages for new sections
-    if (index === 0 || index === 6 || index === 15) {
+    if (index === 0 || // Start
+        index === 2 || // "So funktioniert's"
+        index === 6 || // "Verantwortung wächst"
+        index === 9 || // "Moral- und Zufriedenheitsanzeige"
+        index === 12 || // "Tipps & Tricks"
+        index === 15) { // "Dein Motto"
       displayedMessages.value = [];
     }
     
