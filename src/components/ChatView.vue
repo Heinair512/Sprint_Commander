@@ -58,13 +58,18 @@ const sendMessage = async () => {
       ? 'http://localhost:8888/chat'
       : '/chat';
 
-    const response = await axios.post(endpoint, {
+    const payload = {
       roleId: props.member.id,
       eventId: props.currentEvent.id,
       eventDescription: props.currentEvent.description,
-      history: chatHistory.value,
+      history: chatHistory.value.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      })),
       message: userMessage
-    }, {
+    };
+
+    const response = await axios.post(endpoint, payload, {
       headers: {
         'Content-Type': 'application/json'
       },
