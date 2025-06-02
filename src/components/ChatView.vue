@@ -173,7 +173,7 @@ const handleClose = () => {
 .typing-indicator {
   padding: 1rem;
   display: flex;
-  justify-center;
+  justify-content: center;
 }
 
 .typing-indicator span {
