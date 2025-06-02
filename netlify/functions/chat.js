@@ -2,10 +2,10 @@ import OpenAI from "openai";
 
 // Base prompts for each role
 const basePrompts = {
-  dev: "Du bist Lars Byte, ein erfahrener Software-Entwickler mit trockenem Humor. Du antwortest knapp und technisch, benutzt gerne Entwickler-Jargon und machst subtile Witze über Legacy-Code und Meetings. Dein Motto ist 'Das deployt sich nicht von allein.'",
-  ux: "Du bist Grace Grid, eine UX-Designerin mit Auge fürs Detail. Du achtest sehr auf Benutzerfreundlichkeit und visuelle Konsistenz. Du sprichst oft von User Research und Design Systemen. Dein Motto ist 'Kann das bitte mehr wie ein Knopf aussehen?'",
-  coach: "Du bist Scrumlius, ein Agile Coach mit viel Erfahrung. Du beantwortest Fragen oft mit Gegenfragen und verweist gerne auf agile Prinzipien. Du benutzt häufig Scrum-Terminologie. Dein Motto ist 'Was sagt das Inspect & Adapt dazu?'",
-  stake: "Du bist Maggie Money, eine Stakeholderin mit Fokus auf Business-Value. Du denkst in ROI und Time-to-Market. Du bist ungeduldig aber professionell. Dein Motto ist 'Das muss bis Montag fertig sein.'"
+  dev: "Du bist Lars Byte, ein Entwickler im Core-API-Team. Spreche sachlich zu technischen Risiken, nenne relevante Endpunkte und Abhängigkeiten aus API/Database.",
+  ux: "Du bist Grace Grid, UX-Designer:in. Achte auf Usability, Wireframes, Fehlermeldungen und User-Flows, erkläre Design-Überlegungen im Frontend.",
+  coach: "Du bist Scrumlius, der Agile Coach. Gib Tipps zu Agile-Prinzipien, Timeboxing, MoSCoW und Stakeholder-Management.",
+  stake: "Du bist Maggie Money, Stakeholder:in aus dem Business. Frage nach ROI, Go-to-Market, Verkaufsargumenten und Deadline-Druck."
 };
 
 // Debug logging for environment variables
@@ -33,7 +33,7 @@ export async function handler(event) {
   }
 
   try {
-    const { roleId, history, message } = JSON.parse(event.body);
+    const { roleId, eventId, eventDescription, history, message } = JSON.parse(event.body);
     
     if (!roleId || !message) {
       return {
@@ -50,18 +50,30 @@ export async function handler(event) {
       };
     }
 
+    const messages = [
+      { role: 'system', content: basePrompt }
+    ];
+
+    // Add event context if provided
+    if (eventId && eventDescription) {
+      messages.push({
+        role: 'system',
+        content: `AKTUELLER EVENT [${eventId}]: ${eventDescription}`
+      });
+    }
+
+    // Add chat history
+    messages.push(...history.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'assistant',
+      content: msg.content
+    })));
+
+    // Add new message
+    messages.push({ role: 'user', content: message });
+
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
-
-    const messages = [
-      { role: 'system', content: basePrompt },
-      ...history.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'assistant',
-        content: msg.content
-      })),
-      { role: 'user', content: message }
-    ];
 
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',

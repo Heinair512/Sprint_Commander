@@ -10,7 +10,7 @@ defineProps<{
     options: Array<{
       label: string;
       effect: number;
-    }>
+    }>;
   };
   showChat: boolean;
   activeTeamMember: {
@@ -41,7 +41,8 @@ const handleNavigate = (direction: 'prev' | 'next') => {
   <div class="main-view h-full crt-frame p-4">
     <ChatView 
       v-if="showChat && activeTeamMember" 
-      :member="activeTeamMember" 
+      :member="activeTeamMember"
+      :currentEvent="currentEvent"
       @close="handleCloseChat" 
     />
     <EventCard 

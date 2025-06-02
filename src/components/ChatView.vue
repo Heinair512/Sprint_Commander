@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 const props = defineProps<{
@@ -9,7 +9,16 @@ const props = defineProps<{
     role: string;
     portrait: string;
     quote: string;
-  }
+  };
+  currentEvent: {
+    id: string;
+    title: string;
+    description: string;
+    options: Array<{
+      label: string;
+      effect: number;
+    }>;
+  };
 }>();
 
 const emit = defineEmits(['close']);
@@ -20,6 +29,19 @@ const chatHistory = ref([
 ]);
 const isLoading = ref(false);
 const error = ref('');
+
+onMounted(() => {
+  const initialText = {
+    dev: `Lars Byte hier. Ich schaue mir gerade Event "${props.currentEvent.title}" an: ${props.currentEvent.description}`,
+    ux: `Grace Grid hier. Schau dir das Event "${props.currentEvent.title}" an, ich denke über das UX-Design nach.`,
+    coach: `Scrumlius meldet sich. Event "${props.currentEvent.title}" scheint komplex – lasst uns agil vorgehen.`,
+    stake: `Maggie Money spricht. Wie schnell könnt ihr "${props.currentEvent.title}" umsetzen?`
+  }[props.member.id] || "";
+
+  if (initialText) {
+    chatHistory.value.push({ role: 'assistant', content: initialText });
+  }
+});
 
 const sendMessage = async () => {
   if (!message.value.trim() || isLoading.value) return;
@@ -35,6 +57,8 @@ const sendMessage = async () => {
   try {
     const response = await axios.post('/chat', {
       roleId: props.member.id,
+      eventId: props.currentEvent.id,
+      eventDescription: props.currentEvent.description,
       history: chatHistory.value,
       message: userMessage
     }, {
