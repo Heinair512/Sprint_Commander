@@ -4,29 +4,25 @@
       "id": "dev",
       "name": "Lars Byte",
       "role": "Developer",
-      "portrait": "/assets/portraits/dev.png",
-      "quote": "Das deployt sich nicht von allein."
+      "portrait": "/assets/portraits/dev.png"
     },
     {
       "id": "ux",
       "name": "Grace Grid",
       "role": "UX Designer",
-      "portrait": "/assets/portraits/ux.png",
-      "quote": "Kann das bitte mehr wie ein Knopf aussehen?"
+      "portrait": "/assets/portraits/ux.png"
     },
     {
       "id": "coach",
       "name": "Scrumlius",
       "role": "Coach",
-      "portrait": "/assets/portraits/coach.png",
-      "quote": "Was sagt das Inspect & Adapt dazu?"
+      "portrait": "/assets/portraits/coach.png"
     },
     {
       "id": "stake",
       "name": "Maggie Money",
       "role": "Stakeholder",
-      "portrait": "/assets/portraits/stake.png",
-      "quote": "Das muss bis Montag fertig sein."
+      "portrait": "/assets/portraits/stake.png"
     }
   ]
 }
