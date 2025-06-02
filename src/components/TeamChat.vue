@@ -127,20 +127,20 @@ watch(() => chatHistory.value.length, () => {
 
 <template>
   <div class="team-chat h-full flex flex-col bg-crt-sepia rounded-lg shadow-lg">
-    <div class="chat-header bg-crt-brown text-crt-glow p-2 flex items-center justify-between rounded-t-lg">
-      <div class="text-sm">🚨 Team Chat: {{ event.title }}</div>
-      <button @click="handleClose" class="close-btn px-2 text-sm">X</button>
+    <div class="chat-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between rounded-t-lg">
+      <div class="text-lg">🚨 Team Chat: {{ event.title }}</div>
+      <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
     <div 
       ref="chatContainer"
-      class="chat-messages flex-grow bg-crt-lightsep p-2 overflow-y-auto"
+      class="chat-messages flex-grow bg-crt-lightsep p-4 overflow-y-auto"
     >
       <div 
         v-for="msg in chatHistory" 
         :key="msg.id"
         :class="[
-          'chat-message mb-2 p-2 rounded-lg max-w-xs text-xs leading-relaxed',
+          'chat-message mb-4 p-4 rounded-lg max-w-md',
           msg.sender === 'user' ? 'ml-auto bg-crt-sepia' : 
           msg.sender === 'system' ? 'mx-auto bg-red-600 text-white' :
           `chat-bubble ${msg.sender}`
@@ -148,7 +148,7 @@ watch(() => chatHistory.value.length, () => {
       >
         <div 
           v-if="msg.sender !== 'user' && msg.sender !== 'system'"
-          class="text-[10px] mb-1 font-bold"
+          class="text-sm mb-2 font-bold"
         >
           {{ msg.senderLabel }}
         </div>
@@ -156,18 +156,18 @@ watch(() => chatHistory.value.length, () => {
       </div>
     </div>
     
-    <div class="chat-input flex p-2 bg-crt-sepia border-t-2 border-crt-darkbrown">
+    <div class="chat-input flex p-4 bg-crt-sepia border-t-2 border-crt-darkbrown">
       <input 
         v-model="message" 
         type="text" 
-        class="flex-grow p-2 bg-crt-lightsep border-2 border-crt-darkbrown rounded text-xs"
+        class="flex-grow p-3 bg-crt-lightsep border-2 border-crt-darkbrown rounded"
         placeholder="Deine Nachricht..."
         @keyup.enter="sendMessage"
         :disabled="isLoading"
       />
       <button 
         @click="sendMessage" 
-        class="retro-button ml-2 text-xs px-3"
+        class="retro-button ml-2"
         :disabled="isLoading"
       >
         {{ isLoading ? '...' : 'Senden' }}
@@ -180,8 +180,8 @@ watch(() => chatHistory.value.length, () => {
 .chat-message {
   word-break: break-word;
   transition: all 0.3s ease;
-  font-size: 0.7rem;
-  line-height: 1.4;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
 .chat-message:hover {
@@ -190,7 +190,7 @@ watch(() => chatHistory.value.length, () => {
 
 .chat-input input {
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   outline: none;
 }
 

@@ -51,7 +51,6 @@ const sendMessage = async () => {
   isLoading.value = true;
   error.value = '';
 
-  // Add user message to chat
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
@@ -95,26 +94,28 @@ const handleClose = () => {
 
 <template>
   <div class="chat-view h-full flex flex-col">
-    <div class="chat-header bg-crt-brown text-crt-glow p-2 flex items-center justify-between mb-2">
-      <div class="member-name text-sm">{{ member.name }}</div>
-      <button @click="handleClose" class="close-btn px-2 text-sm">X</button>
+    <div class="chat-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between mb-4">
+      <div class="member-name text-lg">{{ member.name }}</div>
+      <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
-    <div class="chat-messages flex-grow bg-crt-lightsep p-2 mb-2 pixel-border overflow-y-auto">
+    <div class="chat-messages flex-grow bg-crt-lightsep p-4 mb-4 pixel-border overflow-y-auto">
       <div 
         v-for="(msg, index) in chatHistory" 
         :key="index" 
-        :class="['chat-bubble mb-2 p-2 max-w-xs rounded-lg text-xs leading-relaxed', 
-                msg.role === 'user' ? 'ml-auto bg-crt-sepia' : 'bg-crt-brown text-crt-lightsep']"
+        :class="[
+          'chat-bubble mb-4 p-4 max-w-md rounded-lg',
+          msg.role === 'user' ? 'ml-auto bg-crt-sepia' : member.id
+        ]"
       >
         {{ msg.content }}
       </div>
       
-      <div v-if="isLoading" class="typing-indicator text-xs">
+      <div v-if="isLoading" class="typing-indicator">
         <span>.</span><span>.</span><span>.</span>
       </div>
       
-      <div v-if="error" class="error-message bg-red-500 text-white p-2 rounded mt-2 text-xs">
+      <div v-if="error" class="error-message bg-red-500 text-white p-2 rounded mt-2">
         {{ error }}
       </div>
     </div>
@@ -123,14 +124,14 @@ const handleClose = () => {
       <input 
         v-model="message" 
         type="text" 
-        class="flex-grow p-2 bg-crt-lightsep border-2 border-crt-darkbrown text-xs"
+        class="flex-grow p-3 bg-crt-lightsep border-2 border-crt-darkbrown"
         placeholder="Nachricht eingeben..."
         @keyup.enter="sendMessage"
         :disabled="isLoading"
       />
       <button 
         @click="sendMessage" 
-        class="retro-button text-xs px-3"
+        class="retro-button"
         :disabled="isLoading"
       >
         {{ isLoading ? '...' : 'Senden' }}
@@ -146,39 +147,39 @@ const handleClose = () => {
 
 .chat-bubble {
   position: relative;
-  font-size: 0.7rem;
-  line-height: 1.4;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
 .chat-bubble::after {
   content: '';
   position: absolute;
-  bottom: -6px;
+  bottom: -10px;
   width: 0;
   height: 0;
-  border: 6px solid transparent;
+  border: 10px solid transparent;
 }
 
 .chat-bubble:nth-child(odd)::after {
-  left: 6px;
+  left: 10px;
   border-top-color: theme('colors.crt.brown');
   border-bottom: 0;
 }
 
 .chat-bubble:nth-child(even)::after {
-  right: 6px;
+  right: 10px;
   border-top-color: theme('colors.crt.sepia');
   border-bottom: 0;
 }
 
 .chat-input input {
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   outline: none;
 }
 
 .typing-indicator {
-  padding: 0.5rem;
+  padding: 1rem;
   display: flex;
   justify-content: center;
 }
