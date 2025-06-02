@@ -1,26 +1,26 @@
 [
   {
-    "id": "event-1",
+    "id": "event-2",
     "title": "Production Outage",
-    "description": "Ein Drittanbieter-Service ist ausgefallen. Was sollen wir tun?",
+    "description": "Ein unerwarteter Ausfall der Produktionsumgebung hat alle Deployments gestoppt. Im Monitoring-Dashboard erscheinen wiederholt Fehlermeldungen und Timeouts im zentralen Orchestrator-Service. Das Operations-Team muss die Logs sichten und prüfen, ob ein Rollback notwendig ist. Transaktionsverluste und Dateninkonsistenzen drohen mit jeder Minute.",
     "options": [
       { "label": "Team alarmieren", "effect": 5 },
       { "label": "Abwarten", "effect": -10 }
     ]
   },
   {
-    "id": "event-2",
+    "id": "event-1",
     "title": "Feature Scope Creep",
-    "description": "Der Stakeholder hat 3 Extra-Wünsche – ohne Extra-Zeit.",
+    "description": "Der Stakeholder hat drei neue Anforderungen eingebracht, die komplexe Änderungen an der Core-API erfordern. Authentifizierung, Datenmodelle und externe Schnittstellen müssen angepasst werden. Das Team warnt vor erhöhtem Test- und Review-Aufwand sowie versteckten Abhängigkeiten, die den Sprint gefährden könnten.",
     "options": [
-      { "label": "Alles reinnehmen", "effect": -10 },
-      { "label": "Zurück in die Refinement-Runde", "effect": 5 }
+      { "label": "Zurück in die Refinement-Runde", "effect": 5 },
+      { "label": "Alles reinnehmen", "effect": -10 }
     ]
   },
   {
     "id": "event-3",
     "title": "Sprint Planning",
-    "description": "Das Team ist unsicher, wie viel es schaffen kann. Was tun?",
+    "description": "Ein Großkunde fordert eine Bulk-Upload-Funktion für CSV- und JSON-Dateien. Die Änderungen betreffen Frontend-Upload, File-Parsing und Backend-Paging. Das UX-Team muss die Benutzerführung optimieren und das Performance-Team die Service-Level-Ziele absichern. Das Team ist unsicher über den Aufwand.",
     "options": [
       { "label": "Velocity der letzten Sprints als Maßstab", "effect": 10 },
       { "label": "Mehr Stories reinnehmen als beim letzten Mal", "effect": -5 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { useScoreStore } from '../stores/scoreStore';
 
 const props = defineProps<{
@@ -8,13 +8,10 @@ const props = defineProps<{
     name: string;
     role: string;
     portrait: string;
-    quote: string;
   }
 }>();
 
 const scoreStore = useScoreStore();
-const showSpeechBubble = ref(false);
-const speechBubbleText = ref('');
 
 const memberScore = computed(() => scoreStore.getMemberScore(props.member.id));
 
@@ -35,29 +32,10 @@ const moodClass = computed(() => {
   if (value < 0) return 'bg-red-800';
   return 'bg-gray-800';
 });
-
-watch(moodValue, (newValue, oldValue) => {
-  if (oldValue !== undefined && newValue !== oldValue) {
-    const change = newValue - oldValue;
-    speechBubbleText.value = change > 0 ? '😊' : '😠';
-    showSpeechBubble.value = true;
-    
-    setTimeout(() => {
-      showSpeechBubble.value = false;
-    }, 2000);
-  }
-});
 </script>
 
 <template>
   <div class="team-portrait-container">
-    <div 
-      v-if="showSpeechBubble" 
-      class="speech-bubble absolute -top-8 lg:-top-12 left-1/2 transform -translate-x-1/2"
-    >
-      {{ speechBubbleText }}
-    </div>
-    
     <div class="pixel-portrait">
       <img 
         :src="member.portrait"
@@ -106,30 +84,6 @@ watch(moodValue, (newValue, oldValue) => {
 .mood-label {
   @apply inline-block font-mono text-[10px] sm:text-xs;
   transition: background-color 0.3s ease;
-}
-
-.speech-bubble {
-  @apply bg-crt-lightsep border-2 border-crt-darkbrown p-2 rounded-full text-xl z-10;
-  animation: pop-in 0.3s ease-out;
-}
-
-.speech-bubble::after {
-  content: '';
-  @apply absolute -bottom-2 left-1/2 transform -translate-x-1/2;
-  border-width: 10px 10px 0;
-  border-style: solid;
-  border-color: theme('colors.crt.darkbrown') transparent transparent;
-}
-
-@keyframes pop-in {
-  0% {
-    transform: translate(-50%, 20px) scale(0);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(-50%, 0) scale(1);
-    opacity: 1;
-  }
 }
 
 @media (max-width: 1024px) {
