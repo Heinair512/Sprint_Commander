@@ -24,8 +24,10 @@ const isLoading = ref(false);
 const error = ref('');
 const chatStore = useChatStore();
 
-// Get full history for AI context
-const fullHistory = computed(() => chatStore.getAllMessages);
+// Get event-specific history for AI context
+const eventHistory = computed(() => 
+  chatStore.getEventHistory(props.currentEvent.id)
+);
 
 // Get private chat history for display
 const pairKey = computed(() => `${props.poId}-${props.memberId}`);
@@ -42,13 +44,11 @@ const memberName = computed(() => {
   return nameMap[props.memberId] || props.memberId;
 });
 
-function getSanitizedFullHistory() {
-  return fullHistory.value
-    .filter(m => m.eventId === props.currentEvent.id)
-    .map(m => ({
-      role: m.senderId === props.memberId ? 'assistant' : 'user',
-      content: m.content
-    }));
+function getSanitizedEventHistory() {
+  return eventHistory.value.map(m => ({
+    role: m.senderId === props.memberId ? 'assistant' : 'user',
+    content: m.content
+  }));
 }
 
 async function sendMessage() {
@@ -69,7 +69,7 @@ async function sendMessage() {
     );
 
     // 2. Prepare history for AI
-    const historyForAI = getSanitizedFullHistory();
+    const historyForAI = getSanitizedEventHistory();
 
     // 3. Send to chat function
     const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
@@ -130,7 +130,7 @@ const handleClose = () => {
         :key="msg.timestamp"
         :class="[
           'chat-bubble mb-4 p-3 max-w-xs rounded-lg',
-          msg.senderId === props.poId ? 'ml-auto bg-crt-sepia' : props.memberId
+          msg.senderId === props.poId ? 'ml-auto bg-crt-sepia' : msg.senderId
         ]"
       >
         {{ msg.content }}
