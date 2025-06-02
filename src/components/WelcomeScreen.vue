@@ -50,36 +50,53 @@ const emit = defineEmits(['close']);
 
 onMounted(() => {
   let index = 0;
-  const baseDelay = 3850; // 3500ms + 10%
+  const baseDelay = 3850; // Base delay
   
-  const showNextMessage = () => {
-    if (index < messages.length) {
-      // Remove oldest message if we already have 3 messages
-      if (displayedMessages.value.length >= 3) {
-        displayedMessages.value.shift();
-      }
-      
-      displayedMessages.value.push(messages[index]);
-      
-      // Scroll to bottom with smooth animation
-      setTimeout(() => {
-        if (chatContainer.value) {
-          chatContainer.value.scrollTo({
-            top: chatContainer.value.scrollHeight,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-      
-      // Add extra delay after the second message
-      const delay = index === 1 ? baseDelay * 2 : baseDelay;
-      
-      index++;
-      setTimeout(showNextMessage, delay);
+  const showNextGroup = () => {
+    if (index >= messages.length) return;
+    
+    // Clear messages except for motto section
+    if (index < 16) { // Before motto section
+      displayedMessages.value = [];
     }
+    
+    const isFirstGroup = index === 0;
+    const isMotto = index >= 16;
+    const groupSize = isFirstGroup ? 2 : 3;
+    
+    const showMessagesInGroup = () => {
+      if (index < messages.length && (isFirstGroup ? index < 2 : index < Math.min(messages.length, index + groupSize))) {
+        displayedMessages.value.push(messages[index]);
+        
+        // Scroll to bottom with smooth animation
+        setTimeout(() => {
+          if (chatContainer.value) {
+            chatContainer.value.scrollTo({
+              top: chatContainer.value.scrollHeight,
+              behavior: 'smooth'
+            });
+          }
+        }, 100);
+        
+        index++;
+        
+        // Continue showing messages in current group
+        if (!isMotto) {
+          setTimeout(showMessagesInGroup, baseDelay);
+        } else {
+          // Show motto messages faster
+          setTimeout(showMessagesInGroup, baseDelay / 2);
+        }
+      } else if (!isMotto) {
+        // Move to next group after a longer pause
+        setTimeout(showNextGroup, baseDelay * 2);
+      }
+    };
+    
+    showMessagesInGroup();
   };
   
-  showNextMessage();
+  showNextGroup();
 });
 
 const handleClose = () => {
