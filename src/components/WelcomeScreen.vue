@@ -7,7 +7,7 @@ const chatContainer = ref<HTMLElement | null>(null);
 const showLetsGoButton = ref(false);
 const videoRef = ref<HTMLVideoElement | null>(null);
 
-const { playing, toggle } = useMediaControls(videoRef, {
+const { playing } = useMediaControls(videoRef, {
   src: '/assets/instructor.mp4',
   autoplay: true,
 });
