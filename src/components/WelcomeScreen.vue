@@ -51,7 +51,7 @@ const emit = defineEmits(['close']);
 
 onMounted(() => {
   let index = 0;
-  const baseDelay = 5500; // Even slower base delay
+  const baseDelay = 5500;
 
   const showNextGroup = () => {
     if (index >= messages.length) {
@@ -92,6 +92,8 @@ onMounted(() => {
         let nextDelay;
         if (isFirstGroup) {
           nextDelay = baseDelay * 1.3; // 30% longer for first group
+        } else if (index >= 2 && index <= 6) {
+          nextDelay = baseDelay * 0.7; // 30% faster for "so funktioniert's" to "Verantwortung"
         } else if (isScoreSection) {
           nextDelay = baseDelay * 1.2; // 20% longer for score section
         } else if (isMotto) {
@@ -130,7 +132,7 @@ const handleClose = () => {
 <template>
   <div class="welcome-screen bg-crt-sepia p-4 rounded-lg shadow-lg max-w-6xl mx-auto h-[80vh]">
     <div class="welcome-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between mb-4 rounded">
-      <div class="text-lg">Willkommen beim Sprint Commander</div>
+      <div class="text-lg">Willkommen Sprint Commander</div>
       <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
