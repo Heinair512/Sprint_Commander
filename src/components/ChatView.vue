@@ -1,12 +1,6 @@
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-
-interface Message {
-  id: number;
-  role: 'user' | 'assistant' | 'system';
-  sender?: string;
-  content: string;
-}
 
 const props = defineProps<{
   member: {
@@ -14,6 +8,7 @@ const props = defineProps<{
     name: string;
     role: string;
     portrait: string;
+    quote: string;
   };
   currentEvent: {
     id: string;
@@ -29,24 +24,11 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const message = ref('');
-const chatHistory = ref<Message[]>([]);
+const chatHistory = ref([
+  { role: 'assistant', content: props.member.quote }
+]);
 const isLoading = ref(false);
 const error = ref('');
-
-function pickTwoRoles(): [string, string] {
-  const allRoles = ['dev', 'ux', 'coach', 'stake'].filter(id => id !== props.member.id);
-  const copy = [...allRoles];
-  const first = copy.splice(Math.floor(Math.random() * copy.length), 1)[0];
-  const second = copy[Math.floor(Math.random() * copy.length)];
-  return [first, second];
-}
-
-const nameMap = {
-  dev: 'Lars Byte',
-  ux: 'Grace Grid',
-  coach: 'Scrumlius',
-  stake: 'Maggie Money'
-};
 
 onMounted(() => {
   const initialText = {
@@ -54,15 +36,10 @@ onMounted(() => {
     ux: `Grace Grid hier. Schau dir das Event "${props.currentEvent.title}" an, ich denke über das UX-Design nach.`,
     coach: `Scrumlius meldet sich. Event "${props.currentEvent.title}" scheint komplex – lasst uns agil vorgehen.`,
     stake: `Maggie Money spricht. Wie schnell könnt ihr "${props.currentEvent.title}" umsetzen?`
-  }[props.member.id];
+  }[props.member.id] || "";
 
   if (initialText) {
-    chatHistory.value.push({
-      id: Date.now(),
-      role: 'assistant',
-      sender: props.member.id,
-      content: initialText
-    });
+    chatHistory.value.push({ role: 'assistant', content: initialText });
   }
 });
 
@@ -75,46 +52,38 @@ const sendMessage = async () => {
   error.value = '';
 
   // Add user message to chat
-  chatHistory.value.push({
-    id: Date.now(),
-    role: 'user',
-    content: userMessage
-  });
+  chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    // Get two random roles to respond
-    const [roleA, roleB] = pickTwoRoles();
+    const response = await axios.post('/chat', {
+      roleId: props.member.id,
+      eventId: props.currentEvent.id,
+      eventDescription: props.currentEvent.description,
+      history: chatHistory.value,
+      message: userMessage
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      timeout: 30000
+    });
 
-    // Send requests for both roles
-    for (const roleId of [roleA, roleB]) {
-      try {
-        const response = await axios.post('/chat', {
-          roleId,
-          eventId: props.currentEvent.id,
-          eventDescription: props.currentEvent.description,
-          history: chatHistory.value.map(msg => ({
-            role: msg.role,
-            content: msg.content
-          })),
-          message: userMessage
-        });
-
-        if (response.data && response.data.reply) {
-          chatHistory.value.push({
-            id: Date.now() + Math.random(),
-            role: 'assistant',
-            sender: roleId,
-            content: response.data.reply
-          });
-        }
-      } catch (err) {
-        console.error('Chat error for role', roleId, err);
-        error.value = `Fehler beim Abrufen der Antwort von ${nameMap[roleId]}`;
-      }
+    if (response.data && response.data.reply) {
+      chatHistory.value.push({ role: 'assistant', content: response.data.reply });
+    } else {
+      throw new Error('Invalid response format from server');
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Chat error:', err);
-    error.value = 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+    if (err.code === 'ECONNABORTED') {
+      error.value = 'Die Verbindung zum Server hat zu lange gedauert. Bitte versuchen Sie es erneut.';
+    } else if (err.response) {
+      error.value = `Server-Fehler: ${err.response.status}. Bitte versuchen Sie es später erneut.`;
+    } else if (err.request) {
+      error.value = 'Keine Verbindung zum Server möglich. Bitte überprüfen Sie Ihre Internetverbindung.';
+    } else {
+      error.value = 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+    }
   } finally {
     isLoading.value = false;
   }
@@ -134,16 +103,11 @@ const handleClose = () => {
     
     <div class="chat-messages flex-grow bg-crt-lightsep p-4 mb-4 pixel-border overflow-y-auto">
       <div 
-        v-for="msg in chatHistory" 
-        :key="msg.id" 
-        :class="[
-          'chat-bubble mb-4 p-3 max-w-xs rounded-lg',
-          msg.role === 'user' ? 'ml-auto bg-crt-sepia' : 'bg-crt-brown text-crt-lightsep'
-        ]"
+        v-for="(msg, index) in chatHistory" 
+        :key="index" 
+        :class="['chat-bubble mb-4 p-3 max-w-xs rounded-lg', 
+                msg.role === 'user' ? 'ml-auto bg-crt-sepia' : 'bg-crt-brown text-crt-lightsep']"
       >
-        <div v-if="msg.sender" class="text-xs mb-1 opacity-80">
-          {{ nameMap[msg.sender] }}
-        </div>
         {{ msg.content }}
       </div>
       
