@@ -1,5 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
+import axios from 'axios';
+
+interface Message {
+  id: number;
+  sender: string;
+  senderLabel: string;
+  text: string;
+}
 
 const props = defineProps<{
   event: {
@@ -18,15 +26,24 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const message = ref('');
-const chatHistory = ref([
-  { sender: 'system', text: '🚨 ALARM: Production Outage detected! 🚨' },
-  { sender: 'dev', text: 'OMG! Ich schaue sofort in die Logs!' },
-  { sender: 'ux', text: 'Die User melden schon Probleme im Support-Chat!' },
-  { sender: 'coach', text: 'Bleibt ruhig! Was sagen die Metriken?' },
-  { sender: 'stake', text: 'Wir verlieren GELD! Jede Minute!' }
-]);
-
+const chatHistory = ref<Message[]>([]);
+const isLoading = ref(false);
 const chatContainer = ref<HTMLElement | null>(null);
+
+function pickTwoRoles(): [string, string] {
+  const allRoles = ['dev', 'ux', 'coach', 'stake'];
+  const copy = [...allRoles];
+  const first = copy.splice(Math.floor(Math.random() * copy.length), 1)[0];
+  const second = copy[Math.floor(Math.random() * copy.length)];
+  return [first, second];
+}
+
+const nameMap: Record<string, string> = {
+  dev: 'Lars Byte',
+  ux: 'Grace Grid',
+  coach: 'Scrumlius',
+  stake: 'Maggie Money'
+};
 
 const scrollToBottom = async () => {
   await nextTick();
@@ -35,30 +52,77 @@ const scrollToBottom = async () => {
   }
 };
 
-const sendMessage = () => {
-  if (message.value.trim()) {
-    chatHistory.value.push({ sender: 'user', text: message.value });
-    message.value = '';
-    scrollToBottom();
-    
-    // Simulate team response after a short delay
-    setTimeout(() => {
-      const responses = [
-        { sender: 'dev', text: 'Ich sehe erhöhte Error-Raten in den Logs!' },
-        { sender: 'coach', text: 'Lasst uns einen War Room aufsetzen!' },
-        { sender: 'ux', text: 'Support-Tickets steigen exponentiell!' },
-        { sender: 'stake', text: 'Brauchen wir einen Rollback?' }
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      chatHistory.value.push(randomResponse);
-      scrollToBottom();
-    }, 1000);
+const sendMessage = async () => {
+  if (!message.value.trim() || isLoading.value) return;
+
+  const userMessage = message.value;
+  message.value = '';
+  isLoading.value = true;
+
+  // Add user message to chat
+  chatHistory.value.push({
+    id: Date.now(),
+    sender: 'user',
+    senderLabel: 'Du',
+    text: userMessage
+  });
+
+  await scrollToBottom();
+
+  // Get two random roles to respond
+  const [roleA, roleB] = pickTwoRoles();
+
+  try {
+    // Send requests for both roles
+    for (const roleId of [roleA, roleB]) {
+      const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
+      
+      const response = await axios.post(endpoint, {
+        roleId,
+        eventId: props.event.id,
+        eventDescription: props.event.description,
+        history: chatHistory.value.map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.text
+        })),
+        message: userMessage
+      });
+
+      if (response.data && response.data.reply) {
+        chatHistory.value.push({
+          id: Date.now() + Math.random(),
+          sender: roleId,
+          senderLabel: nameMap[roleId],
+          text: response.data.reply
+        });
+        await scrollToBottom();
+      }
+    }
+  } catch (err) {
+    console.error('Team chat error:', err);
+    chatHistory.value.push({
+      id: Date.now(),
+      sender: 'system',
+      senderLabel: 'System',
+      text: 'Fehler bei der Kommunikation mit dem Team. Bitte versuche es später erneut.'
+    });
+  } finally {
+    isLoading.value = false;
+    await scrollToBottom();
   }
 };
 
 const handleClose = () => {
   emit('close');
 };
+
+// Initialize with system message
+chatHistory.value.push({
+  id: Date.now(),
+  sender: 'system',
+  senderLabel: 'System',
+  text: `🚨 ALARM: ${props.event.title}! 🚨`
+});
 
 // Watch for new messages and scroll to bottom
 watch(() => chatHistory.value.length, () => {
@@ -78,16 +142,20 @@ watch(() => chatHistory.value.length, () => {
       class="chat-messages flex-grow bg-crt-lightsep p-4 overflow-y-auto"
     >
       <div 
-        v-for="(msg, index) in chatHistory" 
-        :key="index"
+        v-for="msg in chatHistory" 
+        :key="msg.id"
         :class="[
           'chat-message mb-4 p-3 rounded-lg max-w-xs',
-          msg.sender === 'user' ? 'ml-auto bg-crt-sepia' : 'bg-crt-brown text-crt-lightsep',
-          msg.sender === 'system' ? 'mx-auto bg-red-600 text-white' : ''
+          msg.sender === 'user' ? 'ml-auto bg-crt-sepia' : 
+          msg.sender === 'system' ? 'mx-auto bg-red-600 text-white' :
+          `chat-bubble ${msg.sender}`
         ]"
       >
-        <div class="text-xs mb-1" v-if="msg.sender !== 'user' && msg.sender !== 'system'">
-          {{ team.find(t => t.id === msg.sender)?.name }}
+        <div 
+          v-if="msg.sender !== 'user' && msg.sender !== 'system'"
+          class="text-xs mb-1 font-bold"
+        >
+          {{ msg.senderLabel }}
         </div>
         {{ msg.text }}
       </div>
@@ -100,8 +168,15 @@ watch(() => chatHistory.value.length, () => {
         class="flex-grow p-3 bg-crt-lightsep border-2 border-crt-darkbrown rounded"
         placeholder="Deine Nachricht..."
         @keyup.enter="sendMessage"
+        :disabled="isLoading"
       />
-      <button @click="sendMessage" class="retro-button ml-2">Senden</button>
+      <button 
+        @click="sendMessage" 
+        class="retro-button ml-2"
+        :disabled="isLoading"
+      >
+        {{ isLoading ? '...' : 'Senden' }}
+      </button>
     </div>
   </div>
 </template>
@@ -122,6 +197,12 @@ watch(() => chatHistory.value.length, () => {
   outline: none;
 }
 
+.chat-input input:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .chat-messages {
   scrollbar-width: thin;
   scrollbar-color: theme('colors.crt.darkbrown') theme('colors.crt.lightsep');
@@ -138,5 +219,25 @@ watch(() => chatHistory.value.length, () => {
 .chat-messages::-webkit-scrollbar-thumb {
   background-color: theme('colors.crt.darkbrown');
   border-radius: 4px;
+}
+
+.chat-bubble {
+  @apply bg-crt-brown text-crt-lightsep;
+}
+
+.chat-bubble.dev {
+  border-left: 4px solid #4CAF50;
+}
+
+.chat-bubble.ux {
+  border-left: 4px solid #2196F3;
+}
+
+.chat-bubble.coach {
+  border-left: 4px solid #FFC107;
+}
+
+.chat-bubble.stake {
+  border-left: 4px solid #F44336;
 }
 </style>

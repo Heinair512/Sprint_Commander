@@ -154,3 +154,36 @@ body {
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
+
+/* Chat bubble styles for different roles */
+.chat-bubble {
+  position: relative;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+
+.chat-bubble.dev {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 4px solid #4CAF50;
+  color: #2E7D32;
+}
+
+.chat-bubble.ux {
+  background-color: rgba(33, 150, 243, 0.1);
+  border-left: 4px solid #2196F3;
+  color: #1565C0;
+}
+
+.chat-bubble.coach {
+  background-color: rgba(255, 193, 7, 0.1);
+  border-left: 4px solid #FFC107;
+  color: #F57F17;
+}
+
+.chat-bubble.stake {
+  background-color: rgba(244, 67, 54, 0.1);
+  border-left: 4px solid #F44336;
+  color: #C62828;
+}
+</style>
