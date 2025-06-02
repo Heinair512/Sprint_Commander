@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useChatStore } from '../stores/chat';
+import greetings from '../data/greetings.json';
 
 const props = defineProps<{
   poId: string;
@@ -30,6 +31,24 @@ const fullHistory = computed(() => chatStore.getAllMessages);
 // Get private chat history for display
 const pairKey = computed(() => `${props.poId}-${props.memberId}`);
 const privateHistory = computed(() => chatStore.messagesByPair[pairKey.value] || []);
+
+function getRandomGreeting(roleId: string): string {
+  const roleGreetings = greetings[roleId as keyof typeof greetings] || [];
+  return roleGreetings[Math.floor(Math.random() * roleGreetings.length)] || 'Hi! Wie kann ich helfen?';
+}
+
+onMounted(() => {
+  // Only add greeting if there's no existing chat history
+  if (!privateHistory.value.length) {
+    const greeting = getRandomGreeting(props.memberId);
+    chatStore.addPrivateReply(
+      props.memberId,
+      props.poId,
+      greeting,
+      props.currentEvent.id
+    );
+  }
+});
 
 function getSanitizedFullHistory() {
   return fullHistory.value
