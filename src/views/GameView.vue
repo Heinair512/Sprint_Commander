@@ -12,16 +12,30 @@ import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
 
-const team = teamData.team; // Access the team array from the imported data
+// Define interfaces for our data structures
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+}
+
+const team = teamData.team as TeamMember[]; 
 
 const emit = defineEmits(['logout']);
 const toast = useToast();
 const score = ref(825);
 const missionTitle = ref('Black Friday');
 const level = ref('Jira Login');
-const activeTeamMember = ref(null);
+const activeTeamMember = ref<TeamMember | null>(null);
 const currentEventIndex = ref(0);
-const currentEvent = ref(events[currentEventIndex.value]);
+const currentEvent = ref(events[currentEventIndex.value] as Event);
 const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
@@ -45,7 +59,7 @@ const navigateEvent = (direction: 'prev' | 'next') => {
   } else {
     currentEventIndex.value = currentEventIndex.value < events.length - 1 ? currentEventIndex.value + 1 : 0;
   }
-  currentEvent.value = events[currentEventIndex.value];
+  currentEvent.value = events[currentEventIndex.value] as Event;
   showTeamChat.value = false;
   showActionFeedback.value = false;
 };
@@ -209,7 +223,7 @@ const makeDecision = (effect: number) => {
   }
 };
 
-const selectTeamMember = (member) => {
+const selectTeamMember = (member: TeamMember) => {
   activeTeamMember.value = member;
   showChat.value = true;
 };
