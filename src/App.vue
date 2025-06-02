@@ -2,15 +2,23 @@
 import { ref } from 'vue';
 import GameView from './views/GameView.vue';
 import LoginScreen from './components/LoginScreen.vue';
+import WelcomeScreen from './components/WelcomeScreen.vue';
 
 const isAuthenticated = ref(false);
+const showWelcome = ref(false);
 
 const handleLoginSuccess = () => {
   isAuthenticated.value = true;
+  showWelcome.value = true;
+};
+
+const handleWelcomeClose = () => {
+  showWelcome.value = false;
 };
 
 const handleLogout = () => {
   isAuthenticated.value = false;
+  showWelcome.value = false;
 };
 </script>
 
@@ -18,7 +26,8 @@ const handleLogout = () => {
   <LoginScreen v-if="!isAuthenticated" @login-success="handleLoginSuccess" />
   <div v-else class="crt-screen">
     <div class="crt-overlay"></div>
-    <GameView @logout="handleLogout" />
+    <WelcomeScreen v-if="showWelcome" @close="handleWelcomeClose" />
+    <GameView v-else @logout="handleLogout" />
   </div>
 </template>
 
