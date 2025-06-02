@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 
 const props = defineProps<{
@@ -24,24 +24,27 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const message = ref('');
-const chatHistory = ref([
-  { role: 'assistant', content: props.member.quote || '' }
-]);
+const chatHistory = ref<Array<{ role: string; content: string }>>([]);
 const isLoading = ref(false);
 const error = ref('');
 
-onMounted(() => {
+const generateInitialMessage = () => {
   const initialText = {
-    dev: `Lars Byte hier. Ich schaue mir gerade Event "${props.currentEvent?.title || ''}" an: ${props.currentEvent?.description || ''}`,
-    ux: `Grace Grid hier. Schau dir das Event "${props.currentEvent?.title || ''}" an, ich denke über das UX-Design nach.`,
-    coach: `Scrumlius meldet sich. Event "${props.currentEvent?.title || ''}" scheint komplex – lasst uns agil vorgehen.`,
-    stake: `Maggie Money spricht. Wie schnell könnt ihr "${props.currentEvent?.title || ''}" umsetzen?`
+    dev: `Entwickler Lars Byte hier. Ich analysiere gerade Event "${props.currentEvent?.title || ''}" technisch: ${props.currentEvent?.description || ''}`,
+    ux: `UX-Designerin Grace Grid hier. Lass uns über die User Experience bei "${props.currentEvent?.title || ''}" sprechen.`,
+    coach: `Agile Coach Scrumlius meldet sich. Event "${props.currentEvent?.title || ''}" braucht einen klaren agilen Ansatz.`,
+    stake: `Stakeholder Maggie Money hier. "${props.currentEvent?.title || ''}" muss schnell ROI generieren.`
   }[props.member.id] || '';
 
   if (initialText) {
-    chatHistory.value.push({ role: 'assistant', content: initialText });
+    chatHistory.value = [{ role: 'assistant', content: initialText }];
   }
-});
+};
+
+// Watch for changes in member ID to reset chat
+watch(() => props.member.id, () => {
+  generateInitialMessage();
+}, { immediate: true });
 
 const sendMessage = async () => {
   if (!message.value.trim() || isLoading.value) return;
@@ -51,14 +54,14 @@ const sendMessage = async () => {
   isLoading.value = true;
   error.value = '';
 
+  const sanitizedHistory = chatHistory.value.map(msg => ({
+    role: msg.role || 'user',
+    content: msg.content || ''
+  }));
+
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    const sanitizedHistory = chatHistory.value.map(msg => ({
-      role: msg.role || 'user',
-      content: msg.content || ''
-    }));
-
     const payload = {
       roleId: props.member.id || '',
       eventId: props.currentEvent?.id || '',
@@ -151,27 +154,6 @@ const handleClose = () => {
   line-height: 1.6;
 }
 
-.chat-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  width: 0;
-  height: 0;
-  border: 10px solid transparent;
-}
-
-.chat-bubble:nth-child(odd)::after {
-  left: 10px;
-  border-top-color: theme('colors.crt.brown');
-  border-bottom: 0;
-}
-
-.chat-bubble:nth-child(even)::after {
-  right: 10px;
-  border-top-color: theme('colors.crt.sepia');
-  border-bottom: 0;
-}
-
 .chat-input input {
   font-family: 'Press Start 2P', monospace;
   font-size: 0.75rem;
@@ -205,5 +187,23 @@ const handleClose = () => {
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.crt.darkbrown') theme('colors.crt.lightsep');
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: theme('colors.crt.lightsep');
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: theme('colors.crt.darkbrown');
+  border-radius: 3px;
 }
 </style>
