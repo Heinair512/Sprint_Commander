@@ -8,6 +8,10 @@ const basePrompts = {
   stake: "Du bist Maggie Money, eine Stakeholderin mit Fokus auf Business-Value. Du denkst in ROI und Time-to-Market. Du bist ungeduldig aber professionell. Dein Motto ist 'Das muss bis Montag fertig sein.'"
 };
 
+// Debug logging for environment variables
+console.log('OPENAI_API_KEY (masked):', process.env.OPENAI_API_KEY ? '*****' + process.env.OPENAI_API_KEY.slice(-5) : 'Not set');
+console.log('Environment variables available:', Object.keys(process.env));
+
 export async function handler(event) {
   // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
