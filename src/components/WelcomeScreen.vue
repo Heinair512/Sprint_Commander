@@ -50,10 +50,16 @@ const emit = defineEmits(['close']);
 
 onMounted(() => {
   let index = 0;
-  const interval = setInterval(() => {
+  const baseDelay = 3850; // 3500ms + 10%
+  
+  const showNextMessage = () => {
     if (index < messages.length) {
+      // Remove oldest message if we already have 3 messages
+      if (displayedMessages.value.length >= 3) {
+        displayedMessages.value.shift();
+      }
+      
       displayedMessages.value.push(messages[index]);
-      index++;
       
       // Scroll to bottom with smooth animation
       setTimeout(() => {
@@ -64,10 +70,16 @@ onMounted(() => {
           });
         }
       }, 100);
-    } else {
-      clearInterval(interval);
+      
+      // Add extra delay after the second message
+      const delay = index === 1 ? baseDelay * 2 : baseDelay;
+      
+      index++;
+      setTimeout(showNextMessage, delay);
     }
-  }, 3500); // Increased delay between messages
+  };
+  
+  showNextMessage();
 });
 
 const handleClose = () => {
