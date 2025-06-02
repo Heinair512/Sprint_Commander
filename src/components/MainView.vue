@@ -41,7 +41,8 @@ const handleNavigate = (direction: 'prev' | 'next') => {
   <div class="main-view h-full crt-frame p-4">
     <ChatView 
       v-if="showChat && activeTeamMember" 
-      :member="activeTeamMember"
+      :poId="'po'"
+      :memberId="activeTeamMember.id"
       :currentEvent="currentEvent"
       @close="handleCloseChat" 
     />

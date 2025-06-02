@@ -18,6 +18,7 @@ interface TeamMember {
   name: string;
   role: string;
   portrait: string;
+  quote: string;
 }
 
 interface Event {

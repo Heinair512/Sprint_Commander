@@ -31,6 +31,17 @@ const fullHistory = computed(() => chatStore.getAllMessages);
 const pairKey = computed(() => `${props.poId}-${props.memberId}`);
 const privateHistory = computed(() => chatStore.messagesByPair[pairKey.value] || []);
 
+// Get member name based on ID
+const memberName = computed(() => {
+  const nameMap: Record<string, string> = {
+    dev: 'Lars Byte',
+    ux: 'Grace Grid',
+    coach: 'Scrumlius',
+    stake: 'Maggie Money'
+  };
+  return nameMap[props.memberId] || props.memberId;
+});
+
 function getSanitizedFullHistory() {
   return fullHistory.value
     .filter(m => m.eventId === props.currentEvent.id)
@@ -61,6 +72,7 @@ async function sendMessage() {
     const historyForAI = getSanitizedFullHistory();
 
     // 3. Send to chat function
+    const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
     const payload = {
       roleId: props.memberId,
       eventId: props.currentEvent.id,
@@ -69,7 +81,7 @@ async function sendMessage() {
       message: userText
     };
 
-    const response = await axios.post('/chat', payload, {
+    const response = await axios.post(endpoint, payload, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 30000
     });
@@ -108,7 +120,7 @@ const handleClose = () => {
 <template>
   <div class="chat-view h-full flex flex-col">
     <div class="chat-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between mb-4">
-      <div class="member-name text-lg">Chat mit {{ props.memberId }}</div>
+      <div class="member-name text-lg">Chat mit {{ memberName }}</div>
       <button @click="handleClose" class="close-btn px-2">X</button>
     </div>
     
@@ -138,7 +150,7 @@ const handleClose = () => {
         v-model="message" 
         type="text" 
         class="flex-grow p-3 bg-crt-lightsep border-2 border-crt-darkbrown"
-        :placeholder="`Nachricht an ${props.memberId}...`"
+        :placeholder="`Nachricht an ${memberName}...`"
         @keyup.enter="sendMessage"
         :disabled="isLoading"
       />
