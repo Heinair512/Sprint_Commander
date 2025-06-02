@@ -25,18 +25,18 @@ const emit = defineEmits(['close']);
 
 const message = ref('');
 const chatHistory = ref([
-  { role: 'assistant', content: props.member.quote }
+  { role: 'assistant', content: props.member.quote || '' }
 ]);
 const isLoading = ref(false);
 const error = ref('');
 
 onMounted(() => {
   const initialText = {
-    dev: `Lars Byte hier. Ich schaue mir gerade Event "${props.currentEvent.title}" an: ${props.currentEvent.description}`,
-    ux: `Grace Grid hier. Schau dir das Event "${props.currentEvent.title}" an, ich denke über das UX-Design nach.`,
-    coach: `Scrumlius meldet sich. Event "${props.currentEvent.title}" scheint komplex – lasst uns agil vorgehen.`,
-    stake: `Maggie Money spricht. Wie schnell könnt ihr "${props.currentEvent.title}" umsetzen?`
-  }[props.member.id] || "";
+    dev: `Lars Byte hier. Ich schaue mir gerade Event "${props.currentEvent?.title || ''}" an: ${props.currentEvent?.description || ''}`,
+    ux: `Grace Grid hier. Schau dir das Event "${props.currentEvent?.title || ''}" an, ich denke über das UX-Design nach.`,
+    coach: `Scrumlius meldet sich. Event "${props.currentEvent?.title || ''}" scheint komplex – lasst uns agil vorgehen.`,
+    stake: `Maggie Money spricht. Wie schnell könnt ihr "${props.currentEvent?.title || ''}" umsetzen?`
+  }[props.member.id] || '';
 
   if (initialText) {
     chatHistory.value.push({ role: 'assistant', content: initialText });
@@ -51,47 +51,38 @@ const sendMessage = async () => {
   isLoading.value = true;
   error.value = '';
 
+  // Add user message to chat
   chatHistory.value.push({ role: 'user', content: userMessage });
 
   try {
-    const endpoint = import.meta.env.DEV
-      ? 'http://localhost:8888/chat'
-      : '/chat';
+    const sanitizedHistory = chatHistory.value.map(msg => ({
+      role: msg.role || 'user',
+      content: msg.content || ''
+    }));
 
     const payload = {
-      roleId: props.member.id,
-      eventId: props.currentEvent.id,
-      eventDescription: props.currentEvent.description,
-      history: chatHistory.value.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      })),
-      message: userMessage
+      roleId: props.member.id || '',
+      eventId: props.currentEvent?.id || '',
+      eventDescription: props.currentEvent?.description || '',
+      history: sanitizedHistory,
+      message: userMessage || ''
     };
 
-    const response = await axios.post(endpoint, payload, {
+    const response = await axios.post('/chat', payload, {
       headers: {
         'Content-Type': 'application/json'
       },
       timeout: 30000
     });
 
-    if (response.data && response.data.reply) {
+    if (response.data?.reply) {
       chatHistory.value.push({ role: 'assistant', content: response.data.reply });
     } else {
       throw new Error('Invalid response format from server');
     }
   } catch (err: any) {
     console.error('Chat error:', err);
-    if (err.code === 'ECONNABORTED') {
-      error.value = 'Die Verbindung zum Server hat zu lange gedauert. Bitte versuchen Sie es erneut.';
-    } else if (err.response) {
-      error.value = `Server-Fehler: ${err.response.status}. Bitte versuchen Sie es später erneut.`;
-    } else if (err.request) {
-      error.value = 'Keine Verbindung zum Server möglich. Bitte überprüfen Sie Ihre Internetverbindung.';
-    } else {
-      error.value = 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
-    }
+    error.value = err.response?.data?.error || 'Ein Fehler ist aufgetreten. Bitte versuche es später erneut.';
   } finally {
     isLoading.value = false;
   }

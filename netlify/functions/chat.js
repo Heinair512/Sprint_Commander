@@ -1,6 +1,5 @@
 import OpenAI from "openai";
 
-// Base prompts for each role
 const basePrompts = {
   dev: "Du bist Lars Byte, ein Entwickler im Core-API-Team. Spreche sachlich zu technischen Risiken, nenne relevante Endpunkte und Abhängigkeiten aus API/Database.",
   ux: "Du bist Grace Grid, UX-Designer:in. Achte auf Usability, Wireframes, Fehlermeldungen und User-Flows, erkläre Design-Überlegungen im Frontend.",
@@ -32,55 +31,51 @@ export async function handler(event) {
     if (!event.body) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'No body in request' })
+        body: JSON.stringify({ error: 'Request body is required' })
       };
     }
 
-    const { roleId, eventId, eventDescription, history, message } = JSON.parse(event.body);
+    const { roleId = '', eventId = '', eventDescription = '', history = [], message = '' } = JSON.parse(event.body);
     
-    if (!roleId || !Array.isArray(history) || !message) {
+    if (!roleId || !message) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing required fields: roleId, history, or message' })
+        body: JSON.stringify({ error: 'roleId and message are required' })
       };
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      console.log('WARN: OPENAI_API_KEY is not set');
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'API key not set' })
-      };
-    }
-
-    const basePrompt = basePrompts[roleId];
-    if (!basePrompt) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Invalid role ID' })
-      };
-    }
-
+    const basePrompt = basePrompts[roleId] || '';
+    
+    // Build messages array with sanitized content
     const messages = [
-      { role: 'system', content: basePrompt }
+      { role: 'system', content: basePrompt || '' }
     ];
 
     // Add event context if provided
-    if (eventId && eventDescription) {
+    if (eventId || eventDescription) {
       messages.push({
         role: 'system',
         content: `AKTUELLER EVENT [${eventId}]: ${eventDescription}`
       });
     }
 
-    // Add chat history
-    messages.push(...history.map(msg => ({
+    // Add sanitized chat history
+    const sanitizedHistory = Array.isArray(history) ? history : [];
+    messages.push(...sanitizedHistory.map(msg => ({
       role: msg.role === 'user' ? 'user' : 'assistant',
-      content: msg.content
+      content: msg.content || ''
     })));
 
     // Add new message
-    messages.push({ role: 'user', content: message });
+    messages.push({ role: 'user', content: message || '' });
+
+    // Verify no null content exists
+    messages.forEach((msg, index) => {
+      if (msg.content === null || msg.content === undefined) {
+        console.warn(`Found null content in message ${index}, replacing with empty string`);
+        msg.content = '';
+      }
+    });
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
@@ -100,7 +95,7 @@ export async function handler(event) {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        reply: response.choices[0].message.content
+        reply: response.choices[0]?.message?.content || ''
       })
     };
   } catch (error) {
