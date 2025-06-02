@@ -50,7 +50,7 @@ const emit = defineEmits(['close']);
 
 onMounted(() => {
   let index = 0;
-  const baseDelay = 3850; // Base delay
+  const baseDelay = 4620; // Base delay increased by 20%
   
   const showNextGroup = () => {
     if (index >= messages.length) return;
@@ -82,14 +82,14 @@ onMounted(() => {
         
         // Continue showing messages in current group
         if (!isMotto) {
-          setTimeout(showMessagesInGroup, baseDelay);
+          setTimeout(showMessagesInGroup, isFirstGroup ? baseDelay * 1.3 : baseDelay); // 30% longer for first group
         } else {
           // Show motto messages faster
           setTimeout(showMessagesInGroup, baseDelay / 2);
         }
       } else if (!isMotto) {
         // Move to next group after a longer pause
-        setTimeout(showNextGroup, baseDelay * 2);
+        setTimeout(showNextGroup, isFirstGroup ? baseDelay * 2.6 : baseDelay * 2); // 30% longer pause after first group
       }
     };
     
