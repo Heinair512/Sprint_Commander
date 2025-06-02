@@ -1,5 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useMediaControls } from '@vueuse/core';
+
+const displayedMessages = ref<string[]>([]);
+const chatContainer = ref<HTMLElement | null>(null);
+const showLetsGoButton = ref(false);
+const videoRef = ref<HTMLVideoElement | null>(null);
+
+const { playing, toggle } = useMediaControls(videoRef, {
+  src: '/assets/instructor.mp4',
+  autoplay: true,
+});
+
+const emit = defineEmits(['close']);
 
 const messages = [
   '👋 Willkommen, angehender SprintCommander!',
@@ -42,12 +55,6 @@ const messages = [
   
   '🔄 Repeat, denn sobald du Level 1 gemeistert hast, wartet direkt der nächste, knalligere Sprint auf dich!'
 ];
-
-const displayedMessages = ref<string[]>([]);
-const chatContainer = ref<HTMLElement | null>(null);
-const showLetsGoButton = ref(false);
-
-const emit = defineEmits(['close']);
 
 onMounted(() => {
   let index = 0;
@@ -140,13 +147,15 @@ const handleClose = () => {
       <!-- Video Section -->
       <div class="video-container w-1/2 bg-black rounded-lg overflow-hidden">
         <video 
+          ref="videoRef"
           class="w-full h-full object-cover"
-          autoplay 
+          :autoplay="true"
           loop 
           muted 
           playsinline
         >
           <source src="/assets/instructor.mp4" type="video/mp4">
+          Your browser does not support the video tag.
         </video>
       </div>
       

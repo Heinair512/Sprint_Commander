@@ -59,6 +59,11 @@ const sendMessage = () => {
 const handleClose = () => {
   emit('close');
 };
+
+// Watch for new messages and scroll to bottom
+watch(() => chatHistory.value.length, () => {
+  scrollToBottom();
+});
 </script>
 
 <template>
