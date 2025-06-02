@@ -45,6 +45,7 @@ const messages = [
 
 const displayedMessages = ref<string[]>([]);
 const chatContainer = ref<HTMLElement | null>(null);
+const showLetsGoButton = ref(false);
 
 const emit = defineEmits(['close']);
 
@@ -53,7 +54,10 @@ onMounted(() => {
   const baseDelay = 5500; // Even slower base delay
 
   const showNextGroup = () => {
-    if (index >= messages.length) return;
+    if (index >= messages.length) {
+      showLetsGoButton.value = true;
+      return;
+    }
     
     // Clear messages for new sections
     if (index === 0 || // Start
@@ -103,6 +107,11 @@ onMounted(() => {
         } else if (!isMotto) {
           // Longer pause before next section
           setTimeout(showNextGroup, baseDelay * 2);
+        } else {
+          // Show Let's Go button after last message
+          setTimeout(() => {
+            showLetsGoButton.value = true;
+          }, baseDelay);
         }
       }
     };
@@ -142,7 +151,7 @@ const handleClose = () => {
       <!-- Chat Section -->
       <div 
         ref="chatContainer"
-        class="chat-container w-1/2 bg-crt-lightsep p-4 rounded overflow-y-auto"
+        class="chat-container w-1/2 bg-crt-lightsep p-4 rounded overflow-y-auto relative"
       >
         <div 
           v-for="(message, index) in displayedMessages" 
@@ -151,6 +160,15 @@ const handleClose = () => {
         >
           <p class="whitespace-pre-line">{{ message }}</p>
         </div>
+        
+        <!-- Let's Go Button -->
+        <button 
+          v-if="showLetsGoButton"
+          @click="handleClose"
+          class="lets-go-button w-full py-4 mt-6 bg-crt-brown text-crt-glow rounded-lg hover:bg-crt-darkbrown transition-colors duration-300"
+        >
+          🚀 Let's Go!
+        </button>
       </div>
     </div>
   </div>
@@ -183,6 +201,10 @@ const handleClose = () => {
   font-size: 0.8rem;
   line-height: 1.8;
   animation: fade-in 0.8s ease-out;
+}
+
+.lets-go-button {
+  animation: fade-in 1s ease-out;
 }
 
 @keyframes fade-in {
