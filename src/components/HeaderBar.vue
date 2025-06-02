@@ -7,11 +7,16 @@ defineProps<{
   level: string;
 }>();
 
-const emit = defineEmits(['logout']);
+const emit = defineEmits(['logout', 'showTips']);
 const showMenu = ref(false);
 
 const handleLogout = () => {
   emit('logout');
+};
+
+const handleShowTips = () => {
+  emit('showTips');
+  showMenu.value = false;
 };
 
 const toggleMenu = () => {
@@ -31,10 +36,16 @@ const toggleMenu = () => {
       <!-- Burger Menu Dropdown -->
       <div v-if="showMenu" class="absolute top-full left-0 mt-2 w-48 bg-crt-sepia border-2 border-crt-darkbrown rounded shadow-lg z-50">
         <button 
+          @click="handleShowTips" 
+          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
+        >
+          📚 Tipps
+        </button>
+        <button 
           @click="handleLogout" 
           class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
         >
-          Logout
+          🚪 Logout
         </button>
       </div>
       

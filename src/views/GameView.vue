@@ -8,6 +8,7 @@ import MainView from '../components/MainView.vue';
 import NewsTicker from '../components/NewsTicker.vue';
 import TeamChat from '../components/TeamChat.vue';
 import ActionFeedback from '../components/ActionFeedback.vue';
+import TipsPanel from '../components/TipsPanel.vue';
 import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
@@ -43,6 +44,7 @@ const currentEvent = ref(events[currentEventIndex.value] as Event);
 const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
+const showTips = ref(false);
 const scoreStore = useScoreStore();
 const scoreResetTimeout = ref<number | null>(null);
 
@@ -55,6 +57,13 @@ const handleLogout = () => {
     pauseOnHover: true,
     draggable: true,
   });
+};
+
+const handleShowTips = () => {
+  showTips.value = true;
+  showChat.value = false;
+  showTeamChat.value = false;
+  showActionFeedback.value = false;
 };
 
 const navigateEvent = (direction: 'prev' | 'next') => {
@@ -230,6 +239,7 @@ const makeDecision = (effect: number) => {
 const selectTeamMember = (member: TeamMember) => {
   activeTeamMember.value = member;
   showChat.value = true;
+  showTips.value = false;
 };
 
 const closeChat = () => {
@@ -253,6 +263,7 @@ const closeActionFeedback = () => {
       :score="score" 
       :level="level"
       @logout="handleLogout"
+      @showTips="handleShowTips"
     />
     
     <div class="flex-grow flex flex-col lg:flex-row p-2 sm:p-4 gap-4">
@@ -269,8 +280,9 @@ const closeActionFeedback = () => {
       <!-- Main area -->
       <div class="main-area flex-grow lg:w-1/2 xl:w-3/5">
         <div class="max-w-4xl mx-auto h-full">
+          <TipsPanel v-if="showTips" />
           <ActionFeedback
-            v-if="showActionFeedback"
+            v-else-if="showActionFeedback"
             :message="currentEvent.id === 'event-1' 
               ? 'Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat.'
               : currentEvent.id === 'event-2'
