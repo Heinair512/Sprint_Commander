@@ -2,26 +2,45 @@
 import { ref, onMounted } from 'vue';
 
 const messages = [
-  'Willkommen, angehender SprintCommander!',
-  'Gratulation, du hast dich mutig in die pixelige Welt von SprintCommander gewagt. Hier übernehmen wir die Rolle des Product Owners (PO) – aber keine Angst, unser Abenteuer startet ganz klein: Du übernimmst zunächst einen überschaubaren Bereich, in dem du die Grundtechniken eines POs anhand praktischer Mini-Beispiele lernst. Keine Panik, wenn du am Anfang nur ein paar Pixel-Features jonglierst – von „simple" zu „complex" geht\'s Schritt für Schritt.',
-  'So funktioniert\'s\nLevel 1: Rookie-PO im Anfänger-Modus',
-  'Du bekommst ein kleines Backlog mit simplen Aufgaben: Eine neue Button-Farbe hier, ein Mini-API-Update dort.',
-  'Deine erste Aufgabe: Halte das Team bei Laune und sorge dafür, dass die Stakeholder nicht bockig werden. (Tipp: Ein Coffee-Emoji in der Slack-Nachricht zaubert manchmal Wunder.)',
-  'Ziel: Erreiche am Ende 1.000 Score-Punkte, ohne dass Team-Moral oder Stakeholder-Zufriedenheit unter 50 Punkten fallen.',
-  'Verantwortung wächst mit dem Score',
-  'Sobald du 1.000 Punkte eingesackt hast und dein Team sowie deine Stakeholder gut gelaunt sind, hast du das Level geschafft. Dann geht\'s direkt in den mittel-komplexen Bereich, wo Features enger getaktet und Stakeholder-Launen launischer werden.',
-  'Je höher dein Level, desto mehr Komplexität: Von „Kann das Feature X bitte bunter leuchten?" bis hin zu „Unser größter Kunde fordert ein massives Redesign – ohne Zeitgarantie!"',
-  'Moral- und Zufriedenheitsanzeige',
-  'Jede Entscheidung (z. B. „Feature sofort umsetzen" oder „Zurück ins Refinement schicken") wirkt sich auf Team-Moral und Stakeholder-Zufriedenheit aus.',
-  'Bleibt einer der Werte unter 50, eskaliert das Pixel-Chaos – dein Score bröckelt und das Level wird hart. Also wäge ab, ob dein Team wirklich bereit ist, den 99. Kaffeebecher-Patch einzusehen…',
-  'Tipps & Tricks vom Coach',
+  '👋 Willkommen, angehender SprintCommander!',
+  
+  'Gratulation, du hast dich mutig in die pixelige Welt von SprintCommander gewagt.\n\nHier übernehmen wir die Rolle des Product Owners (PO) – aber keine Angst, unser Abenteuer startet ganz klein: Du übernimmst zunächst einen überschaubaren Bereich, in dem du die Grundtechniken eines POs anhand praktischer Mini-Beispiele lernst.\n\nKeine Panik, wenn du am Anfang nur ein paar Pixel-Features jonglierst – von „simple" zu „complex" geht\'s Schritt für Schritt.',
+  
+  '🎮 So funktioniert\'s\n\nLevel 1: Rookie-PO im Anfänger-Modus',
+  
+  'Du bekommst ein kleines Backlog mit simplen Aufgaben:\n• Eine neue Button-Farbe hier\n• Ein Mini-API-Update dort',
+  
+  '📋 Deine erste Aufgabe:\nHalte das Team bei Laune und sorge dafür, dass die Stakeholder nicht bockig werden.\n\n(Tipp: Ein ☕️ Coffee-Emoji in der Slack-Nachricht zaubert manchmal Wunder.)',
+  
+  '🎯 Ziel:\nErreiche am Ende 1.000 Score-Punkte, ohne dass Team-Moral oder Stakeholder-Zufriedenheit unter 50 Punkten fallen.',
+  
+  '📈 Verantwortung wächst mit dem Score',
+  
+  'Sobald du 1.000 Punkte eingesackt hast und dein Team sowie deine Stakeholder gut gelaunt sind, hast du das Level geschafft.\n\nDann geht\'s direkt in den mittel-komplexen Bereich, wo Features enger getaktet und Stakeholder-Launen launischer werden.',
+  
+  'Je höher dein Level, desto mehr Komplexität:\n• Von „Kann das Feature X bitte bunter leuchten?"\n• Bis hin zu „Unser größter Kunde fordert ein massives Redesign – ohne Zeitgarantie!"',
+  
+  '📊 Moral- und Zufriedenheitsanzeige',
+  
+  'Jede Entscheidung wirkt sich auf Team-Moral und Stakeholder-Zufriedenheit aus.\n\nBeispiele:\n• „Feature sofort umsetzen"\n• „Zurück ins Refinement schicken"',
+  
+  '⚠️ Wichtig:\nBleibt einer der Werte unter 50, eskaliert das Pixel-Chaos – dein Score bröckelt und das Level wird hart.\n\nAlso wäge ab, ob dein Team wirklich bereit ist, den 99. Kaffeebecher-Patch einzusehen…',
+  
+  '🎓 Tipps & Tricks vom Coach',
+  
   'Hinter jeder Entscheidung gibt\'s Zugriff auf wertvolle Ressourcen, die dein Wissen vertiefen, ohne dass du dich durch den Framework-Informationsjungle kämpfen musst.',
-  'Kleine Rätsel innerhalb eines Events trainieren deine Priorisierungs-Skills: „Welches Feature killt zuerst dein Team-Mojo – oder schwindet die Stakeholder-Power schneller?"',
-  'Dein Motto: Lerne, lache, siege, repeat',
-  'Lerne die Kunst des Backlog-Managements und der Stakeholder-Kommunikation.',
-  'Lache über grantige Entwickler und schräge Stakeholder-Memes.',
-  'Siege, indem du 1.000 Punkte sammelst und dein Team & deine Stakeholder gut gelaunt hältst.',
-  'Repeat, denn sobald du Level 1 gemeistert hast, wartet direkt der nächste, knalligere Sprint auf dich!'
+  
+  '🧩 Kleine Rätsel innerhalb eines Events trainieren deine Priorisierungs-Skills:\n„Welches Feature killt zuerst dein Team-Mojo – oder schwindet die Stakeholder-Power schneller?"',
+  
+  '🚀 Dein Motto: Lerne, lache, siege, repeat',
+  
+  '📚 Lerne die Kunst des Backlog-Managements und der Stakeholder-Kommunikation.',
+  
+  '😄 Lache über grantige Entwickler und schräge Stakeholder-Memes.',
+  
+  '🏆 Siege, indem du 1.000 Punkte sammelst und dein Team & deine Stakeholder gut gelaunt hältst.',
+  
+  '🔄 Repeat, denn sobald du Level 1 gemeistert hast, wartet direkt der nächste, knalligere Sprint auf dich!'
 ];
 
 const displayedMessages = ref<string[]>([]);
@@ -36,16 +55,19 @@ onMounted(() => {
       displayedMessages.value.push(messages[index]);
       index++;
       
-      // Scroll to bottom
+      // Scroll to bottom with smooth animation
       setTimeout(() => {
         if (chatContainer.value) {
-          chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+          chatContainer.value.scrollTo({
+            top: chatContainer.value.scrollHeight,
+            behavior: 'smooth'
+          });
         }
       }, 100);
     } else {
       clearInterval(interval);
     }
-  }, 2000);
+  }, 3500); // Increased delay between messages
 });
 
 const handleClose = () => {
@@ -116,8 +138,8 @@ const handleClose = () => {
 
 .chat-message {
   font-size: 0.8rem;
-  line-height: 1.6;
-  animation: fade-in 0.5s ease-out;
+  line-height: 1.8;
+  animation: fade-in 0.8s ease-out;
 }
 
 @keyframes fade-in {
