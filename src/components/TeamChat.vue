@@ -24,7 +24,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['close']);
-
 const message = ref('');
 const chatHistory = ref<Message[]>([]);
 const isLoading = ref(false);
@@ -51,20 +50,7 @@ const triggerInitialTeamResponses = async () => {
   isLoading.value = true;
   
   try {
-    const initialPrompt = `
-      Event: ${props.event.title}
-      
-      Beschreibung: ${props.event.description}
-      
-      Als ${nameMap[props.team[0].id]}, wie bewertest du die Situation? 
-      Berücksichtige dabei die möglichen Auswirkungen auf:
-      - Team-Moral
-      - Stakeholder-Zufriedenheit
-      - Projekt-Outcome
-      - Team-Belastung (Burden)
-      
-      Gib eine professionelle aber persönliche Einschätzung ab.
-    `;
+    const initialPrompt = `Kurze Einschätzung (max. 2 Sätze) zu: ${props.event.title}. Berücksichtige dabei deine Rolle und die möglichen Auswirkungen auf Team, Stakeholder und Projekt.`;
     
     chatHistory.value = [{
       id: Date.now(),
@@ -254,8 +240,7 @@ triggerInitialTeamResponses();
   outline: none;
 }
 
-.chat-input input:disable
-d,
+.chat-input input:disabled,
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -282,7 +267,7 @@ button:disabled {
 .typing-indicator {
   padding: 1rem;
   display: flex;
-  justify-content: center;
+  justify-center;
 }
 
 .typing-indicator span {
