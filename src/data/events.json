@@ -34,16 +34,6 @@
         "teamMorale": 20,
         "stakeholderMorale": -20
       }
-    ],
-    "tips": [
-      {
-        "text": "Bevor neue Wünsche blind aufgenommen werden, hilft die MoSCoW-Priorisierung. Schau dir dazu dieses Video an:",
-        "link": "https://www.youtube.com/watch?v=XVx5FKZb6l4"
-      },
-      {
-        "text": "Um Anforderungen wirklich aus Anwender-Jobs abzuleiten, lohnt ein Blick in die Jobs-to-be-Done-Theorie. Alan Klement erklärt es hier:",
-        "link": "https://www.youtube.com/watch?v=cdhra0UYILk"
-      }
     ]
   },
   {
