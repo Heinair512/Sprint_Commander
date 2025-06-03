@@ -45,8 +45,8 @@ const moodClass = computed(() => {
       />
     </div>
     
-    <div class="portrait-info mt-2">
-      <div class="member-name text-xs mb-1 text-crt-darkbrown">{{ member.name }}</div>
+    <div class="portrait-info">
+      <div class="member-name text-xs text-crt-darkbrown">{{ member.name }}</div>
       <div 
         class="mood-label text-xs text-crt-lightsep px-2 py-1 rounded"
         :class="moodClass"
@@ -59,11 +59,11 @@ const moodClass = computed(() => {
 
 <style scoped>
 .team-portrait-container {
-  @apply flex flex-col items-center w-full max-w-[256px] mx-auto relative;
+  @apply flex flex-col items-center w-full max-w-[200px] mx-auto;
 }
 
 .pixel-portrait {
-  @apply w-full aspect-square bg-crt-sepia/20 rounded-lg overflow-hidden flex items-center justify-center;
+  @apply w-full aspect-square bg-crt-sepia/20 rounded overflow-hidden flex items-center justify-center;
   border: 2px solid theme('colors.crt.sepia');
 }
 
@@ -74,11 +74,11 @@ const moodClass = computed(() => {
 }
 
 .portrait-info {
-  @apply w-full text-center;
+  @apply w-full text-center mt-1;
 }
 
 .member-name {
-  @apply font-mono truncate;
+  @apply font-mono truncate mb-1;
 }
 
 .mood-label {
@@ -88,13 +88,13 @@ const moodClass = computed(() => {
 
 @media (max-width: 1024px) {
   .team-portrait-container {
-    max-width: 180px;
+    max-width: 160px;
   }
 }
 
 @media (max-width: 640px) {
   .team-portrait-container {
-    max-width: 140px;
+    max-width: 120px;
   }
   
   .mood-label {
