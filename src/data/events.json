@@ -19,20 +19,20 @@
         "stakeholderMorale": 0
       },
       {
+        "label": "Alles einbauen, sofort!",
+        "effect": -50,
+        "outcome": 40,
+        "burden": 40,
+        "teamMorale": -30,
+        "stakeholderMorale": 30
+      },
+      {
         "label": "Praktikant als Laufbursche",
         "effect": -25,
         "outcome": 0,
         "burden": 0,
         "teamMorale": 20,
         "stakeholderMorale": -20
-      },
-      {
-        "label": "Nein, nur Grundfunktionen",
-        "effect": 50,
-        "outcome": 40,
-        "burden": -10,
-        "teamMorale": 30,
-        "stakeholderMorale": -10
       }
     ]
   },
