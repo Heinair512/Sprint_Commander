@@ -2,7 +2,7 @@
   "levels": [
     {
       "id": "level-1",
-      "title": "Rookie PO",
+      "title": "Kaffee-Büro-App",
       "description": "Erste Schritte als Product Owner",
       "targetScore": 500,
       "minTeamMorale": -10,
