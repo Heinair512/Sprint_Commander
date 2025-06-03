@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useScoreStore } from '../stores/scoreStore';
 import HeaderBar from '../components/HeaderBar.vue';
@@ -51,10 +51,10 @@ const levels = levelsData.levels as Level[];
 
 const emit = defineEmits(['logout']);
 const toast = useToast();
-const score = ref(0); // Reset to 0
-const missionTitle = ref('Black Friday');
+const score = ref(0);
 const currentLevelIndex = ref(0);
 const level = ref(levels[currentLevelIndex.value].title);
+const missionTitle = ref(levels[currentLevelIndex.value].title);
 const activeTeamMember = ref<TeamMember | null>(null);
 const currentEventIndex = ref(0);
 const currentEvent = ref(events[currentEventIndex.value] as Event);
@@ -63,6 +63,19 @@ const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const showTips = ref(false);
 const scoreStore = useScoreStore();
+
+onMounted(() => {
+  // Start with kick-off event (event-0)
+  currentEvent.value = events.find(e => e.id === 'event-0') as Event;
+  
+  // After 20 seconds, transition to the first decision event
+  setTimeout(() => {
+    const firstDecisionEvent = events.find(e => e.id === 'event-1');
+    if (firstDecisionEvent) {
+      currentEvent.value = firstDecisionEvent;
+    }
+  }, 20000);
+});
 
 const checkLevelCompletion = () => {
   const currentLevel = levels[currentLevelIndex.value];
@@ -82,6 +95,7 @@ const checkLevelCompletion = () => {
     currentLevelIndex.value++;
     if (currentLevelIndex.value < levels.length) {
       level.value = levels[currentLevelIndex.value].title;
+      missionTitle.value = levels[currentLevelIndex.value].title;
       toast.success(`Level geschafft! Willkommen in Level ${currentLevelIndex.value + 1}!`, {
         timeout: 5000
       });
