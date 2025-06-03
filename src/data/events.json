@@ -2,13 +2,29 @@
   {
     "id": "event-0",
     "title": "Kick-off Meeting",
-    "description": "Du sitzt im Café um die Ecke, dein Laptop aufgeklappt, und dein erster Arbeitstag als Product Owner für die neue „Büro-Kaffee-App\" hat gerade begonnen. Auf dem Bildschirm siehst du ein schlichtes Dashboard mit den Basis-Kennzahlen:\n\nScore: 0 Punkte\nOutcome: 0 % (kein MVP live)\nBurden: 0 % (Team uneingeschränkt verfügbar)\nTeam-Moral: alle Rollen bei 0\nStakeholder-Moral: 0\n\nGleich startet das Kick-off-Meeting mit dem gesamten Team im hölzernen Konferenzraum: Lars Byte, der API-Entwickler, hat seinen MacBook-Stick bereit, Grace Grid, die UX-Designerin, trägt Skizzen für mögliche Wireframes bei sich, Scrumlius, der Agile Coach, lehnt sich lächelnd zurück und hält seinen Pocket-Guide für Priorisierungsempfehlungen in der Hand. Maggie Money, Stakeholderin aus der Geschäftsführung, schaut erwartungsvoll auf ihr Tablet.\n\nAuf einer Leinwand prangt der Titel des Projekts: „Sprint Commander – Level 1: Kaffee-Kommando\". Dein erklärtes Ziel ist, vor allem die zwei Kernfunktionen zu definieren:\n\nAnzeige, welche:r Kolleg:in gerade Kaffee brüht.\nLive-Information über den Bohnenvorrat im Tank.\n\nGestalte es ansprechend, retro und gut lesbar.",
+    "description": "Du sitzt im Café um die Ecke, dein Laptop bereit, und heute startest du als Product Owner für die „Büro-Kaffee-App\". Auf deinem Screen flimmern die Basis-Kennzahlen:\n\nScore: 0\n\nOutcome: 0 % (kein MVP live)\n\nBurden: 0 % (Team frei)\n\nTeam-Moral: alle bei 0\n\nStakeholder-Moral: 0\n\nGleich beginnt das Kick-off im hölzernen Konferenzraum: Lars Byte, der API-Entwickler, zappt mit seinem MacBook-Stick, Grace Grid, UX-Designerin, hält Wireframe-Skizzen bereit, Scrumlius, der Agile Coach, lehnt sich lächelnd zurück – Pocket-Guide für Priorisierung in der Tasche. Maggie Money, Stakeholderin aus der Geschäftsführung, blickt erwartungsvoll auf ihr Tablet.\n\nÜber der Leinwand prangt: „Sprint Commander – Level 1: Kaffee-Kommando\". Dein Ziel: Zwei Kernfunktionen festlegen:\n\nWer brüht gerade Kaffee?\n\nWie viel Bohnenvorrat ist noch da?\n\nEin Schluck Espresso, ein kurzer Blick auf die Mood-Bar (alles bei 0) – gleich fällst du deine ersten Entscheidungen: Jede beeinflusst Score, Outcome, Burden und Moral. Zeit, mutig „Nein\" zu sagen!",
+    "options": []
+  },
+  {
+    "id": "event-1",
+    "title": "Kaffee-Kommando Scope Creep",
+    "description": "Stakeholder, UX-Design und Dev-Team kommen mit Extras: Push, Emojis, Dark-Mode. Du musst priorisieren und klare Entscheidungen treffen.",
     "options": [
-      { 
-        "label": "Weiter zum ersten Event", 
-        "effect": 0,
-        "outcome": 0,
-        "burden": 0
+      {
+        "label": "Push-Nachrichten für CFO einbauen",
+        "effect": 300,
+        "outcome": 20,
+        "burden": 40,
+        "teamMorale": -8,
+        "stakeholderMorale": 12
+      },
+      {
+        "label": "Nur Basis-Features umsetzen",
+        "effect": 100,
+        "outcome": 40,
+        "burden": 20,
+        "teamMorale": 5,
+        "stakeholderMorale": -5
       }
     ]
   },
@@ -17,36 +33,17 @@
     "title": "Production Outage",
     "description": "Ein unerwarteter Ausfall der Produktionsumgebung hat alle Deployments gestoppt. Im Monitoring-Dashboard erscheinen wiederholt Fehlermeldungen und Timeouts im zentralen Orchestrator-Service. Das Operations-Team muss die Logs sichten und prüfen, ob ein Rollback notwendig ist. Transaktionsverluste und Dateninkonsistenzen drohen mit jeder Minute.",
     "options": [
-      { 
-        "label": "Team alarmieren", 
+      {
+        "label": "Team alarmieren",
         "effect": 5,
         "outcome": 10,
         "burden": 5
       },
-      { 
-        "label": "Abwarten", 
+      {
+        "label": "Abwarten",
         "effect": -10,
         "outcome": -20,
         "burden": 15
-      }
-    ]
-  },
-  {
-    "id": "event-1",
-    "title": "Feature Scope Creep",
-    "description": "Der Stakeholder hat drei neue Anforderungen eingebracht, die komplexe Änderungen an der Core-API erfordern. Authentifizierung, Datenmodelle und externe Schnittstellen müssen angepasst werden. Das Team warnt vor erhöhtem Test- und Review-Aufwand sowie versteckten Abhängigkeiten, die den Sprint gefährden könnten.",
-    "options": [
-      { 
-        "label": "Zurück in die Refinement-Runde", 
-        "effect": 5,
-        "outcome": 5,
-        "burden": -5
-      },
-      { 
-        "label": "Alles reinnehmen", 
-        "effect": -10,
-        "outcome": -10,
-        "burden": 20
       }
     ]
   },
@@ -55,14 +52,14 @@
     "title": "Sprint Planning",
     "description": "Ein Großkunde fordert eine Bulk-Upload-Funktion für CSV- und JSON-Dateien. Die Änderungen betreffen Frontend-Upload, File-Parsing und Backend-Paging. Das UX-Team muss die Benutzerführung optimieren und das Performance-Team die Service-Level-Ziele absichern. Das Team ist unsicher über den Aufwand.",
     "options": [
-      { 
-        "label": "Velocity der letzten Sprints als Maßstab", 
+      {
+        "label": "Velocity der letzten Sprints als Maßstab",
         "effect": 10,
         "outcome": 15,
         "burden": -10
       },
-      { 
-        "label": "Mehr Stories reinnehmen als beim letzten Mal", 
+      {
+        "label": "Mehr Stories reinnehmen als beim letzten Mal",
         "effect": -5,
         "outcome": -5,
         "burden": 25
