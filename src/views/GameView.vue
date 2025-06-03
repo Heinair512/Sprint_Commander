@@ -86,48 +86,52 @@ const makeDecision = (effect: number) => {
   const scoreElement = document.querySelector('.score');
   
   if (currentEvent.value.id === 'event-1') {
-    if (effect === 50) { // "Nein, nur Grundfunktionen" option
-      score.value += 50;
-      scoreElement?.classList.add('success');
-      setTimeout(() => scoreElement?.classList.remove('success'), 1000);
-      
-      updateMoods({
-        dev: { team: 30, stakeholder: -10 },
-        ux: { team: 30, stakeholder: -10 },
-        coach: { team: 30, stakeholder: -10 },
-        stake: { team: -10, stakeholder: -10 }
-      });
-      
-      scoreStore.updateOutcome(40);
-      scoreStore.updateBurden(-10);
-      
-      showSuccess.value = true;
-      
-      toast.success("Sehr gut! Du hast den Scope unter Kontrolle gehalten -> +50 Punkte", {
-        timeout: 3000
-      });
-    } else {
-      score.value -= Math.abs(effect);
+    if (effect === -25) { // "Praktikant als Laufbursche" option
+      score.value -= 25;
       scoreElement?.classList.add('error');
       setTimeout(() => scoreElement?.classList.remove('error'), 1000);
       
-      if (effect === -99) { // "Mit dem Team sprechen" option
-        updateMoods({
-          dev: { team: -20, stakeholder: -30 },
-          ux: { team: -20, stakeholder: -30 },
-          coach: { team: -20, stakeholder: -30 },
-          stake: { team: -30, stakeholder: -30 }
-        });
-        showTeamChat.value = true;
-      } else { // "Praktikant als Laufbursche" option
-        updateMoods({
-          dev: { team: 20, stakeholder: -20 },
-          ux: { team: 20, stakeholder: -20 },
-          coach: { team: 20, stakeholder: -20 },
-          stake: { team: -20, stakeholder: -20 }
-        });
-        showActionFeedback.value = true;
-      }
+      updateMoods({
+        dev: { team: 20, stakeholder: -20 },
+        ux: { team: 20, stakeholder: -20 },
+        coach: { team: 20, stakeholder: -20 },
+        stake: { team: -20, stakeholder: -20 }
+      });
+      
+      scoreStore.updateOutcome(0);
+      scoreStore.updateBurden(0);
+      
+      showSuccess.value = true;
+      
+      toast.error("Der Praktikant ist überfordert! -25 Punkte", {
+        timeout: 3000
+      });
+    } else if (effect === -50) { // "Alles einbauen, sofort!" option
+      score.value -= 50;
+      scoreElement?.classList.add('error');
+      setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+      
+      updateMoods({
+        dev: { team: -30, stakeholder: 30 },
+        ux: { team: -30, stakeholder: 30 },
+        coach: { team: -30, stakeholder: 30 },
+        stake: { team: 30, stakeholder: 30 }
+      });
+      
+      scoreStore.updateOutcome(40);
+      scoreStore.updateBurden(40);
+      
+      showActionFeedback.value = true;
+      
+      toast.error("Das Team ist überlastet! -50 Punkte", {
+        timeout: 3000
+      });
+    } else { // "Mit dem Team sprechen" option
+      score.value -= 99;
+      scoreElement?.classList.add('error');
+      setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+      
+      showTeamChat.value = true;
     }
   } else {
     // Handle other events...
