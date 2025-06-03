@@ -7,6 +7,8 @@ interface TeamMemberScore {
 
 interface ScoreState {
   scores: Record<string, TeamMemberScore>;
+  outcome: number;
+  burden: number;
 }
 
 export const useScoreStore = defineStore('score', {
@@ -16,7 +18,9 @@ export const useScoreStore = defineStore('score', {
       ux: { teamMorale: 0, stakeholderSatisfaction: 0 },
       coach: { teamMorale: 0, stakeholderSatisfaction: 0 },
       stake: { teamMorale: 0, stakeholderSatisfaction: 0 }
-    }
+    },
+    outcome: 50, // Starting at neutral value
+    burden: 50  // Starting at neutral value
   }),
   
   getters: {
@@ -28,7 +32,9 @@ export const useScoreStore = defineStore('score', {
       const total = Object.values(state.scores).reduce((sum, score) => sum + score.stakeholderSatisfaction, 0);
       return Math.round(total / Object.keys(state.scores).length);
     },
-    getMemberScore: (state) => (memberId: string) => state.scores[memberId] || { teamMorale: 0, stakeholderSatisfaction: 0 }
+    getMemberScore: (state) => (memberId: string) => state.scores[memberId] || { teamMorale: 0, stakeholderSatisfaction: 0 },
+    getCurrentOutcome: (state) => state.outcome,
+    getCurrentBurden: (state) => state.burden
   },
   
   actions: {
@@ -38,10 +44,18 @@ export const useScoreStore = defineStore('score', {
         this.scores[memberId].stakeholderSatisfaction = Math.max(-100, Math.min(100, stakeholderSatisfaction));
       }
     },
+    updateOutcome(value: number) {
+      this.outcome = Math.max(0, Math.min(100, this.outcome + value));
+    },
+    updateBurden(value: number) {
+      this.burden = Math.max(0, Math.min(100, this.burden + value));
+    },
     resetAllScores() {
       Object.keys(this.scores).forEach(memberId => {
         this.scores[memberId] = { teamMorale: 0, stakeholderSatisfaction: 0 };
       });
+      this.outcome = 50;
+      this.burden = 50;
     }
   }
 });

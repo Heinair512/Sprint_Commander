@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useScoreStore } from '../stores/scoreStore';
 import HeaderBar from '../components/HeaderBar.vue';
@@ -12,6 +12,7 @@ import TipsPanel from '../components/TipsPanel.vue';
 import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
+import levelsData from '../data/levels.json';
 
 interface TeamMember {
   id: string;
@@ -28,16 +29,32 @@ interface Event {
   options: Array<{
     label: string;
     effect: number;
+    outcome: number;
+    burden: number;
   }>;
 }
 
+interface Level {
+  id: string;
+  title: string;
+  description: string;
+  targetScore: number;
+  minTeamMorale: number;
+  minStakeholderSatisfaction: number;
+  minOutcome: number;
+  maxBurden: number;
+  eventIds: string[];
+}
+
 const team = teamData.team as TeamMember[];
+const levels = levelsData.levels as Level[];
 
 const emit = defineEmits(['logout']);
 const toast = useToast();
 const score = ref(825);
 const missionTitle = ref('Black Friday');
-const level = ref('Jira Login');
+const currentLevelIndex = ref(0);
+const level = ref(levels[currentLevelIndex.value].title);
 const activeTeamMember = ref<TeamMember | null>(null);
 const currentEventIndex = ref(0);
 const currentEvent = ref(events[currentEventIndex.value] as Event);
@@ -46,6 +63,37 @@ const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const showTips = ref(false);
 const scoreStore = useScoreStore();
+
+const checkLevelCompletion = () => {
+  const currentLevel = levels[currentLevelIndex.value];
+  const teamMorale = scoreStore.teamMorale;
+  const stakeholderSatisfaction = scoreStore.stakeholderSatisfaction;
+  const outcome = scoreStore.getCurrentOutcome;
+  const burden = scoreStore.getCurrentBurden;
+
+  if (
+    score.value >= currentLevel.targetScore &&
+    teamMorale >= currentLevel.minTeamMorale &&
+    stakeholderSatisfaction >= currentLevel.minStakeholderSatisfaction &&
+    outcome >= currentLevel.minOutcome &&
+    burden <= currentLevel.maxBurden
+  ) {
+    // Level completed
+    currentLevelIndex.value++;
+    if (currentLevelIndex.value < levels.length) {
+      level.value = levels[currentLevelIndex.value].title;
+      toast.success(`Level geschafft! Willkommen in Level ${currentLevelIndex.value + 1}!`, {
+        timeout: 5000
+      });
+      // Optional: Reset some values for the new level
+      scoreStore.resetAllScores();
+    } else {
+      toast.success("Gratulation! Du hast alle Level gemeistert!", {
+        timeout: 5000
+      });
+    }
+  }
+};
 
 const handleLogout = () => {
   emit('logout');
@@ -97,6 +145,13 @@ const updateMoods = (moodChanges: Record<string, { team: number; stakeholder: nu
 
 const makeDecision = (effect: number) => {
   const scoreElement = document.querySelector('.score');
+  const selectedOption = currentEvent.value.options.find(opt => opt.effect === effect);
+  
+  if (!selectedOption) return;
+
+  // Update outcome and burden
+  scoreStore.updateOutcome(selectedOption.outcome);
+  scoreStore.updateBurden(selectedOption.burden);
   
   switch(currentEvent.value.id) {
     case 'event-2': // Production Outage
@@ -213,6 +268,9 @@ const makeDecision = (effect: number) => {
       }
       break;
   }
+
+  // Check level completion after each decision
+  checkLevelCompletion();
 };
 
 const selectTeamMember = (member: TeamMember) => {
@@ -233,6 +291,17 @@ const closeTeamChat = () => {
 const closeActionFeedback = () => {
   showActionFeedback.value = false;
 };
+
+// Watch for level changes to update events
+watch(currentLevelIndex, (newIndex) => {
+  const levelEvents = levels[newIndex].eventIds;
+  // Filter events based on current level
+  const availableEvents = events.filter(event => levelEvents.includes(event.id));
+  if (availableEvents.length > 0) {
+    currentEventIndex.value = 0;
+    currentEvent.value = availableEvents[0] as Event;
+  }
+});
 </script>
 
 <template>

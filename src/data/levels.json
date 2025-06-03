@@ -1,0 +1,37 @@
+{
+  "levels": [
+    {
+      "id": "level-1",
+      "title": "Rookie PO",
+      "description": "Erste Schritte als Product Owner",
+      "targetScore": 1000,
+      "minTeamMorale": 0,
+      "minStakeholderSatisfaction": 0,
+      "minOutcome": 50,
+      "maxBurden": 75,
+      "eventIds": ["event-1", "event-2", "event-3"]
+    },
+    {
+      "id": "level-2",
+      "title": "Junior PO",
+      "description": "Komplexere Entscheidungen treffen",
+      "targetScore": 2000,
+      "minTeamMorale": 25,
+      "minStakeholderSatisfaction": 25,
+      "minOutcome": 60,
+      "maxBurden": 70,
+      "eventIds": ["event-1", "event-2", "event-3"]
+    },
+    {
+      "id": "level-3",
+      "title": "Senior PO",
+      "description": "Strategische Produktentscheidungen",
+      "targetScore": 3000,
+      "minTeamMorale": 50,
+      "minStakeholderSatisfaction": 50,
+      "minOutcome": 75,
+      "maxBurden": 60,
+      "eventIds": ["event-1", "event-2", "event-3"]
+    }
+  ]
+}

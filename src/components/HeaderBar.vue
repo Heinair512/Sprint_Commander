@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useScoreStore } from '../stores/scoreStore';
 
-defineProps<{
+const props = defineProps<{
   missionTitle: string;
   score: number;
   level: string;
 }>();
 
+const scoreStore = useScoreStore();
 const emit = defineEmits(['logout', 'showTips']);
 const showMenu = ref(false);
 
@@ -59,9 +61,17 @@ const toggleMenu = () => {
       SPRINT COMMANDER
     </div>
     
-    <div class="score-level text-right text-xs md:text-sm">
+    <div class="stats flex flex-col items-end text-xs md:text-sm">
       <div class="score transition-colors duration-500">Score: {{ score }}</div>
       <div>Level: {{ level }}</div>
+      <div class="flex gap-2 mt-1">
+        <div class="outcome" :class="{ 'text-green-700': scoreStore.getCurrentOutcome >= 75, 'text-yellow-700': scoreStore.getCurrentOutcome >= 50 && scoreStore.getCurrentOutcome < 75, 'text-red-700': scoreStore.getCurrentOutcome < 50 }">
+          🎯 {{ scoreStore.getCurrentOutcome }}%
+        </div>
+        <div class="burden" :class="{ 'text-green-700': scoreStore.getCurrentBurden <= 25, 'text-yellow-700': scoreStore.getCurrentBurden > 25 && scoreStore.getCurrentBurden <= 50, 'text-red-700': scoreStore.getCurrentBurden > 50 }">
+          ⚡️ {{ scoreStore.getCurrentBurden }}%
+        </div>
+      </div>
     </div>
   </header>
 </template>
@@ -101,5 +111,9 @@ const toggleMenu = () => {
 
 .burger-menu:hover {
   transform: scale(1.1);
+}
+
+.stats {
+  min-width: 120px;
 }
 </style>
