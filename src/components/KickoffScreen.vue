@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const emit = defineEmits(['transition']);
 const showContent = ref(false);
-const timeLeft = ref(20);
+const timeLeft = ref(30); // Changed from 20 to 30 seconds
 const timerInterval = ref<number | null>(null);
 
 onMounted(() => {
@@ -38,11 +38,6 @@ onBeforeUnmount(() => {
       class="kickoff-content bg-crt-lightsep p-6 rounded-lg relative"
       :class="{ 'fade-in': showContent }"
     >
-      <!-- Countdown Timer -->
-      <div class="countdown-timer absolute top-4 right-4 bg-crt-brown text-crt-glow px-3 py-1 rounded">
-        {{ timeLeft }}s
-      </div>
-      
       <div class="text-content mb-8">
         <p class="mb-4">
           Du sitzt im Café um die Ecke, dein Laptop bereit, und heute startest du als Product Owner für die „Büro-Kaffee-App". Auf deinem Screen flimmern die Basis-Kennzahlen:
@@ -87,6 +82,11 @@ Stakeholder-Moral: 0</pre>
           <li>Wer brüht gerade Kaffee?</li>
           <li>Wie viel Bohnenvorrat ist noch da?</li>
         </ul>
+      </div>
+
+      <!-- Countdown Timer - Moved to bottom right -->
+      <div class="countdown-timer absolute bottom-4 right-4 bg-crt-brown text-crt-glow px-3 py-1 rounded">
+        {{ timeLeft }}s
       </div>
     </div>
   </div>
