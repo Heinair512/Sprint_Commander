@@ -10,6 +10,7 @@ import TeamChat from '../components/TeamChat.vue';
 import ActionFeedback from '../components/ActionFeedback.vue';
 import TipsPanel from '../components/TipsPanel.vue';
 import KickoffScreen from '../components/KickoffScreen.vue';
+import SuccessScreen from '../components/SuccessScreen.vue';
 import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
@@ -67,6 +68,7 @@ const showActionFeedback = ref(false);
 const showTips = ref(false);
 const showKickoff = ref(true);
 const showMainGame = ref(false);
+const showSuccessScreen = ref(false);
 const scoreStore = useScoreStore();
 
 // Computed properties for ActionFeedback component
@@ -185,9 +187,26 @@ const makeDecision = (effect: number) => {
   if (selectedOption.effect > 0) {
     scoreElement?.classList.add('success');
     setTimeout(() => scoreElement?.classList.remove('success'), 1000);
+    
+    // Show success screen for Event 1 when choosing the correct option
+    if (currentEvent.value.id === 'event-1' && effect === 5) {
+      showSuccessScreen.value = true;
+    } else {
+      showTeamChat.value = true;
+    }
+    
+    toast.success(`Gute Entscheidung! -> ${selectedOption.effect > 0 ? '+' : ''}${selectedOption.effect} Punkte`, {
+      timeout: 3000,
+      toastClassName: "pixel-toast success-toast",
+    });
   } else {
     scoreElement?.classList.add('error');
     setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+    showActionFeedback.value = true;
+    toast.error(`Nicht optimal! ${selectedOption.effect} Punkte`, {
+      timeout: 3000,
+      toastClassName: "pixel-toast error-toast",
+    });
   }
 
   // Update global metrics
@@ -202,21 +221,6 @@ const makeDecision = (effect: number) => {
       selectedOption.stakeholderMorale || 0
     );
   });
-
-  // Show appropriate feedback
-  if (selectedOption.effect > 0) {
-    showTeamChat.value = true;
-    toast.success(`Gute Entscheidung! -> ${selectedOption.effect > 0 ? '+' : ''}${selectedOption.effect} Punkte`, {
-      timeout: 3000,
-      toastClassName: "pixel-toast success-toast",
-    });
-  } else {
-    showActionFeedback.value = true;
-    toast.error(`Nicht optimal! ${selectedOption.effect} Punkte`, {
-      timeout: 3000,
-      toastClassName: "pixel-toast error-toast",
-    });
-  }
 
   checkLevelCompletion();
 };
@@ -238,6 +242,10 @@ const closeTeamChat = () => {
 
 const closeActionFeedback = () => {
   showActionFeedback.value = false;
+};
+
+const closeSuccessScreen = () => {
+  showSuccessScreen.value = false;
 };
 
 watch(currentLevelIndex, (newIndex) => {
@@ -279,7 +287,11 @@ watch(currentLevelIndex, (newIndex) => {
         
         <div class="main-area flex-grow lg:w-1/2 xl:w-3/5">
           <div class="max-w-4xl mx-auto h-full">
-            <TipsPanel v-if="showTips" />
+            <SuccessScreen 
+              v-if="showSuccessScreen" 
+              @close="closeSuccessScreen" 
+            />
+            <TipsPanel v-else-if="showTips" />
             <ActionFeedback
               v-else-if="showActionFeedback"
               :message="actionFeedbackMessage"
