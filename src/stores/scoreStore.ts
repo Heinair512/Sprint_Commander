@@ -19,8 +19,8 @@ export const useScoreStore = defineStore('score', {
       coach: { teamMorale: 0, stakeholderSatisfaction: 0 },
       stake: { teamMorale: 0, stakeholderSatisfaction: 0 }
     },
-    outcome: 50, // Starting at neutral value
-    burden: 50  // Starting at neutral value
+    outcome: 0, // Starting at 0 for initial state
+    burden: 0  // Starting at 0 for initial state
   }),
   
   getters: {
@@ -54,8 +54,8 @@ export const useScoreStore = defineStore('score', {
       Object.keys(this.scores).forEach(memberId => {
         this.scores[memberId] = { teamMorale: 0, stakeholderSatisfaction: 0 };
       });
-      this.outcome = 50;
-      this.burden = 50;
+      this.outcome = 0;
+      this.burden = 0;
     }
   }
 });

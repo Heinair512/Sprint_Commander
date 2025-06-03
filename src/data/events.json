@@ -1,5 +1,18 @@
 [
   {
+    "id": "event-0",
+    "title": "Kick-off Meeting",
+    "description": "Du sitzt im Café um die Ecke, dein Laptop aufgeklappt, und dein erster Arbeitstag als Product Owner für die neue „Büro-Kaffee-App" hat gerade begonnen. Auf dem Bildschirm siehst du ein schlichtes Dashboard mit den Basis-Kennzahlen:\n\nScore: 0 Punkte\nOutcome: 0 % (kein MVP live)\nBurden: 0 % (Team uneingeschränkt verfügbar)\nTeam-Moral: alle Rollen bei 0\nStakeholder-Moral: 0\n\nGleich startet das Kick-off-Meeting mit dem gesamten Team im hölzernen Konferenzraum: Lars Byte, der API-Entwickler, hat seinen MacBook-Stick bereit, Grace Grid, die UX-Designerin, trägt Skizzen für mögliche Wireframes bei sich, Scrumlius, der Agile Coach, lehnt sich lächelnd zurück und hält seinen Pocket-Guide für Priorisierungsempfehlungen in der Hand. Maggie Money, Stakeholderin aus der Geschäftsführung, schaut erwartungsvoll auf ihr Tablet.\n\nAuf einer Leinwand prangt der Titel des Projekts: „Sprint Commander – Level 1: Kaffee-Kommando". Dein erklärtes Ziel ist, vor allem die zwei Kernfunktionen zu definieren:\n\nAnzeige, welche:r Kolleg:in gerade Kaffee brüht.\nLive-Information über den Bohnenvorrat im Tank.\n\nGestalte es ansprechend, retro und gut lesbar.",
+    "options": [
+      { 
+        "label": "Weiter zum ersten Event", 
+        "effect": 0,
+        "outcome": 0,
+        "burden": 0
+      }
+    ]
+  },
+  {
     "id": "event-2",
     "title": "Production Outage",
     "description": "Ein unerwarteter Ausfall der Produktionsumgebung hat alle Deployments gestoppt. Im Monitoring-Dashboard erscheinen wiederholt Fehlermeldungen und Timeouts im zentralen Orchestrator-Service. Das Operations-Team muss die Logs sichten und prüfen, ob ein Rollback notwendig ist. Transaktionsverluste und Dateninkonsistenzen drohen mit jeder Minute.",

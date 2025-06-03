@@ -9,7 +9,7 @@
       "minStakeholderSatisfaction": -10,
       "minOutcome": 60,
       "maxBurden": 50,
-      "eventIds": ["event-1", "event-2", "event-3"]
+      "eventIds": ["event-0", "event-1", "event-2", "event-3"]
     },
     {
       "id": "level-2",
