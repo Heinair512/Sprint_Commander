@@ -3,8 +3,15 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const emit = defineEmits(['transition']);
 const showContent = ref(false);
-const timeLeft = ref(30); // Changed from 20 to 30 seconds
+const timeLeft = ref(30);
 const timerInterval = ref<number | null>(null);
+
+const handleClose = () => {
+  if (timerInterval.value) {
+    clearInterval(timerInterval.value);
+  }
+  emit('transition');
+};
 
 onMounted(() => {
   showContent.value = true;
@@ -30,8 +37,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="kickoff-screen bg-crt-sepia p-4 rounded-lg shadow-lg max-w-4xl mx-auto">
-    <div class="kickoff-header bg-crt-brown text-crt-glow p-3 mb-4 rounded">
-      <div class="text-lg text-center">Kick-off Meeting: Büro-Kaffee-App</div>
+    <div class="kickoff-header bg-crt-brown text-crt-glow p-3 mb-4 rounded flex items-center justify-between">
+      <div class="text-lg">Kick-off Meeting: Büro-Kaffee-App</div>
+      <button @click="handleClose" class="close-btn px-2 hover:text-crt-sepia transition-colors">X</button>
     </div>
     
     <div 
@@ -106,6 +114,15 @@ Stakeholder-Moral: 0</pre>
 .countdown-timer {
   font-size: 0.7rem;
   animation: pulse 1s infinite;
+}
+
+.close-btn {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.1);
 }
 
 @keyframes fadeIn {
