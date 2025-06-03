@@ -25,7 +25,6 @@ const isLoading = ref(false);
 const error = ref('');
 const chatStore = useChatStore();
 const scoreStore = useScoreStore();
-const userName = ref('Jan'); // Default user name
 
 // Get event-specific history for AI context
 const eventHistory = computed(() => 
@@ -82,8 +81,8 @@ async function sendMessage() {
     // Prepare history for AI
     const historyForAI = getSanitizedEventHistory();
 
-    // Build context message with user name and metrics
-    const contextMessage = `You are speaking with ${userName.value}, the Product Owner. Current metrics - Team Morale: ${metrics.value.teamMorale}, Stakeholder Satisfaction: ${metrics.value.stakeholderSatisfaction}, Outcome: ${metrics.value.outcome}%, Burden: ${metrics.value.burden}%\n\nEvent context: ${props.currentEvent.description}\n\n${userName.value}'s message: ${userText}`;
+    // Build context message with metrics
+    const contextMessage = `Current metrics - Team Morale: ${metrics.value.teamMorale}, Stakeholder Satisfaction: ${metrics.value.stakeholderSatisfaction}, Outcome: ${metrics.value.outcome}%, Burden: ${metrics.value.burden}%\n\nEvent context: ${props.currentEvent.description}\n\nUser message: ${userText}`;
 
     // Send to chat function
     const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
@@ -131,14 +130,14 @@ onMounted(async () => {
   isLoading.value = true;
   try {
     const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
-    const initialContext = `You are speaking with ${userName.value}, the Product Owner. Current event: ${props.currentEvent.description}`;
+    const initialContext = `Current metrics - Team Morale: ${metrics.value.teamMorale}, Stakeholder Satisfaction: ${metrics.value.stakeholderSatisfaction}, Outcome: ${metrics.value.outcome}%, Burden: ${metrics.value.burden}%\n\nEvent context: ${props.currentEvent.description}`;
     
     const response = await axios.post(endpoint, {
       roleId: props.memberId,
       eventId: props.currentEvent.id,
       eventDescription: props.currentEvent.description,
       history: [],
-      message: `${initialContext}\n\nGreet ${userName.value} professionally and briefly.`
+      message: `${initialContext}\n\nGreet the Product Owner professionally and briefly comment on the current situation.`
     });
 
     if (response.data?.reply) {
