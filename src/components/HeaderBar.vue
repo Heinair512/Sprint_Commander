@@ -35,7 +35,6 @@ const toggleMenu = () => {
         <div class="w-6 h-0.5 bg-crt-darkbrown"></div>
       </button>
       
-      <!-- Burger Menu Dropdown -->
       <div v-if="showMenu" class="absolute top-full left-0 mt-2 w-48 bg-crt-sepia border-2 border-crt-darkbrown rounded shadow-lg z-50">
         <button 
           @click="handleShowTips" 
@@ -61,15 +60,45 @@ const toggleMenu = () => {
       SPRINT COMMANDER
     </div>
     
-    <div class="stats flex flex-col items-end text-xs md:text-sm">
+    <div class="stats flex flex-col items-end text-xs md:text-sm gap-2">
       <div class="score transition-colors duration-500">Score: {{ score }}</div>
       <div>Level: {{ level }}</div>
-      <div class="flex gap-2 mt-1">
-        <div class="outcome" :class="{ 'text-green-700': scoreStore.getCurrentOutcome >= 75, 'text-yellow-700': scoreStore.getCurrentOutcome >= 50 && scoreStore.getCurrentOutcome < 75, 'text-red-700': scoreStore.getCurrentOutcome < 50 }">
-          🎯 {{ scoreStore.getCurrentOutcome }}%
+      
+      <div class="metrics flex flex-col gap-1 mt-1">
+        <div class="metric-bar">
+          <div class="flex justify-between mb-1">
+            <span>🎯 Outcome</span>
+            <span>{{ scoreStore.getCurrentOutcome }}%</span>
+          </div>
+          <div class="w-32 h-2 bg-gray-200 rounded">
+            <div 
+              class="h-full rounded transition-all duration-300"
+              :style="{ width: `${scoreStore.getCurrentOutcome}%` }"
+              :class="{
+                'bg-green-600': scoreStore.getCurrentOutcome >= 75,
+                'bg-yellow-500': scoreStore.getCurrentOutcome >= 50 && scoreStore.getCurrentOutcome < 75,
+                'bg-red-600': scoreStore.getCurrentOutcome < 50
+              }"
+            ></div>
+          </div>
         </div>
-        <div class="burden" :class="{ 'text-green-700': scoreStore.getCurrentBurden <= 25, 'text-yellow-700': scoreStore.getCurrentBurden > 25 && scoreStore.getCurrentBurden <= 50, 'text-red-700': scoreStore.getCurrentBurden > 50 }">
-          ⚡️ {{ scoreStore.getCurrentBurden }}%
+        
+        <div class="metric-bar">
+          <div class="flex justify-between mb-1">
+            <span>⚡️ Burden</span>
+            <span>{{ scoreStore.getCurrentBurden }}%</span>
+          </div>
+          <div class="w-32 h-2 bg-gray-200 rounded">
+            <div 
+              class="h-full rounded transition-all duration-300"
+              :style="{ width: `${scoreStore.getCurrentBurden}%` }"
+              :class="{
+                'bg-red-600': scoreStore.getCurrentBurden > 75,
+                'bg-yellow-500': scoreStore.getCurrentBurden > 50 && scoreStore.getCurrentBurden <= 75,
+                'bg-green-600': scoreStore.getCurrentBurden <= 50
+              }"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
@@ -114,6 +143,10 @@ const toggleMenu = () => {
 }
 
 .stats {
-  min-width: 120px;
+  min-width: 160px;
+}
+
+.metric-bar {
+  font-size: 0.6rem;
 }
 </style>

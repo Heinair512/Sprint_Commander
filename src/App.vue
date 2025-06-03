@@ -3,9 +3,11 @@ import { ref } from 'vue';
 import GameView from './views/GameView.vue';
 import LoginScreen from './components/LoginScreen.vue';
 import WelcomeScreen from './components/WelcomeScreen.vue';
+import LevelIntroScreen from './components/LevelIntroScreen.vue';
 
 const isAuthenticated = ref(false);
 const showWelcome = ref(false);
+const showLevelIntro = ref(false);
 
 const handleLoginSuccess = () => {
   isAuthenticated.value = true;
@@ -14,11 +16,17 @@ const handleLoginSuccess = () => {
 
 const handleWelcomeClose = () => {
   showWelcome.value = false;
+  showLevelIntro.value = true;
+};
+
+const handleLevelIntroClose = () => {
+  showLevelIntro.value = false;
 };
 
 const handleLogout = () => {
   isAuthenticated.value = false;
   showWelcome.value = false;
+  showLevelIntro.value = false;
 };
 </script>
 
@@ -27,6 +35,7 @@ const handleLogout = () => {
   <div v-else class="crt-screen">
     <div class="crt-overlay"></div>
     <WelcomeScreen v-if="showWelcome" @close="handleWelcomeClose" />
+    <LevelIntroScreen v-else-if="showLevelIntro" @close="handleLevelIntroClose" />
     <GameView v-else @logout="handleLogout" />
   </div>
 </template>

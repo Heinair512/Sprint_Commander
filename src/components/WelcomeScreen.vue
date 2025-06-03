@@ -58,7 +58,7 @@ const messages = [
 
 onMounted(() => {
   let index = 0;
-  const baseDelay = 2000; // Reduced from 5500 to 2000
+  const baseDelay = 2000;
 
   const showNextGroup = () => {
     if (index >= messages.length) {
@@ -66,13 +66,12 @@ onMounted(() => {
       return;
     }
     
-    // Clear messages for new sections
-    if (index === 0 || // Start
-        index === 2 || // "So funktioniert's"
-        index === 6 || // "Verantwortung wächst"
-        index === 9 || // "Moral- und Zufriedenheitsanzeige"
-        index === 12 || // "Tipps & Tricks"
-        index === 15) { // "Dein Motto"
+    if (index === 0 || 
+        index === 2 || 
+        index === 6 || 
+        index === 9 || 
+        index === 12 || 
+        index === 15) {
       displayedMessages.value = [];
     }
     
@@ -95,16 +94,15 @@ onMounted(() => {
         
         index++;
         
-        // Determine next message timing
         let nextDelay;
         if (isFirstGroup) {
-          nextDelay = baseDelay * 1.2; // Slightly longer for first group
+          nextDelay = baseDelay * 1.2;
         } else if (index >= 2 && index <= 6) {
-          nextDelay = baseDelay * 0.7; // 30% faster for "so funktioniert's" to "Verantwortung"
+          nextDelay = baseDelay * 0.7;
         } else if (isScoreSection) {
-          nextDelay = baseDelay * 0.8; // 20% faster for score section
+          nextDelay = baseDelay * 0.8;
         } else if (isMotto) {
-          nextDelay = baseDelay * 0.6; // Even faster for motto section
+          nextDelay = baseDelay * 0.6;
         } else {
           nextDelay = baseDelay;
         }
@@ -114,10 +112,8 @@ onMounted(() => {
             (isMotto && index < messages.length)) {
           setTimeout(showMessagesInGroup, nextDelay);
         } else if (!isMotto) {
-          // Shorter pause before next section
           setTimeout(showNextGroup, baseDelay * 1.5);
         } else {
-          // Show Let's Go button after last message
           setTimeout(() => {
             showLetsGoButton.value = true;
           }, baseDelay);
@@ -144,7 +140,6 @@ const handleClose = () => {
     </div>
     
     <div class="welcome-content flex gap-4 h-[calc(100%-4rem)]">
-      <!-- Video Section -->
       <div class="video-container w-1/2 bg-black rounded-lg overflow-hidden">
         <video 
           ref="videoRef"
@@ -159,7 +154,6 @@ const handleClose = () => {
         </video>
       </div>
       
-      <!-- Chat Section -->
       <div 
         ref="chatContainer"
         class="chat-container w-1/2 bg-crt-lightsep p-4 rounded overflow-y-auto relative"
@@ -172,11 +166,10 @@ const handleClose = () => {
           <p class="whitespace-pre-line">{{ message }}</p>
         </div>
         
-        <!-- Let's Go Button -->
         <button 
           v-if="showLetsGoButton"
           @click="handleClose"
-          class="lets-go-button w-full py-4 mt-6 bg-crt-brown text-crt-glow rounded-lg hover:bg-crt-darkbrown transition-colors duration-300"
+          class="lets-go-button w-full py-4 mt-6 bg-green-700 text-crt-glow rounded-lg hover:bg-green-600 transition-colors duration-300"
         >
           🚀 Let's Go!
         </button>
