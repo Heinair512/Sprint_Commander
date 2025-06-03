@@ -45,16 +45,17 @@ const handleLogin = async () => {
     
     if (user) {
       emit('login-success');
+      isLoading.value = false;
     } else {
       error.value = '⚠️ Authentication Failed: 404 - User not found in Production!';
       toast.error('💥 Login-Bug detected! Hotfix needed!', {
         timeout: 3000,
       });
+      isLoading.value = false;
     }
   } catch (err) {
     error.value = '🐛 Critical System Error: Timeout in Authentication Microservice!';
     console.error('Login error:', err);
-  } finally {
     isLoading.value = false;
   }
 };
