@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useChatStore } from '../stores/chat';
+import { useScoreStore } from '../stores/scoreStore';
 
 const props = defineProps<{
   poId: string;
@@ -23,6 +24,7 @@ const message = ref('');
 const isLoading = ref(false);
 const error = ref('');
 const chatStore = useChatStore();
+const scoreStore = useScoreStore();
 
 // Get event-specific history for AI context
 const eventHistory = computed(() => 
@@ -43,6 +45,14 @@ const memberName = computed(() => {
   };
   return nameMap[props.memberId] || props.memberId;
 });
+
+// Get current metrics for context
+const metrics = computed(() => ({
+  teamMorale: scoreStore.teamMorale,
+  stakeholderSatisfaction: scoreStore.stakeholderSatisfaction,
+  outcome: scoreStore.getCurrentOutcome,
+  burden: scoreStore.getCurrentBurden
+}));
 
 function getSanitizedEventHistory() {
   return eventHistory.value.map(m => ({
@@ -71,14 +81,16 @@ async function sendMessage() {
     // 2. Prepare history for AI
     const historyForAI = getSanitizedEventHistory();
 
-    // 3. Send to chat function
+    // 3. Send to chat function with metrics context
     const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
+    const contextMessage = `Current metrics - Team Morale: ${metrics.value.teamMorale}, Stakeholder Satisfaction: ${metrics.value.stakeholderSatisfaction}, Outcome: ${metrics.value.outcome}%, Burden: ${metrics.value.burden}%\n\nEvent context: ${props.currentEvent.description}\n\nUser message: ${userText}`;
+
     const payload = {
       roleId: props.memberId,
       eventId: props.currentEvent.id,
       eventDescription: props.currentEvent.description ?? '',
       history: historyForAI,
-      message: userText
+      message: contextMessage
     };
 
     const response = await axios.post(endpoint, payload, {
@@ -111,6 +123,34 @@ async function sendMessage() {
     isLoading.value = false;
   }
 }
+
+// Initial greeting when chat opens
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
+    const response = await axios.post(endpoint, {
+      roleId: props.memberId,
+      eventId: props.currentEvent.id,
+      eventDescription: props.currentEvent.description,
+      history: [],
+      message: "Begrüße den Product Owner kurz und professionell."
+    });
+
+    if (response.data?.reply) {
+      chatStore.addPrivateReply(
+        props.memberId,
+        props.poId,
+        response.data.reply,
+        props.currentEvent.id
+      );
+    }
+  } catch (err) {
+    console.error('Initial greeting error:', err);
+  } finally {
+    isLoading.value = false;
+  }
+});
 
 const handleClose = () => {
   emit('close');

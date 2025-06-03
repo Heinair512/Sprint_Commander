@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
 import axios from 'axios';
+import { useScoreStore } from '../stores/scoreStore';
 
 interface Message {
   id: number;
@@ -29,6 +30,7 @@ const chatHistory = ref<Message[]>([]);
 const isLoading = ref(false);
 const chatContainer = ref<HTMLElement | null>(null);
 const initialResponsesLoaded = ref(false);
+const scoreStore = useScoreStore();
 
 const nameMap: Record<string, string> = {
   dev: 'Lars Byte',
@@ -50,35 +52,44 @@ const triggerInitialTeamResponses = async () => {
   isLoading.value = true;
   
   try {
-    const initialPrompt = `Kurze Einschätzung (max. 2 Sätze) zu: ${props.event.title}. Berücksichtige dabei deine Rolle und die möglichen Auswirkungen auf Team, Stakeholder und Projekt.`;
-    
+    // Add system message first
     chatHistory.value = [{
       id: Date.now(),
       sender: 'system',
       senderLabel: 'System',
       text: `🚨 ALARM: ${props.event.title}! 🚨`
     }];
-    
-    for (const member of props.team) {
-      const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
-      
-      const response = await axios.post(endpoint, {
-        roleId: member.id,
-        eventId: props.event.id,
-        eventDescription: props.event.description,
-        history: [],
-        message: initialPrompt
-      });
 
-      if (response.data && response.data.reply) {
-        chatHistory.value.push({
-          id: Date.now() + Math.random(),
-          sender: member.id,
-          senderLabel: nameMap[member.id],
-          text: response.data.reply
-        });
-        await scrollToBottom();
-      }
+    // Get current metrics for context
+    const metrics = {
+      teamMorale: scoreStore.teamMorale,
+      stakeholderSatisfaction: scoreStore.stakeholderSatisfaction,
+      outcome: scoreStore.getCurrentOutcome,
+      burden: scoreStore.getCurrentBurden
+    };
+
+    // Choose one random team member for initial response
+    const randomMember = props.team[Math.floor(Math.random() * props.team.length)];
+    
+    const initialPrompt = `Current metrics - Team Morale: ${metrics.teamMorale}, Stakeholder Satisfaction: ${metrics.stakeholderSatisfaction}, Outcome: ${metrics.outcome}%, Burden: ${metrics.burden}%\n\nEvent context: ${props.event.description}\n\nGib eine kurze, prägnante erste Einschätzung (max. 2 Sätze) zu diesem Event aus deiner Rolle heraus.`;
+    
+    const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
+    const response = await axios.post(endpoint, {
+      roleId: randomMember.id,
+      eventId: props.event.id,
+      eventDescription: props.event.description,
+      history: [],
+      message: initialPrompt
+    });
+
+    if (response.data && response.data.reply) {
+      chatHistory.value.push({
+        id: Date.now() + Math.random(),
+        sender: randomMember.id,
+        senderLabel: nameMap[randomMember.id],
+        text: response.data.reply
+      });
+      await scrollToBottom();
     }
     
     initialResponsesLoaded.value = true;
@@ -113,9 +124,18 @@ const sendMessage = async () => {
   await scrollToBottom();
 
   try {
+    const metrics = {
+      teamMorale: scoreStore.teamMorale,
+      stakeholderSatisfaction: scoreStore.stakeholderSatisfaction,
+      outcome: scoreStore.getCurrentOutcome,
+      burden: scoreStore.getCurrentBurden
+    };
+
     for (const member of props.team) {
       const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
       
+      const contextMessage = `Current metrics - Team Morale: ${metrics.teamMorale}, Stakeholder Satisfaction: ${metrics.stakeholderSatisfaction}, Outcome: ${metrics.outcome}%, Burden: ${metrics.burden}%\n\nEvent context: ${props.event.description}\n\nUser message: ${userMessage}`;
+
       const response = await axios.post(endpoint, {
         roleId: member.id,
         eventId: props.event.id,
@@ -124,7 +144,7 @@ const sendMessage = async () => {
           role: msg.sender === 'user' ? 'user' : 'assistant',
           content: msg.text
         })),
-        message: userMessage
+        message: contextMessage
       });
 
       if (response.data && response.data.reply) {
