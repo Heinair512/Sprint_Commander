@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useChatStore } from '../stores/chat';
 import { useScoreStore } from '../stores/scoreStore';
