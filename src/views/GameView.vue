@@ -9,6 +9,7 @@ import NewsTicker from '../components/NewsTicker.vue';
 import TeamChat from '../components/TeamChat.vue';
 import ActionFeedback from '../components/ActionFeedback.vue';
 import TipsPanel from '../components/TipsPanel.vue';
+import KickoffScreen from '../components/KickoffScreen.vue';
 import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
@@ -62,7 +63,16 @@ const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const showTips = ref(false);
+const showKickoff = ref(true);
+const showMainGame = ref(false);
 const scoreStore = useScoreStore();
+
+const handleKickoffTransition = () => {
+  showKickoff.value = false;
+  showMainGame.value = true;
+  // Set first decision event
+  currentEvent.value = events.find(e => e.id === 'event-1') as Event;
+};
 
 onMounted(() => {
   // Start with kick-off event (event-0)
@@ -329,61 +339,69 @@ watch(currentLevelIndex, (newIndex) => {
     />
     
     <div class="flex-grow flex flex-col lg:flex-row p-2 sm:p-4 gap-4">
-      <!-- Left team members -->
-      <div class="team-left w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
-        <div v-for="member in team.slice(0, 2)" 
-             :key="member.id"
-             class="team-member-container transform hover:scale-105 transition-transform duration-200 cursor-pointer"
-             @click="selectTeamMember(member)">
-          <TeamPortrait :member="member" />
+      <template v-if="showKickoff">
+        <div class="w-full">
+          <KickoffScreen @transition="handleKickoffTransition" />
         </div>
-      </div>
+      </template>
       
-      <!-- Main area -->
-      <div class="main-area flex-grow lg:w-1/2 xl:w-3/5">
-        <div class="max-w-4xl mx-auto h-full">
-          <TipsPanel v-if="showTips" />
-          <ActionFeedback
-            v-else-if="showActionFeedback"
-            :message="currentEvent.id === 'event-2' 
-              ? 'Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat.'
-              : currentEvent.id === 'event-1'
-              ? 'Das Team ist überfordert und die Qualität leidet. Mehrere kritische Bugs haben es in die Produktion geschafft.'
-              : 'Das Team ist demotiviert und der Sprint ist gescheitert. Die Velocity ist auf einem Allzeittief.'"
-            :tip="currentEvent.id === 'event-2'
-              ? 'Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig.'
-              : currentEvent.id === 'event-1'
-              ? 'Die Standard Antwort sollte \'Nein\' sein. Sonst verlierst du den Fokus und gehst das Risiko ein, am Ende gar nichts fertig zu haben.'
-              : 'Vertraue den Daten und der Erfahrung des Teams.'"
-            @close="closeActionFeedback"
-          />
-          <TeamChat 
-            v-else-if="showTeamChat"
-            :event="currentEvent"
-            :team="team"
-            @close="closeTeamChat"
-          />
-          <MainView 
-            v-else
-            :currentEvent="currentEvent" 
-            :showChat="showChat" 
-            :activeTeamMember="activeTeamMember"
-            @make-decision="makeDecision" 
-            @close-chat="closeChat"
-            @navigate="navigateEvent"
-          />
+      <template v-else>
+        <!-- Left team members -->
+        <div class="team-left w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
+          <div v-for="member in team.slice(0, 2)" 
+               :key="member.id"
+               class="team-member-container transform hover:scale-105 transition-transform duration-200 cursor-pointer"
+               @click="selectTeamMember(member)">
+            <TeamPortrait :member="member" />
+          </div>
         </div>
-      </div>
-      
-      <!-- Right team members -->
-      <div class="team-right w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
-        <div v-for="member in team.slice(2, 4)" 
-             :key="member.id"
-             class="team-member-container transform hover:scale-105 transition-transform duration-200 cursor-pointer"
-             @click="selectTeamMember(member)">
-          <TeamPortrait :member="member" />
+        
+        <!-- Main area -->
+        <div class="main-area flex-grow lg:w-1/2 xl:w-3/5">
+          <div class="max-w-4xl mx-auto h-full">
+            <TipsPanel v-if="showTips" />
+            <ActionFeedback
+              v-else-if="showActionFeedback"
+              :message="currentEvent.id === 'event-2' 
+                ? 'Du hast ganz Achtsam die Ruhe bewahrt, was dir dein Team sehr dankt. Leider sind durch die Outage 5000 Bestellungen verloren gegangen, was deinem Unternehmen 5 Millionen Verlust eingebracht hat.'
+                : currentEvent.id === 'event-1'
+                ? 'Das Team ist überfordert und die Qualität leidet. Mehrere kritische Bugs haben es in die Produktion geschafft.'
+                : 'Das Team ist demotiviert und der Sprint ist gescheitert. Die Velocity ist auf einem Allzeittief.'"
+              :tip="currentEvent.id === 'event-2'
+                ? 'Es ist wichtig am Anfang schnell zu reagieren um die Kritikalität besser einschätzen zu können. Ruhig aber zügig.'
+                : currentEvent.id === 'event-1'
+                ? 'Die Standard Antwort sollte \'Nein\' sein. Sonst verlierst du den Fokus und gehst das Risiko ein, am Ende gar nichts fertig zu haben.'
+                : 'Vertraue den Daten und der Erfahrung des Teams.'"
+              @close="closeActionFeedback"
+            />
+            <TeamChat 
+              v-else-if="showTeamChat"
+              :event="currentEvent"
+              :team="team"
+              @close="closeTeamChat"
+            />
+            <MainView 
+              v-else
+              :currentEvent="currentEvent" 
+              :showChat="showChat" 
+              :activeTeamMember="activeTeamMember"
+              @make-decision="makeDecision" 
+              @close-chat="closeChat"
+              @navigate="navigateEvent"
+            />
+          </div>
         </div>
-      </div>
+        
+        <!-- Right team members -->
+        <div class="team-right w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
+          <div v-for="member in team.slice(2, 4)" 
+               :key="member.id"
+               class="team-member-container transform hover:scale-105 transition-transform duration-200 cursor-pointer"
+               @click="selectTeamMember(member)">
+            <TeamPortrait :member="member" />
+          </div>
+        </div>
+      </template>
     </div>
     
     <NewsTicker :news="news" class="mt-auto" />
