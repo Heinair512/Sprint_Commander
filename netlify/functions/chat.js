@@ -1,21 +1,4 @@
-import express from 'express';
-import OpenAI from 'openai';
-import cors from 'cors';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const router = express.Router();
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// CORS configuration
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  optionsSuccessStatus: 200
-};
-
-router.use(cors(corsOptions));
-router.use(express.json());
+import OpenAI from "openai";
 
 // Base prompts for each role with refined personas
 const basePrompts = {
@@ -44,17 +27,49 @@ Moderiere Diskussionen, halte Meetings schlank und sorge für kontinuierliche Ve
 Antworte immer auf Deutsch, strukturiert und lösungsorientiert.`
 };
 
-router.post('/', async (req, res) => {
+export const handler = async (event) => {
+  // Handle preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      }
+    };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
+  }
+
   try {
-    const { roleId, eventId, eventDescription, history, message } = req.body;
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Request body is required' })
+      };
+    }
+
+    const { roleId, eventId, eventDescription, history, message } = JSON.parse(event.body);
 
     if (!roleId || !message) {
-      return res.status(400).json({ error: 'Missing required parameters' });
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Missing required parameters' })
+      };
     }
 
     const basePrompt = basePrompts[roleId];
     if (!basePrompt) {
-      return res.status(400).json({ error: 'Invalid role ID' });
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid role ID' })
+      };
     }
 
     const messages = [
@@ -78,6 +93,10 @@ router.post('/', async (req, res) => {
     // Add new message
     messages.push({ role: 'user', content: message });
 
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages,
@@ -85,12 +104,27 @@ router.post('/', async (req, res) => {
       max_tokens: 300
     });
 
-    const reply = response.choices[0].message.content;
-    res.json({ reply });
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        reply: response.choices[0]?.message?.content || ''
+      })
+    };
   } catch (error) {
-    console.error('Chat API Error:', error);
-    res.status(500).json({ error: 'Failed to generate response' });
+    console.error('Chat function error:', error);
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        error: 'Failed to generate response'
+      })
+    };
   }
-});
-
-export default router;
+};
