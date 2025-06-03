@@ -1,0 +1,85 @@
+[
+  {
+    "id": "event-0",
+    "title": "Kick-off Meeting",
+    "description": "Du sitzt im Café um die Ecke, dein Laptop bereit, und heute startest du als Product Owner für die \"Büro-Kaffee-App\". Auf deinem Screen flimmern die Basis-Kennzahlen:\n\nScore: 0\n\nOutcome: 0 % (kein MVP live)\n\nBurden: 0 % (Team frei)\n\nTeam-Moral: alle bei 0\n\nStakeholder-Moral: 0\n\nGleich beginnt das Kick-off im hölzernen Konferenzraum: Lars Byte, der API-Entwickler, zappt mit seinem MacBook-Stick, Grace Grid, UX-Designerin, hält Wireframe-Skizzen bereit, Scrumlius, der Agile Coach, lehnt sich lächelnd zurück – Pocket-Guide für Priorisierung in der Tasche. Maggie Money, Stakeholderin aus der Geschäftsführung, blickt erwartungsvoll auf ihr Tablet.\n\nÜber der Leinwand prangt: \"Sprint Commander – Level 1: Kaffee-Kommando\". Dein Ziel: Zwei Kernfunktionen festlegen:\n\nWer brüht gerade Kaffee?\n\nWie viel Bohnenvorrat ist noch da?\n\nEin Schluck Espresso, ein kurzer Blick auf die Mood-Bar (alles bei 0) – gleich fällst du deine ersten Entscheidungen: Jede beeinflusst Score, Outcome, Burden und Moral. Zeit, mutig \"Nein\" zu sagen!",
+    "options": []
+  },
+  {
+    "id": "event-1",
+    "title": "Kaffee-Kommando Scope Creep",
+    "description": "Im Konferenzraum lehnt sich der CFO, Herr Herrmann, mit verschränkten Armen zurück, während du gerade den letzten Schluck deines Espressos nimmst. Er schaut dich durch die Gläser herausfordernd an und erklärt mit sonorer Stimme:\n\n\"Ich will nicht erst in meiner App nachsehen müssen, ob noch genug Koffein da ist. Sobald mein Koffein-Pegel unter 30 % sinkt, muss mir die App automatisch eine Push-Benachrichtigung aufs Handy schicken – am besten mit meinem Lieblingsbild als Hintergrund. Und wenn die Bohnen bald leer sind, will ich eine Eilmeldung, damit die Kaffee-Oase nie versiegt.\"",
+    "options": [
+      {
+        "label": "Mit dem Team sprechen",
+        "effect": -99,
+        "outcome": 0,
+        "burden": 0,
+        "teamMorale": 0,
+        "stakeholderMorale": 0
+      },
+      {
+        "label": "Praktikant als Laufbursche",
+        "effect": -25,
+        "outcome": 0,
+        "burden": 0,
+        "teamMorale": 20,
+        "stakeholderMorale": -20
+      },
+      {
+        "label": "Nein, nur Grundfunktionen",
+        "effect": 50,
+        "outcome": 40,
+        "burden": -10,
+        "teamMorale": 30,
+        "stakeholderMorale": -10
+      }
+    ]
+  },
+  {
+    "id": "event-2",
+    "title": "Production Outage",
+    "description": "Ein unerwarteter Ausfall der Produktionsumgebung hat alle Deployments gestoppt. Im Monitoring-Dashboard erscheinen wiederholt Fehlermeldungen und Timeouts im zentralen Orchestrator-Service. Das Operations-Team muss die Logs sichten und prüfen, ob ein Rollback notwendig ist. Transaktionsverluste und Dateninkonsistenzen drohen mit jeder Minute.",
+    "options": [
+      {
+        "label": "Team alarmieren",
+        "effect": 5,
+        "outcome": 10,
+        "burden": 5,
+        "teamMorale": -15,
+        "stakeholderMorale": 20
+      },
+      {
+        "label": "Abwarten",
+        "effect": -10,
+        "outcome": -20,
+        "burden": 15,
+        "teamMorale": 5,
+        "stakeholderMorale": -20
+      }
+    ]
+  },
+  {
+    "id": "event-3",
+    "title": "Sprint Planning",
+    "description": "Ein Großkunde fordert eine Bulk-Upload-Funktion für CSV- und JSON-Dateien. Die Änderungen betreffen Frontend-Upload, File-Parsing und Backend-Paging. Das UX-Team muss die Benutzerführung optimieren und das Performance-Team die Service-Level-Ziele absichern. Das Team ist unsicher über den Aufwand.",
+    "options": [
+      {
+        "label": "Velocity der letzten Sprints als Maßstab",
+        "effect": 10,
+        "outcome": 15,
+        "burden": -10,
+        "teamMorale": 20,
+        "stakeholderMorale": 10
+      },
+      {
+        "label": "Mehr Stories reinnehmen als beim letzten Mal",
+        "effect": -5,
+        "outcome": -5,
+        "burden": 25,
+        "teamMorale": -25,
+        "stakeholderMorale": -15
+      }
+    ]
+  }
+]
