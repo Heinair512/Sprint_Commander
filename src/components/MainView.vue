@@ -18,7 +18,6 @@ defineProps<{
     name: string;
     role: string;
     portrait: string;
-    quote: string;
   } | null;
 }>();
 
