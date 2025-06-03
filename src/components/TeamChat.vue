@@ -29,14 +29,7 @@ const message = ref('');
 const chatHistory = ref<Message[]>([]);
 const isLoading = ref(false);
 const chatContainer = ref<HTMLElement | null>(null);
-
-function pickTwoRoles(): [string, string] {
-  const allRoles = ['dev', 'ux', 'coach', 'stake'];
-  const copy = [...allRoles];
-  const first = copy.splice(Math.floor(Math.random() * copy.length), 1)[0];
-  const second = copy[Math.floor(Math.random() * copy.length)];
-  return [first, second];
-}
+const initialResponsesLoaded = ref(false);
 
 const nameMap: Record<string, string> = {
   dev: 'Lars Byte',
@@ -49,6 +42,71 @@ const scrollToBottom = async () => {
   await nextTick();
   if (chatContainer.value) {
     chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+  }
+};
+
+const triggerInitialTeamResponses = async () => {
+  if (initialResponsesLoaded.value) return;
+  
+  isLoading.value = true;
+  
+  try {
+    const initialPrompt = `
+      Event: ${props.event.title}
+      
+      Beschreibung: ${props.event.description}
+      
+      Als ${nameMap[props.team[0].id]}, wie bewertest du die Situation? 
+      Berücksichtige dabei die möglichen Auswirkungen auf:
+      - Team-Moral
+      - Stakeholder-Zufriedenheit
+      - Projekt-Outcome
+      - Team-Belastung (Burden)
+      
+      Gib eine professionelle aber persönliche Einschätzung ab.
+    `;
+    
+    chatHistory.value = [{
+      id: Date.now(),
+      sender: 'system',
+      senderLabel: 'System',
+      text: `🚨 ALARM: ${props.event.title}! 🚨`
+    }];
+    
+    for (const member of props.team) {
+      const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
+      
+      const response = await axios.post(endpoint, {
+        roleId: member.id,
+        eventId: props.event.id,
+        eventDescription: props.event.description,
+        history: [],
+        message: initialPrompt
+      });
+
+      if (response.data && response.data.reply) {
+        chatHistory.value.push({
+          id: Date.now() + Math.random(),
+          sender: member.id,
+          senderLabel: nameMap[member.id],
+          text: response.data.reply
+        });
+        await scrollToBottom();
+      }
+    }
+    
+    initialResponsesLoaded.value = true;
+  } catch (err) {
+    console.error('Initial team responses error:', err);
+    chatHistory.value.push({
+      id: Date.now(),
+      sender: 'system',
+      senderLabel: 'System',
+      text: 'Fehler bei der Kommunikation mit dem Team. Bitte versuche es später erneut.'
+    });
+  } finally {
+    isLoading.value = false;
+    await scrollToBottom();
   }
 };
 
@@ -68,14 +126,12 @@ const sendMessage = async () => {
 
   await scrollToBottom();
 
-  const [roleA, roleB] = pickTwoRoles();
-
   try {
-    for (const roleId of [roleA, roleB]) {
+    for (const member of props.team) {
       const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
       
       const response = await axios.post(endpoint, {
-        roleId,
+        roleId: member.id,
         eventId: props.event.id,
         eventDescription: props.event.description,
         history: chatHistory.value.map(msg => ({
@@ -88,8 +144,8 @@ const sendMessage = async () => {
       if (response.data && response.data.reply) {
         chatHistory.value.push({
           id: Date.now() + Math.random(),
-          sender: roleId,
-          senderLabel: nameMap[roleId],
+          sender: member.id,
+          senderLabel: nameMap[member.id],
           text: response.data.reply
         });
         await scrollToBottom();
@@ -113,17 +169,14 @@ const handleClose = () => {
   emit('close');
 };
 
-// Initialize with system message
-chatHistory.value = [{
-  id: Date.now(),
-  sender: 'system',
-  senderLabel: 'System',
-  text: `🚨 ALARM: ${props.event.title}! 🚨`
-}];
-
-watch(() => chatHistory.value.length, () => {
-  scrollToBottom();
+watch(() => props.event.id, () => {
+  chatHistory.value = [];
+  initialResponsesLoaded.value = false;
+  triggerInitialTeamResponses();
 });
+
+// Trigger initial responses when component mounts
+triggerInitialTeamResponses();
 </script>
 
 <template>
@@ -156,6 +209,10 @@ watch(() => chatHistory.value.length, () => {
           {{ msg.senderLabel }}
         </div>
         {{ msg.text }}
+      </div>
+      
+      <div v-if="isLoading" class="typing-indicator">
+        <span>.</span><span>.</span><span>.</span>
       </div>
     </div>
     
@@ -197,7 +254,8 @@ watch(() => chatHistory.value.length, () => {
   outline: none;
 }
 
-.chat-input input:disabled,
+.chat-input input:disable
+d,
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -219,5 +277,29 @@ button:disabled {
 .chat-messages::-webkit-scrollbar-thumb {
   background-color: theme('colors.crt.darkbrown');
   border-radius: 3px;
+}
+
+.typing-indicator {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.typing-indicator span {
+  animation: typing 1s infinite;
+  margin: 0 2px;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 </style>

@@ -25,6 +25,14 @@
         "burden": 20,
         "teamMorale": 5,
         "stakeholderMorale": -5
+      },
+      {
+        "label": "Mit dem Team reden",
+        "effect": -99,
+        "outcome": 0,
+        "burden": 0,
+        "teamMorale": 0,
+        "stakeholderMorale": 0
       }
     ]
   },

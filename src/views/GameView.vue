@@ -70,15 +70,12 @@ const scoreStore = useScoreStore();
 const handleKickoffTransition = () => {
   showKickoff.value = false;
   showMainGame.value = true;
-  // Set first decision event
   currentEvent.value = events.find(e => e.id === 'event-1') as Event;
 };
 
 onMounted(() => {
-  // Start with kick-off event (event-0)
   currentEvent.value = events.find(e => e.id === 'event-0') as Event;
   
-  // After 20 seconds, transition to the first decision event
   setTimeout(() => {
     const firstDecisionEvent = events.find(e => e.id === 'event-1');
     if (firstDecisionEvent) {
@@ -101,7 +98,6 @@ const checkLevelCompletion = () => {
     outcome >= currentLevel.minOutcome &&
     burden <= currentLevel.maxBurden
   ) {
-    // Level completed
     currentLevelIndex.value++;
     if (currentLevelIndex.value < levels.length) {
       level.value = levels[currentLevelIndex.value].title;
@@ -109,7 +105,6 @@ const checkLevelCompletion = () => {
       toast.success(`Level geschafft! Willkommen in Level ${currentLevelIndex.value + 1}!`, {
         timeout: 5000
       });
-      // Optional: Reset some values for the new level
       scoreStore.resetAllScores();
     } else {
       toast.success("Gratulation! Du hast alle Level gemeistert!", {
@@ -173,6 +168,12 @@ const makeDecision = (effect: number) => {
   
   if (!selectedOption) return;
 
+  // Special case for team chat
+  if (effect === -99) {
+    showTeamChat.value = true;
+    return;
+  }
+
   // Update outcome and burden
   scoreStore.updateOutcome(selectedOption.outcome);
   scoreStore.updateBurden(selectedOption.burden);
@@ -217,8 +218,25 @@ const makeDecision = (effect: number) => {
       break;
       
     case 'event-1': // Feature Scope Creep
-      if (effect === 5) {
+      if (effect === 300) {
         score.value += 50;
+        scoreElement?.classList.add('success');
+        setTimeout(() => scoreElement?.classList.remove('success'), 1000);
+        
+        updateMoods({
+          dev: { team: -25, stakeholder: 5 },
+          ux: { team: -20, stakeholder: -5 },
+          coach: { team: -15, stakeholder: -10 },
+          stake: { team: 20, stakeholder: 15 }
+        });
+        
+        toast.success("Stakeholder sind begeistert! -> +50 Punkte", {
+          timeout: 3000,
+          toastClassName: "pixel-toast success-toast",
+        });
+        showTeamChat.value = true;
+      } else if (effect === 100) {
+        score.value += 100;
         scoreElement?.classList.add('success');
         setTimeout(() => scoreElement?.classList.remove('success'), 1000);
         
@@ -229,28 +247,11 @@ const makeDecision = (effect: number) => {
           stake: { team: -15, stakeholder: -20 }
         });
         
-        toast.success("Kluge Entscheidung! Qualität vor Quantität -> +50 Punkte", {
+        toast.success("Kluge Entscheidung! Qualität vor Quantität -> +100 Punkte", {
           timeout: 3000,
           toastClassName: "pixel-toast success-toast",
         });
         showTeamChat.value = true;
-      } else {
-        score.value -= 50;
-        scoreElement?.classList.add('error');
-        setTimeout(() => scoreElement?.classList.remove('error'), 1000);
-        
-        updateMoods({
-          dev: { team: -25, stakeholder: 5 },
-          ux: { team: -20, stakeholder: -5 },
-          coach: { team: -15, stakeholder: -10 },
-          stake: { team: 20, stakeholder: 15 }
-        });
-        
-        toast.error("Oh je, das wird stressig! -50 Punkte", {
-          timeout: 3000,
-          toastClassName: "pixel-toast error-toast",
-        });
-        showActionFeedback.value = true;
       }
       break;
       
@@ -293,7 +294,6 @@ const makeDecision = (effect: number) => {
       break;
   }
 
-  // Check level completion after each decision
   checkLevelCompletion();
 };
 
@@ -316,10 +316,8 @@ const closeActionFeedback = () => {
   showActionFeedback.value = false;
 };
 
-// Watch for level changes to update events
 watch(currentLevelIndex, (newIndex) => {
   const levelEvents = levels[newIndex].eventIds;
-  // Filter events based on current level
   const availableEvents = events.filter(event => levelEvents.includes(event.id));
   if (availableEvents.length > 0) {
     currentEventIndex.value = 0;
@@ -346,7 +344,6 @@ watch(currentLevelIndex, (newIndex) => {
       </template>
       
       <template v-else>
-        <!-- Left team members -->
         <div class="team-left w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
           <div v-for="member in team.slice(0, 2)" 
                :key="member.id"
@@ -356,7 +353,6 @@ watch(currentLevelIndex, (newIndex) => {
           </div>
         </div>
         
-        <!-- Main area -->
         <div class="main-area flex-grow lg:w-1/2 xl:w-3/5">
           <div class="max-w-4xl mx-auto h-full">
             <TipsPanel v-if="showTips" />
@@ -392,7 +388,6 @@ watch(currentLevelIndex, (newIndex) => {
           </div>
         </div>
         
-        <!-- Right team members -->
         <div class="team-right w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
           <div v-for="member in team.slice(2, 4)" 
                :key="member.id"
