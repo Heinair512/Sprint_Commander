@@ -1,15 +1,30 @@
-```vue
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const emit = defineEmits(['transition']);
 const showContent = ref(false);
+const timeLeft = ref(20);
+const timerInterval = ref<number | null>(null);
 
 onMounted(() => {
   showContent.value = true;
-  setTimeout(() => {
-    emit('transition');
-  }, 20000);
+  
+  // Start countdown timer
+  timerInterval.value = window.setInterval(() => {
+    timeLeft.value--;
+    if (timeLeft.value <= 0) {
+      if (timerInterval.value) {
+        clearInterval(timerInterval.value);
+      }
+      emit('transition');
+    }
+  }, 1000);
+});
+
+onBeforeUnmount(() => {
+  if (timerInterval.value) {
+    clearInterval(timerInterval.value);
+  }
 });
 </script>
 
@@ -20,9 +35,14 @@ onMounted(() => {
     </div>
     
     <div 
-      class="kickoff-content bg-crt-lightsep p-6 rounded-lg"
+      class="kickoff-content bg-crt-lightsep p-6 rounded-lg relative"
       :class="{ 'fade-in': showContent }"
     >
+      <!-- Countdown Timer -->
+      <div class="countdown-timer absolute top-4 right-4 bg-crt-brown text-crt-glow px-3 py-1 rounded">
+        {{ timeLeft }}s
+      </div>
+      
       <div class="text-content mb-8">
         <p class="mb-4">
           Du sitzt im Café um die Ecke, dein Laptop bereit, und heute startest du als Product Owner für die „Büro-Kaffee-App". Auf deinem Screen flimmern die Basis-Kennzahlen:
@@ -83,6 +103,11 @@ Stakeholder-Moral: 0</pre>
   animation: fadeIn 1s ease-out;
 }
 
+.countdown-timer {
+  font-size: 0.7rem;
+  animation: pulse 1s infinite;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -92,6 +117,12 @@ Stakeholder-Moral: 0</pre>
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
 }
 
 .diagram-container {
@@ -113,4 +144,3 @@ Stakeholder-Moral: 0</pre>
   border-radius: 3px;
 }
 </style>
-```
