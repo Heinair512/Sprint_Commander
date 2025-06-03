@@ -25,6 +25,7 @@ const isLoading = ref(false);
 const error = ref('');
 const chatStore = useChatStore();
 const scoreStore = useScoreStore();
+const userName = ref('Jan'); // Default user name
 
 // Get event-specific history for AI context
 const eventHistory = computed(() => 
@@ -70,7 +71,7 @@ async function sendMessage() {
   message.value = '';
 
   try {
-    // 1. Store PO's message
+    // Store PO's message
     chatStore.addPrivateMessage(
       props.poId,
       props.memberId,
@@ -78,13 +79,14 @@ async function sendMessage() {
       props.currentEvent.id
     );
 
-    // 2. Prepare history for AI
+    // Prepare history for AI
     const historyForAI = getSanitizedEventHistory();
 
-    // 3. Send to chat function with metrics context
-    const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
-    const contextMessage = `Current metrics - Team Morale: ${metrics.value.teamMorale}, Stakeholder Satisfaction: ${metrics.value.stakeholderSatisfaction}, Outcome: ${metrics.value.outcome}%, Burden: ${metrics.value.burden}%\n\nEvent context: ${props.currentEvent.description}\n\nUser message: ${userText}`;
+    // Build context message with user name and metrics
+    const contextMessage = `You are speaking with ${userName.value}, the Product Owner. Current metrics - Team Morale: ${metrics.value.teamMorale}, Stakeholder Satisfaction: ${metrics.value.stakeholderSatisfaction}, Outcome: ${metrics.value.outcome}%, Burden: ${metrics.value.burden}%\n\nEvent context: ${props.currentEvent.description}\n\n${userName.value}'s message: ${userText}`;
 
+    // Send to chat function
+    const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
     const payload = {
       roleId: props.memberId,
       eventId: props.currentEvent.id,
@@ -98,7 +100,7 @@ async function sendMessage() {
       timeout: 30000
     });
 
-    // 4. Store AI's reply
+    // Store AI's reply
     if (response.data?.reply) {
       chatStore.addPrivateReply(
         props.memberId,
@@ -129,12 +131,14 @@ onMounted(async () => {
   isLoading.value = true;
   try {
     const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
+    const initialContext = `You are speaking with ${userName.value}, the Product Owner. Current event: ${props.currentEvent.description}`;
+    
     const response = await axios.post(endpoint, {
       roleId: props.memberId,
       eventId: props.currentEvent.id,
       eventDescription: props.currentEvent.description,
       history: [],
-      message: "Begrüße den Product Owner kurz und professionell."
+      message: `${initialContext}\n\nGreet ${userName.value} professionally and briefly.`
     });
 
     if (response.data?.reply) {

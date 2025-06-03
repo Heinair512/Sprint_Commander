@@ -31,19 +31,13 @@ const isLoading = ref(false);
 const chatContainer = ref<HTMLElement | null>(null);
 const initialResponsesLoaded = ref(false);
 const scoreStore = useScoreStore();
+const userName = ref('Jan'); // Default user name
 
 const nameMap: Record<string, string> = {
   dev: 'Lars Byte',
   ux: 'Grace Grid',
   coach: 'Scrumlius',
   stake: 'Maggie Money'
-};
-
-const scrollToBottom = async () => {
-  await nextTick();
-  if (chatContainer.value) {
-    chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
-  }
 };
 
 const getGameContext = () => {
@@ -54,15 +48,24 @@ const getGameContext = () => {
     burden: scoreStore.getCurrentBurden
   };
 
-  return `Current Game State:
+  return `You are speaking with ${userName.value}, the Product Owner, in a team discussion.
+
+Current Game State:
 - Team Morale: ${metrics.teamMorale}%
 - Stakeholder Satisfaction: ${metrics.stakeholderSatisfaction}%
 - Project Outcome: ${metrics.outcome}%
 - Team Burden: ${metrics.burden}%
 
-You are in a direct conversation with the Product Owner. Focus on your role's perspective and expertise. Do not reference or respond to other team members or stakeholders who aren't part of this conversation. Keep responses concise and professional.
+You are in a team discussion with ${userName.value}. Focus on your role's perspective and expertise. Keep responses concise and professional.
 
 Current Event: ${props.event.description}`;
+};
+
+const scrollToBottom = async () => {
+  await nextTick();
+  if (chatContainer.value) {
+    chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+  }
 };
 
 const triggerInitialTeamResponses = async () => {
@@ -87,7 +90,7 @@ const triggerInitialTeamResponses = async () => {
       eventId: props.event.id,
       eventDescription: props.event.description,
       history: [],
-      message: `${getGameContext()}\n\nGive a brief, role-specific initial assessment of this situation (max 2 sentences).`
+      message: `${getGameContext()}\n\nGive ${userName.value} a brief, role-specific initial assessment of this situation (max 2 sentences).`
     });
 
     if (response.data && response.data.reply) {
@@ -125,7 +128,7 @@ const sendMessage = async () => {
   chatHistory.value.push({
     id: Date.now(),
     sender: 'user',
-    senderLabel: 'Du',
+    senderLabel: userName.value,
     text: userMessage
   });
 
@@ -136,7 +139,7 @@ const sendMessage = async () => {
     const respondingMember = props.team[Math.floor(Math.random() * props.team.length)];
     const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
     
-    const contextMessage = `${getGameContext()}\n\nProduct Owner's message: ${userMessage}`;
+    const contextMessage = `${getGameContext()}\n\n${userName.value}'s message: ${userMessage}`;
 
     const response = await axios.post(endpoint, {
       roleId: respondingMember.id,
