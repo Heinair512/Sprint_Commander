@@ -6,7 +6,6 @@ import WelcomeScreen from './components/WelcomeScreen.vue';
 
 const isAuthenticated = ref(false);
 const showWelcome = ref(false);
-const isLoading = ref(false);
 
 const handleLoginSuccess = () => {
   isAuthenticated.value = true;
