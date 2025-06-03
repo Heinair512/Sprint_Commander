@@ -136,7 +136,7 @@ const handleClose = () => {
   <div class="welcome-screen bg-crt-sepia p-4 rounded-lg shadow-lg max-w-6xl mx-auto h-[80vh]">
     <div class="welcome-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between mb-4 rounded">
       <div class="text-lg">Willkommen Sprint Commander</div>
-      <button @click="handleClose" class="close-btn px-2">X</button>
+      <button @click="handleClose" class="close-btn px-2 hover:text-crt-sepia transition-colors">X</button>
     </div>
     
     <div class="welcome-content flex gap-4 h-[calc(100%-4rem)]">
@@ -209,6 +209,16 @@ const handleClose = () => {
 
 .lets-go-button {
   animation: fade-in 1s ease-out;
+}
+
+.close-btn {
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.1);
 }
 
 @keyframes fade-in {
