@@ -8,7 +8,7 @@
   {
     "id": "event-1",
     "title": "Kaffee-Kommando Scope Creep",
-    "description": "Stakeholder, UX-Design und Dev-Team kommen mit Extras: Push, Emojis, Dark-Mode. Du musst priorisieren und klare Entscheidungen treffen.",
+    "description": "Im Konferenzraum lehnt sich der CFO, Herr Herrmann, mit verschränkten Armen zurück, während du gerade den letzten Schluck deines Espressos nimmst. Er schaut dich durch die Gläser herausfordernd an und erklärt mit sonorer Stimme:\n\n„Ich will nicht erst in meiner App nachsehen müssen, ob noch genug Koffein da ist. Sobald mein Koffein-Pegel unter 30 % sinkt, muss mir die App automatisch eine Push-Benachrichtigung aufs Handy schicken – am besten mit meinem Lieblingsbild als Hintergrund. Und wenn die Bohnen bald leer sind, will ich eine Eilmeldung, damit die Kaffee-Oase nie versiegt."\n\nWährend er spricht, rollen deine Gedanken:\n\nPush-Benachrichtigungen bedeuten ein Firebase-Backend und zusätzliche Infrastruktur.\n\nPersonalisierte CFO-Grafik (sein Porträt als Wallpaper) heißt Extra-Assets, die das UX-Team vorbereiten muss.\n\nAlarm bei niedrigem Bohnenvorrat erfordert Sensor-Integration und Echtzeit-Alerts.",
     "options": [
       {
         "label": "Push-Nachrichten für CFO einbauen",
