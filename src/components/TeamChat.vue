@@ -46,13 +46,31 @@ const scrollToBottom = async () => {
   }
 };
 
+const getGameContext = () => {
+  const metrics = {
+    teamMorale: scoreStore.teamMorale,
+    stakeholderSatisfaction: scoreStore.stakeholderSatisfaction,
+    outcome: scoreStore.getCurrentOutcome,
+    burden: scoreStore.getCurrentBurden
+  };
+
+  return `Current Game State:
+- Team Morale: ${metrics.teamMorale}%
+- Stakeholder Satisfaction: ${metrics.stakeholderSatisfaction}%
+- Project Outcome: ${metrics.outcome}%
+- Team Burden: ${metrics.burden}%
+
+You are in a direct conversation with the Product Owner. Focus on your role's perspective and expertise. Do not reference or respond to other team members or stakeholders who aren't part of this conversation. Keep responses concise and professional.
+
+Current Event: ${props.event.description}`;
+};
+
 const triggerInitialTeamResponses = async () => {
   if (initialResponsesLoaded.value) return;
   
   isLoading.value = true;
   
   try {
-    // Add system message first
     chatHistory.value = [{
       id: Date.now(),
       sender: 'system',
@@ -60,18 +78,8 @@ const triggerInitialTeamResponses = async () => {
       text: `🚨 ALARM: ${props.event.title}! 🚨`
     }];
 
-    // Get current metrics for context
-    const metrics = {
-      teamMorale: scoreStore.teamMorale,
-      stakeholderSatisfaction: scoreStore.stakeholderSatisfaction,
-      outcome: scoreStore.getCurrentOutcome,
-      burden: scoreStore.getCurrentBurden
-    };
-
     // Choose one random team member for initial response
     const randomMember = props.team[Math.floor(Math.random() * props.team.length)];
-    
-    const initialPrompt = `Current metrics - Team Morale: ${metrics.teamMorale}, Stakeholder Satisfaction: ${metrics.stakeholderSatisfaction}, Outcome: ${metrics.outcome}%, Burden: ${metrics.burden}%\n\nEvent context: ${props.event.description}\n\nGib eine kurze, prägnante erste Einschätzung (max. 2 Sätze) zu diesem Event aus deiner Rolle heraus.`;
     
     const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
     const response = await axios.post(endpoint, {
@@ -79,7 +87,7 @@ const triggerInitialTeamResponses = async () => {
       eventId: props.event.id,
       eventDescription: props.event.description,
       history: [],
-      message: initialPrompt
+      message: `${getGameContext()}\n\nGive a brief, role-specific initial assessment of this situation (max 2 sentences).`
     });
 
     if (response.data && response.data.reply) {
@@ -124,38 +132,31 @@ const sendMessage = async () => {
   await scrollToBottom();
 
   try {
-    const metrics = {
-      teamMorale: scoreStore.teamMorale,
-      stakeholderSatisfaction: scoreStore.stakeholderSatisfaction,
-      outcome: scoreStore.getCurrentOutcome,
-      burden: scoreStore.getCurrentBurden
-    };
+    // Get one random team member to respond
+    const respondingMember = props.team[Math.floor(Math.random() * props.team.length)];
+    const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
+    
+    const contextMessage = `${getGameContext()}\n\nProduct Owner's message: ${userMessage}`;
 
-    for (const member of props.team) {
-      const endpoint = import.meta.env.DEV ? '/api/chat' : '/chat';
-      
-      const contextMessage = `Current metrics - Team Morale: ${metrics.teamMorale}, Stakeholder Satisfaction: ${metrics.stakeholderSatisfaction}, Outcome: ${metrics.outcome}%, Burden: ${metrics.burden}%\n\nEvent context: ${props.event.description}\n\nUser message: ${userMessage}`;
+    const response = await axios.post(endpoint, {
+      roleId: respondingMember.id,
+      eventId: props.event.id,
+      eventDescription: props.event.description,
+      history: chatHistory.value.map(msg => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      })),
+      message: contextMessage
+    });
 
-      const response = await axios.post(endpoint, {
-        roleId: member.id,
-        eventId: props.event.id,
-        eventDescription: props.event.description,
-        history: chatHistory.value.map(msg => ({
-          role: msg.sender === 'user' ? 'user' : 'assistant',
-          content: msg.text
-        })),
-        message: contextMessage
+    if (response.data && response.data.reply) {
+      chatHistory.value.push({
+        id: Date.now() + Math.random(),
+        sender: respondingMember.id,
+        senderLabel: nameMap[respondingMember.id],
+        text: response.data.reply
       });
-
-      if (response.data && response.data.reply) {
-        chatHistory.value.push({
-          id: Date.now() + Math.random(),
-          sender: member.id,
-          senderLabel: nameMap[member.id],
-          text: response.data.reply
-        });
-        await scrollToBottom();
-      }
+      await scrollToBottom();
     }
   } catch (err) {
     console.error('Team chat error:', err);
@@ -287,7 +288,7 @@ button:disabled {
 .typing-indicator {
   padding: 1rem;
   display: flex;
-  justify-content: center;
+  justify-center: center;
 }
 
 .typing-indicator span {
