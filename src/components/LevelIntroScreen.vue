@@ -46,6 +46,16 @@ const handleClose = () => {
         <strong class="block mb-2">Deine oberste Aufgabe:</strong>
         <p>Stelle sicher, dass die Grundfunktionen (Kaffeestatus & Vorratsanzeige) im MVP landen, ohne dass Team zu stark belastet wird.</p>
       </div>
+
+      <div class="level-criteria mt-6 p-4 bg-green-100 rounded">
+        <strong class="block mb-2">Erfolgskriterien für dieses Level:</strong>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>Score ≥ 500 Punkte</li>
+          <li>Outcome ≥ 60 %</li>
+          <li>Burden ≤ 50 %</li>
+          <li>Moral aller Rollen (Team + Stakeholder) ≥ –10</li>
+        </ul>
+      </div>
     </div>
     
     <button 
@@ -70,5 +80,17 @@ const handleClose = () => {
 
 .mission {
   font-size: 0.85rem;
+}
+
+.level-criteria {
+  font-size: 0.75rem;
+}
+
+.level-criteria ul {
+  margin-top: 0.5rem;
+}
+
+.level-criteria li {
+  margin-bottom: 0.5rem;
 }
 </style>

@@ -51,7 +51,7 @@ const levels = levelsData.levels as Level[];
 
 const emit = defineEmits(['logout']);
 const toast = useToast();
-const score = ref(825);
+const score = ref(0); // Reset to 0
 const missionTitle = ref('Black Friday');
 const currentLevelIndex = ref(0);
 const level = ref(levels[currentLevelIndex.value].title);
