@@ -21,17 +21,25 @@ const users = [
   }
 ];
 
-const validatePassword = (password: string): boolean => {
-  if (password === '1') return true;
-  return password.length >= 6;
+const validateCredentials = (email: string, password: string): boolean => {
+  // Special case for test credentials
+  if (email === '1' && password === '1') {
+    return true;
+  }
+  
+  // Regular validation for other credentials
+  if (password.length < 6 && password !== '1') {
+    error.value = '🔒 Passwort zu kurz! Mindestens 6 Zeichen für Production-Ready Security!';
+    return false;
+  }
+  
+  return true;
 };
 
 const handleLogin = async () => {
   error.value = '';
   
-  // Validate password
-  if (!validatePassword(password.value)) {
-    error.value = '🔒 Passwort zu kurz! Mindestens 6 Zeichen für Production-Ready Security!';
+  if (!validateCredentials(email.value, password.value)) {
     return;
   }
   
