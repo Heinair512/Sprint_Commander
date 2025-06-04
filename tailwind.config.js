@@ -21,6 +21,11 @@ export default {
           error: '#f7768e',
           warning: '#e0af68',
           glow: '#c0caf5',
+          // Add the missing CRT theme colors
+          sepia: '#a39171',
+          lightsep: '#d4c4a5',
+          darkbrown: '#2c1810',
+          brown: '#4a2c1d'
         },
       },
       boxShadow: {
