@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useScoreStore } from '../stores/scoreStore';
 
 const props = defineProps<{
@@ -29,6 +29,13 @@ const handleNavigate = (screen: 'workspace' | 'game') => {
 const toggleMenu = () => {
   showMenu.value = !showMenu.value;
 };
+
+const wmt = computed(() => scoreStore.getWMTPercentage);
+const wmtClass = computed(() => {
+  if (wmt.value >= 90) return 'bg-red-600';
+  if (wmt.value >= 75) return 'bg-yellow-500';
+  return 'bg-green-600';
+});
 </script>
 
 <template>
@@ -40,10 +47,10 @@ const toggleMenu = () => {
         <div class="w-6 h-0.5 bg-crt-darkbrown"></div>
       </button>
       
-      <div v-if="showMenu" class="absolute top-full left-0 mt-2 w-48 bg-crt-sepia border-2 border-crt-darkbrown rounded shadow-lg z-50">
+      <div v-if="showMenu" class="absolute top-full left-0 mt-2 w-40 bg-crt-sepia border-2 border-crt-darkbrown rounded shadow-lg z-50">
         <button 
           @click="handleNavigate('workspace')" 
-          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
+          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200 truncate"
         >
           💻 Arbeitsbereich
         </button>
@@ -114,6 +121,20 @@ const toggleMenu = () => {
                 'bg-yellow-500': scoreStore.getCurrentBurden > 50 && scoreStore.getCurrentBurden <= 75,
                 'bg-green-600': scoreStore.getCurrentBurden <= 50
               }"
+            ></div>
+          </div>
+        </div>
+
+        <div class="metric-bar">
+          <div class="flex justify-between mb-1">
+            <span>⏰ WMT</span>
+            <span>{{ wmt }}%</span>
+          </div>
+          <div class="w-32 h-2 bg-gray-200 rounded">
+            <div 
+              class="h-full rounded transition-all duration-300"
+              :style="{ width: `${wmt}%` }"
+              :class="wmtClass"
             ></div>
           </div>
         </div>
