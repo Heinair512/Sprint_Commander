@@ -214,7 +214,7 @@ const handleClose = () => {
 }
 
 .chat-messages {
-  max-height: 320px;
+  max-height: 960px;
   scrollbar-width: thin;
   scrollbar-color: theme('colors.crt.darkbrown') theme('colors.crt.lightsep');
 }
