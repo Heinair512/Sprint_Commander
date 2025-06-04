@@ -27,62 +27,57 @@ const toggleMenu = () => {
 </script>
 
 <template>
-  <header class="header-bar p-4 bg-crt-surface border-b-4 border-crt-primary flex items-center justify-between">
-    <div class="flex items-center space-x-6">
-      <button 
-        class="burger-menu p-2 hover:bg-crt-primary/20 rounded transition-colors" 
-        @click="toggleMenu"
-      >
-        <div class="w-6 h-0.5 bg-crt-glow mb-1"></div>
-        <div class="w-6 h-0.5 bg-crt-glow mb-1"></div>
-        <div class="w-6 h-0.5 bg-crt-glow"></div>
+  <header class="header-bar p-2 bg-crt-sepia text-crt-darkbrown border-b-4 border-crt-darkbrown flex items-center justify-between">
+    <div class="flex items-center space-x-4 relative">
+      <button class="burger-menu p-1" @click="toggleMenu">
+        <div class="w-6 h-0.5 bg-crt-darkbrown mb-1"></div>
+        <div class="w-6 h-0.5 bg-crt-darkbrown mb-1"></div>
+        <div class="w-6 h-0.5 bg-crt-darkbrown"></div>
       </button>
       
-      <div v-if="showMenu" class="absolute top-full left-4 mt-2 w-48 bg-crt-surface border-2 border-crt-primary rounded shadow-glow z-50">
+      <div v-if="showMenu" class="absolute top-full left-0 mt-2 w-48 bg-crt-sepia border-2 border-crt-darkbrown rounded shadow-lg z-50">
         <button 
           @click="handleShowTips" 
-          class="w-full text-left px-4 py-2 hover:bg-crt-primary/20 transition-colors duration-200"
+          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
         >
           📚 Tipps
         </button>
         <button 
           @click="handleLogout" 
-          class="w-full text-left px-4 py-2 hover:bg-crt-primary/20 transition-colors duration-200"
+          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
         >
           🚪 Logout
         </button>
       </div>
       
-      <div class="mission-info flex flex-col items-start">
-        <span class="text-crt-muted text-xs">Mission:</span>
-        <span class="text-crt-glow text-sm">{{ missionTitle }}</span>
+      <div class="mission-title text-xs md:text-sm flex flex-col items-start">
+        <span>Mission:</span>
+        <span>{{ missionTitle }}</span>
       </div>
     </div>
     
-    <div class="game-title text-center text-xl font-bold tracking-wider text-crt-primary">
+    <div class="game-title text-center text-lg md:text-xl font-bold tracking-wider">
       SPRINT COMMANDER
     </div>
     
-    <div class="stats flex flex-col items-end gap-3">
-      <div class="flex items-center gap-4">
-        <div class="score text-crt-glow">Score: {{ score }}</div>
-        <div class="level text-crt-secondary">{{ level }}</div>
-      </div>
+    <div class="stats flex flex-col items-end text-xs md:text-sm gap-2">
+      <div class="score transition-colors duration-500">Score: {{ score }}</div>
+      <div>Level: {{ level }}</div>
       
-      <div class="metrics flex flex-col gap-2">
+      <div class="metrics flex flex-col gap-1 mt-1">
         <div class="metric-bar">
           <div class="flex justify-between mb-1">
-            <span class="text-crt-accent">🎯 Outcome</span>
-            <span class="text-crt-glow">{{ scoreStore.getCurrentOutcome }}%</span>
+            <span>🎯 Outcome</span>
+            <span>{{ scoreStore.getCurrentOutcome }}%</span>
           </div>
-          <div class="w-32 h-2 bg-crt-muted/20 rounded">
+          <div class="w-32 h-2 bg-gray-200 rounded">
             <div 
               class="h-full rounded transition-all duration-300"
               :style="{ width: `${scoreStore.getCurrentOutcome}%` }"
               :class="{
-                'bg-crt-success': scoreStore.getCurrentOutcome >= 75,
-                'bg-crt-warning': scoreStore.getCurrentOutcome >= 50 && scoreStore.getCurrentOutcome < 75,
-                'bg-crt-error': scoreStore.getCurrentOutcome < 50
+                'bg-green-600': scoreStore.getCurrentOutcome >= 75,
+                'bg-yellow-500': scoreStore.getCurrentOutcome >= 50 && scoreStore.getCurrentOutcome < 75,
+                'bg-red-600': scoreStore.getCurrentOutcome < 50
               }"
             ></div>
           </div>
@@ -90,17 +85,17 @@ const toggleMenu = () => {
         
         <div class="metric-bar">
           <div class="flex justify-between mb-1">
-            <span class="text-crt-accent">⚡️ Burden</span>
-            <span class="text-crt-glow">{{ scoreStore.getCurrentBurden }}%</span>
+            <span>⚡️ Burden</span>
+            <span>{{ scoreStore.getCurrentBurden }}%</span>
           </div>
-          <div class="w-32 h-2 bg-crt-muted/20 rounded">
+          <div class="w-32 h-2 bg-gray-200 rounded">
             <div 
               class="h-full rounded transition-all duration-300"
               :style="{ width: `${scoreStore.getCurrentBurden}%` }"
               :class="{
-                'bg-crt-error': scoreStore.getCurrentBurden > 75,
-                'bg-crt-warning': scoreStore.getCurrentBurden > 50 && scoreStore.getCurrentBurden <= 75,
-                'bg-crt-success': scoreStore.getCurrentBurden <= 50
+                'bg-red-600': scoreStore.getCurrentBurden > 75,
+                'bg-yellow-500': scoreStore.getCurrentBurden > 50 && scoreStore.getCurrentBurden <= 75,
+                'bg-green-600': scoreStore.getCurrentBurden <= 50
               }"
             ></div>
           </div>
@@ -118,10 +113,11 @@ const toggleMenu = () => {
 }
 
 .game-title {
-  text-shadow: 0 0 10px theme('colors.crt.primary');
+  color: #5c4321;
+  text-shadow: 2px 2px 0px rgba(252, 239, 180, 0.4);
 }
 
-.mission-info {
+.mission-title {
   line-height: 1.5;
 }
 
@@ -130,11 +126,11 @@ const toggleMenu = () => {
 }
 
 .score.success {
-  color: theme('colors.crt.success');
+  color: #90EE90;
 }
 
 .score.error {
-  color: theme('colors.crt.error');
+  color: #8B0000;
 }
 
 .burger-menu {

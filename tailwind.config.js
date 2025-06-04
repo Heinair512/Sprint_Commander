@@ -11,21 +11,16 @@ export default {
       },
       colors: {
         crt: {
-          bg: '#1a1b26',
-          primary: '#7aa2f7',
-          secondary: '#bb9af7',
-          accent: '#2ac3de',
-          surface: '#24283b',
-          muted: '#565f89',
-          success: '#9ece6a',
-          error: '#f7768e',
-          warning: '#e0af68',
-          glow: '#c0caf5',
+          bg: '#2b2b29',
+          sepia: '#c1a477',
+          brown: '#8a6642',
+          darkbrown: '#5c4321',
+          lightsep: '#e4d4b8',
+          glow: '#fcefb4',
         },
       },
       boxShadow: {
         frame: 'inset 0 0 4px rgba(255, 255, 255, 0.2)',
-        glow: '0 0 10px rgba(192, 202, 245, 0.2)',
       },
       animation: {
         'news-ticker': 'news-ticker 20s linear infinite',
