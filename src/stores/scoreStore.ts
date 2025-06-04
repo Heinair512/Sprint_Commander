@@ -9,6 +9,8 @@ interface ScoreState {
   scores: Record<string, TeamMemberScore>;
   outcome: number;
   burden: number;
+  weeklyMeetingTime: number;
+  maxWeeklyMeetingTime: number;
 }
 
 export const useScoreStore = defineStore('score', {
@@ -19,8 +21,10 @@ export const useScoreStore = defineStore('score', {
       coach: { teamMorale: 0, stakeholderSatisfaction: 0 },
       stake: { teamMorale: 0, stakeholderSatisfaction: 0 }
     },
-    outcome: 0, // Starting at 0 for initial state
-    burden: 0  // Starting at 0 for initial state
+    outcome: 0,
+    burden: 0,
+    weeklyMeetingTime: 0,
+    maxWeeklyMeetingTime: 480 // 8 hours in minutes
   }),
   
   getters: {
@@ -34,7 +38,9 @@ export const useScoreStore = defineStore('score', {
     },
     getMemberScore: (state) => (memberId: string) => state.scores[memberId] || { teamMorale: 0, stakeholderSatisfaction: 0 },
     getCurrentOutcome: (state) => state.outcome,
-    getCurrentBurden: (state) => state.burden
+    getCurrentBurden: (state) => state.burden,
+    getWMTPercentage: (state) => Math.round((state.weeklyMeetingTime / state.maxWeeklyMeetingTime) * 100),
+    canMakeDecisions: (state) => state.weeklyMeetingTime < state.maxWeeklyMeetingTime
   },
   
   actions: {
@@ -50,12 +56,19 @@ export const useScoreStore = defineStore('score', {
     updateBurden(value: number) {
       this.burden = Math.max(0, Math.min(100, this.burden + value));
     },
+    addMeetingTime(minutes: number) {
+      this.weeklyMeetingTime = Math.min(this.maxWeeklyMeetingTime, this.weeklyMeetingTime + minutes);
+    },
+    skipMeeting(outcomeReduction: number) {
+      this.updateOutcome(-outcomeReduction);
+    },
     resetAllScores() {
       Object.keys(this.scores).forEach(memberId => {
         this.scores[memberId] = { teamMorale: 0, stakeholderSatisfaction: 0 };
       });
       this.outcome = 0;
       this.burden = 0;
+      this.weeklyMeetingTime = 0;
     }
   }
 });

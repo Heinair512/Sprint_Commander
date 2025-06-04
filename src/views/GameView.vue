@@ -27,13 +27,14 @@ const score = ref(0);
 const missionTitle = ref('Büro-Kaffee-App');
 const level = ref('Level 1');
 const activeTeamMember = ref<TeamMember | null>(null);
-const currentEventIndex = ref(1); // Start with event-1 after kickoff
+const currentEventIndex = ref(1);
 const currentEvent = ref(events[currentEventIndex.value]);
 const showChat = ref(false);
 const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const showTips = ref(false);
 const showSuccess = ref(false);
+const showWorkspace = ref(false);
 const scoreStore = useScoreStore();
 
 const handleLogout = () => {
@@ -168,6 +169,15 @@ const closeSuccess = () => {
   showSuccess.value = false;
 };
 
+const handleNavigate = (screen: 'workspace' | 'game') => {
+  showWorkspace.value = screen === 'workspace';
+  showChat.value = false;
+  showTeamChat.value = false;
+  showActionFeedback.value = false;
+  showTips.value = false;
+  showSuccess.value = false;
+};
+
 const team = teamData.team;
 </script>
 
@@ -179,6 +189,7 @@ const team = teamData.team;
       :level="level"
       @logout="handleLogout"
       @showTips="handleShowTips"
+      @navigate="handleNavigate"
     />
     
     <div class="flex-grow flex flex-col lg:flex-row p-2 sm:p-4 gap-4">

@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const emit = defineEmits(['transition']);
 const showContent = ref(false);
-const timeLeft = ref(30);
+const timeLeft = ref(120); // Changed to 120 seconds (2 minutes)
 const timerInterval = ref<number | null>(null);
 const showMeetingInfo = ref(false);
 const selectedMeeting = ref<Meeting | null>(null);
