@@ -302,19 +302,8 @@ triggerInitialTeamResponses();
   transform: scale(1.02);
 }
 
-.chat-input input {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.75rem;
-  outline: none;
-}
-
-.chat-input input:disabled,
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .chat-messages {
+  max-height: 320px;
   scrollbar-width: thin;
   scrollbar-color: theme('colors.crt.darkbrown') theme('colors.crt.lightsep');
 }
@@ -330,6 +319,18 @@ button:disabled {
 .chat-messages::-webkit-scrollbar-thumb {
   background-color: theme('colors.crt.darkbrown');
   border-radius: 3px;
+}
+
+.chat-input input {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.chat-input input:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .typing-indicator {

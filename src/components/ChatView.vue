@@ -213,6 +213,25 @@ const handleClose = () => {
   border-radius: 4px;
 }
 
+.chat-messages {
+  max-height: 320px;
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.crt.darkbrown') theme('colors.crt.lightsep');
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: theme('colors.crt.lightsep');
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: theme('colors.crt.darkbrown');
+  border-radius: 3px;
+}
+
 .chat-bubble {
   position: relative;
   font-size: 0.85rem;
