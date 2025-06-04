@@ -127,11 +127,16 @@ const makeDecision = (effect: number) => {
         timeout: 3000
       });
     } else { // "Mit dem Team sprechen" option
-      score.value -= 99;
-      scoreElement?.classList.add('error');
-      setTimeout(() => scoreElement?.classList.remove('error'), 1000);
+      score.value += 50; // Changed from -99 to +50
+      scoreElement?.classList.add('success');
+      setTimeout(() => scoreElement?.classList.remove('success'), 1000);
       
+      scoreStore.updateBurden(-5); // Reduce burden by 5
       showTeamChat.value = true;
+      
+      toast.success("Gute Wahl! Mit dem Team sprechen: +50 Punkte", {
+        timeout: 3000
+      });
     }
   } else {
     // Handle other events...
