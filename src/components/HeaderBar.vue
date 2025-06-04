@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const scoreStore = useScoreStore();
-const emit = defineEmits(['logout', 'showTips']);
+const emit = defineEmits(['logout', 'showTips', 'navigate']);
 const showMenu = ref(false);
 
 const handleLogout = () => {
@@ -18,6 +18,11 @@ const handleLogout = () => {
 
 const handleShowTips = () => {
   emit('showTips');
+  showMenu.value = false;
+};
+
+const handleNavigate = (screen: 'workspace' | 'game') => {
+  emit('navigate', screen);
   showMenu.value = false;
 };
 
@@ -36,6 +41,18 @@ const toggleMenu = () => {
       </button>
       
       <div v-if="showMenu" class="absolute top-full left-0 mt-2 w-48 bg-crt-sepia border-2 border-crt-darkbrown rounded shadow-lg z-50">
+        <button 
+          @click="handleNavigate('workspace')" 
+          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
+        >
+          💻 Arbeitsbereich
+        </button>
+        <button 
+          @click="handleNavigate('game')" 
+          class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
+        >
+          🎮 Events
+        </button>
         <button 
           @click="handleShowTips" 
           class="w-full text-left px-4 py-2 hover:bg-crt-brown hover:text-crt-lightsep transition-colors duration-200"
