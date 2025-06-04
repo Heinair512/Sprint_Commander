@@ -10,6 +10,7 @@ import TeamChat from '../components/TeamChat.vue';
 import ActionFeedback from '../components/ActionFeedback.vue';
 import TipsPanel from '../components/TipsPanel.vue';
 import SuccessScreen from '../components/SuccessScreen.vue';
+import KickoffScreen from '../components/KickoffScreen.vue';
 import teamData from '../data/team.json';
 import events from '../data/events.json';
 import news from '../data/news.json';
@@ -34,7 +35,7 @@ const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const showTips = ref(false);
 const showSuccess = ref(false);
-const showWorkspace = ref(false);
+const showKickoff = ref(false);
 const scoreStore = useScoreStore();
 
 const handleLogout = () => {
@@ -50,6 +51,7 @@ const handleShowTips = () => {
   showTeamChat.value = false;
   showActionFeedback.value = false;
   showSuccess.value = false;
+  showKickoff.value = false;
 };
 
 const navigateEvent = (direction: 'prev' | 'next') => {
@@ -88,7 +90,7 @@ const makeDecision = (effect: number) => {
   
   if (currentEvent.value.id === 'event-1') {
     if (effect === -25) { // "Praktikant als Laufbursche" option
-      score.value += 300; // Changed from -25 to +300
+      score.value += 300;
       scoreElement?.classList.add('success');
       setTimeout(() => scoreElement?.classList.remove('success'), 1000);
       
@@ -128,11 +130,11 @@ const makeDecision = (effect: number) => {
         timeout: 3000
       });
     } else { // "Mit dem Team sprechen" option
-      score.value += 50; // Changed from -99 to +50
+      score.value += 50;
       scoreElement?.classList.add('success');
       setTimeout(() => scoreElement?.classList.remove('success'), 1000);
       
-      scoreStore.updateBurden(-5); // Reduce burden by 5
+      scoreStore.updateBurden(-5);
       showTeamChat.value = true;
       
       toast.success("Gute Wahl! Mit dem Team sprechen: +50 Punkte", {
@@ -140,7 +142,6 @@ const makeDecision = (effect: number) => {
       });
     }
   } else {
-    // Handle other events...
     navigateEvent('next');
   }
 };
@@ -170,7 +171,11 @@ const closeSuccess = () => {
 };
 
 const handleNavigate = (screen: 'workspace' | 'game') => {
-  showWorkspace.value = screen === 'workspace';
+  if (screen === 'workspace') {
+    showKickoff.value = true;
+  } else {
+    showKickoff.value = false;
+  }
   showChat.value = false;
   showTeamChat.value = false;
   showActionFeedback.value = false;
@@ -192,7 +197,10 @@ const team = teamData.team;
       @navigate="handleNavigate"
     />
     
-    <div class="flex-grow flex flex-col lg:flex-row p-2 sm:p-4 gap-4">
+    <div v-if="showKickoff">
+      <KickoffScreen @transition="showKickoff = false" />
+    </div>
+    <div v-else class="flex-grow flex flex-col lg:flex-row p-2 sm:p-4 gap-4">
       <!-- Left team members -->
       <div class="team-left w-full lg:w-1/4 xl:w-1/5 grid grid-cols-2 lg:grid-cols-1 gap-4">
         <div v-for="member in team.slice(0, 2)" 
