@@ -21,8 +21,7 @@
     "@netlify/functions": "^2.6.0",
     "@vueuse/core": "^10.7.2",
     "@vue/tsconfig": "^0.5.1",
-    "vite": "^5.4.2",
-    "vue-router": "^4.2.5"
+    "vite": "^5.4.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
