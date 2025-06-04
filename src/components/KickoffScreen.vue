@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const emit = defineEmits(['transition']);
 const showContent = ref(false);
-const timeLeft = ref(120); // 2 minutes
+const timeLeft = ref(120); // Changed to 120 seconds (2 minutes)
 const timerInterval = ref<number | null>(null);
 const showMeetingInfo = ref(false);
 const selectedMeeting = ref<Meeting | null>(null);
@@ -91,7 +91,6 @@ const handleRequest = (requestId: string, accepted: boolean) => {
 onMounted(() => {
   showContent.value = true;
   
-  // Start hidden timer
   timerInterval.value = window.setInterval(() => {
     timeLeft.value--;
     if (timeLeft.value <= 0) {
@@ -111,8 +110,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="kickoff-screen p-4">
-    <div class="grid grid-cols-3 gap-4">
+  <div class="kickoff-screen h-screen bg-crt-sepia p-4">
+    <div class="grid grid-cols-3 gap-4 h-full">
       <!-- Info Window -->
       <div class="window bg-crt-lightsep rounded-lg overflow-hidden">
         <div class="window-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between">
@@ -126,6 +125,9 @@ onBeforeUnmount(() => {
             <li>Zeige an, wer gerade Kaffee brüht</li>
             <li>Überwache den Bohnenvorrat</li>
           </ul>
+          <div class="mt-4 text-xs text-right">
+            Verbleibende Zeit: {{ timeLeft }}s
+          </div>
         </div>
       </div>
 
@@ -256,14 +258,12 @@ onBeforeUnmount(() => {
 <style scoped>
 .kickoff-screen {
   font-family: 'Press Start 2P', monospace;
-  height: calc(100vh - 120px); /* Adjust for header */
 }
 
 .window {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 400px;
 }
 
 .window-content {
