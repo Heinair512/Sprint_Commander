@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useScoreStore } from '../stores/scoreStore';
 
 const emit = defineEmits(['transition']);
 const showContent = ref(false);
-const timeLeft = ref(120); // Changed to 120 seconds (2 minutes)
+const timeLeft = ref(120);
 const timerInterval = ref<number | null>(null);
 const showMeetingInfo = ref(false);
 const selectedMeeting = ref<Meeting | null>(null);
+const scoreStore = useScoreStore();
 
 interface Meeting {
   id: string;
@@ -14,6 +16,7 @@ interface Meeting {
   description: string;
   time: string;
   details: string;
+  duration: number; // in minutes
 }
 
 const meetings = ref<Meeting[]>([
@@ -22,14 +25,24 @@ const meetings = ref<Meeting[]>([
     title: 'Sprint Planning',
     description: 'Planung des nächsten Sprints für die Kaffee-App',
     time: '10:00 Uhr',
-    details: 'Agenda:\n- Review des letzten Sprints\n- Kapazitätsplanung\n- Story Estimation\n- Sprint Goal Definition'
+    details: 'Agenda:\n- Review des letzten Sprints\n- Kapazitätsplanung\n- Story Estimation\n- Sprint Goal Definition',
+    duration: 120
   },
   {
     id: 'm2',
     title: 'Stakeholder Meeting',
     description: 'Vorstellung des MVP-Konzepts',
     time: '14:00 Uhr',
-    details: 'Teilnehmer:\n- Management Team\n- Core Entwickler\n- UX Team\n\nFokus auf ROI und Timeline'
+    details: 'Teilnehmer:\n- Management Team\n- Core Entwickler\n- UX Team\n\nFokus auf ROI und Timeline',
+    duration: 60
+  },
+  {
+    id: 'm3',
+    title: 'Daily mit dem Team',
+    description: 'Tägliches Stand-up Meeting',
+    time: '09:30 Uhr',
+    details: 'Agenda:\n- Was wurde gestern erreicht?\n- Was ist für heute geplant?\n- Gibt es Blockaden?',
+    duration: 15
   }
 ]);
 
@@ -61,6 +74,32 @@ const requests = ref<Request[]>([
   }
 ]);
 
+interface RoadmapItem {
+  id: string;
+  week: number;
+  title: string;
+  description: string;
+  type: 'feature' | 'milestone' | 'release';
+}
+
+const roadmapItems = ref<RoadmapItem[]>([
+  // Week 1-2: MVP
+  { id: 'r1', week: 1, title: 'Basis Setup', description: 'Projekt-Setup & CI/CD Pipeline', type: 'milestone' },
+  { id: 'r2', week: 1, title: 'Brew Status', description: 'Anzeige des aktuellen Brühvorgangs', type: 'feature' },
+  { id: 'r3', week: 2, title: 'Bean Level', description: 'Bohnenvorrats-Monitoring', type: 'feature' },
+  { id: 'r4', week: 2, title: 'MVP Release', description: 'Erste produktive Version', type: 'release' },
+  
+  // Week 3-4: Erweiterungen
+  { id: 'r5', week: 3, title: 'User Profiles', description: 'Persönliche Kaffee-Präferenzen', type: 'feature' },
+  { id: 'r6', week: 3, title: 'Statistics', description: 'Basis-Statistiken implementieren', type: 'feature' },
+  { id: 'r7', week: 4, title: 'Dark Mode', description: 'Dunkles Farbschema für die UI', type: 'feature' },
+  
+  // Week 5-6: Analytics
+  { id: 'r8', week: 5, title: 'Analytics', description: 'Erweiterte Verbrauchsanalyse', type: 'feature' },
+  { id: 'r9', week: 5, title: 'Predictions', description: 'KI-basierte Verbrauchsvorhersage', type: 'feature' },
+  { id: 'r10', week: 6, title: 'V2 Release', description: 'Analytics Update Release', type: 'release' }
+]);
+
 const handleClose = () => {
   if (timerInterval.value) {
     clearInterval(timerInterval.value);
@@ -78,14 +117,27 @@ const closeMeetingDetails = () => {
   selectedMeeting.value = null;
 };
 
-const handleMeetingResponse = (meetingId: string, attending: boolean) => {
-  meetings.value = meetings.value.filter(m => m.id !== meetingId);
-  // Hier später: Metriken aktualisieren basierend auf der Entscheidung
+const handleMeetingResponse = (meeting: Meeting, attending: boolean) => {
+  if (attending) {
+    scoreStore.addMeetingTime(meeting.duration);
+  } else if (meeting.title === 'Daily mit dem Team') {
+    // Reduce team morale and outcome when skipping daily
+    Object.keys(scoreStore.scores).forEach(memberId => {
+      const currentScore = scoreStore.getMemberScore(memberId);
+      scoreStore.updateMemberScore(
+        memberId,
+        currentScore.teamMorale - 10,
+        currentScore.stakeholderSatisfaction
+      );
+    });
+    scoreStore.skipMeeting(5); // Reduce outcome by 5%
+  }
+  
+  meetings.value = meetings.value.filter(m => m.id !== meeting.id);
 };
 
 const handleRequest = (requestId: string, accepted: boolean) => {
   requests.value = requests.value.filter(r => r.id !== requestId);
-  // Hier später: Metriken aktualisieren basierend auf der Entscheidung
 };
 
 onMounted(() => {
@@ -111,7 +163,44 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="kickoff-screen flex-grow bg-crt-sepia p-4">
-    <div class="grid grid-cols-3 gap-4 h-full">
+    <!-- Roadmap Section -->
+    <div class="roadmap-section mb-4 bg-crt-lightsep rounded-lg overflow-hidden">
+      <div class="window-header bg-crt-brown text-crt-glow p-3">
+        <div class="text-sm">🗺️ Roadmap</div>
+      </div>
+      <div class="roadmap-container p-4 overflow-x-auto">
+        <div class="roadmap-timeline" style="width: max-content; min-width: 100%;">
+          <div class="flex">
+            <div 
+              v-for="week in 52" 
+              :key="week"
+              class="week-column min-w-[200px] border-r border-crt-brown/20 relative"
+            >
+              <div class="week-header text-xs mb-2 sticky top-0">
+                Woche {{ week }}
+              </div>
+              <div class="week-items space-y-2">
+                <div 
+                  v-for="item in roadmapItems.filter(i => i.week === week)"
+                  :key="item.id"
+                  class="roadmap-item p-2 rounded"
+                  :class="{
+                    'bg-blue-100': item.type === 'feature',
+                    'bg-yellow-100': item.type === 'milestone',
+                    'bg-green-100': item.type === 'release'
+                  }"
+                >
+                  <div class="text-xs font-bold mb-1">{{ item.title }}</div>
+                  <div class="text-xs">{{ item.description }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 h-[calc(100%-12rem)]">
       <!-- Info Window -->
       <div class="window bg-crt-lightsep rounded-lg overflow-hidden">
         <div class="window-header bg-crt-brown text-crt-glow p-3 flex items-center justify-between">
@@ -153,13 +242,13 @@ onBeforeUnmount(() => {
               <div class="space-x-2">
                 <button 
                   class="px-3 py-1 bg-green-600 text-white rounded text-xs"
-                  @click="handleMeetingResponse(meeting.id, true)"
+                  @click="handleMeetingResponse(meeting, true)"
                 >
                   Ich geh hin
                 </button>
                 <button 
                   class="px-3 py-1 bg-red-600 text-white rounded text-xs"
-                  @click="handleMeetingResponse(meeting.id, false)"
+                  @click="handleMeetingResponse(meeting, false)"
                 >
                   Ohne mich
                 </button>
@@ -286,6 +375,26 @@ onBeforeUnmount(() => {
   border-radius: 3px;
 }
 
+.roadmap-container {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.crt.brown') theme('colors.crt.lightsep');
+  height: 200px;
+  overflow-y: hidden;
+}
+
+.roadmap-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.roadmap-container::-webkit-scrollbar-track {
+  background: theme('colors.crt.lightsep');
+}
+
+.roadmap-container::-webkit-scrollbar-thumb {
+  background-color: theme('colors.crt.brown');
+  border-radius: 3px;
+}
+
 .meeting-card,
 .request-card {
   transition: transform 0.2s ease;
@@ -306,5 +415,13 @@ button:hover {
 
 .close-btn:hover {
   transform: scale(1.1);
+}
+
+.roadmap-item {
+  transition: transform 0.2s ease;
+}
+
+.roadmap-item:hover {
+  transform: translateY(-2px);
 }
 </style>
