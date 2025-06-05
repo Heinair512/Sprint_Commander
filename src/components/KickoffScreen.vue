@@ -110,7 +110,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="kickoff-screen h-screen bg-crt-sepia p-4">
+  <div class="kickoff-screen flex-grow bg-crt-sepia p-4">
     <div class="grid grid-cols-3 gap-4 h-full">
       <!-- Info Window -->
       <div class="window bg-crt-lightsep rounded-lg overflow-hidden">
