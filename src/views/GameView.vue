@@ -1,5 +1,4 @@
-<script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useScoreStore } from '../stores/scoreStore';
 import HeaderBar from '../components/HeaderBar.vue';
@@ -35,8 +34,14 @@ const showTeamChat = ref(false);
 const showActionFeedback = ref(false);
 const showTips = ref(false);
 const showSuccess = ref(false);
-const showKickoff = ref(false);
+const showKickoff = ref(true);
 const scoreStore = useScoreStore();
+
+onMounted(() => {
+  setTimeout(() => {
+    showKickoff.value = false;
+  }, 120000); // 2 minutes
+});
 
 const handleLogout = () => {
   emit('logout');
