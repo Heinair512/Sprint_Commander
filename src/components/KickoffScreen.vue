@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useScoreStore } from '../stores/scoreStore';
 
 const emit = defineEmits(['transition']);
@@ -100,6 +100,33 @@ const roadmapItems = ref<RoadmapItem[]>([
   { id: 'r10', week: 6, title: 'V2 Release', description: 'Analytics Update Release', type: 'release' }
 ]);
 
+// Add new refs for animation
+const animatingRequest = ref<Request | null>(null);
+const animationTarget = ref<{ week: number; position: number } | null>(null);
+
+// Compute available slots in roadmap
+const availableSlots = computed(() => {
+  const slots: Record<number, number> = {};
+  for (let week = 1; week <= 52; week++) {
+    const itemsInWeek = roadmapItems.value.filter(i => i.week === week).length;
+    slots[week] = 3 - itemsInWeek; // Maximum 3 items per week
+  }
+  return slots;
+});
+
+// Find next available slot
+const findNextSlot = () => {
+  for (let week = 1; week <= 52; week++) {
+    if (availableSlots.value[week] > 0) {
+      return {
+        week,
+        position: 3 - availableSlots.value[week]
+      };
+    }
+  }
+  return null;
+};
+
 const handleClose = () => {
   if (timerInterval.value) {
     clearInterval(timerInterval.value);
@@ -136,7 +163,42 @@ const handleMeetingResponse = (meeting: Meeting, attending: boolean) => {
   meetings.value = meetings.value.filter(m => m.id !== meeting.id);
 };
 
-const handleRequest = (requestId: string, accepted: boolean) => {
+const handleRequest = async (requestId: string, accepted: boolean) => {
+  const request = requests.value.find(r => r.id === requestId);
+  if (!request || !accepted) {
+    requests.value = requests.value.filter(r => r.id !== requestId);
+    return;
+  }
+
+  // Find next available slot
+  const slot = findNextSlot();
+  if (!slot) {
+    requests.value = requests.value.filter(r => r.id !== requestId);
+    return;
+  }
+
+  // Set up animation
+  animatingRequest.value = request;
+  animationTarget.value = slot;
+
+  // Create new roadmap item
+  const newItem: RoadmapItem = {
+    id: `roadmap-${request.id}`,
+    week: slot.week,
+    title: request.title,
+    description: request.description,
+    type: request.type === 'bug' ? 'milestone' : 'feature'
+  };
+
+  // Wait for animation
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  // Add to roadmap
+  roadmapItems.value.push(newItem);
+
+  // Clean up
+  animatingRequest.value = null;
+  animationTarget.value = null;
   requests.value = requests.value.filter(r => r.id !== requestId);
 };
 
@@ -264,7 +326,10 @@ onBeforeUnmount(() => {
           <div class="text-sm">🔧 Request Channel</div>
         </div>
         <div class="window-content p-4 overflow-y-auto">
-          <div v-for="request in requests" :key="request.id" class="request-card bg-white/50 p-4 rounded-lg mb-4">
+          <div v-for="request in requests" :key="request.id" 
+               class="request-card bg-white/50 p-4 rounded-lg mb-4"
+               :class="{ 'animating': animatingRequest?.id === request.id }"
+          >
             <div class="flex justify-between items-start mb-2">
               <div>
                 <span 
@@ -339,6 +404,21 @@ onBeforeUnmount(() => {
             Schließen
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Animating request overlay -->
+    <div 
+      v-if="animatingRequest"
+      class="fixed pointer-events-none"
+      :style="{
+        transform: `translate(${animationTarget ? animationTarget.week * 200 : 0}px, ${animationTarget ? animationTarget.position * 60 : 0}px)`,
+        transition: 'all 1s ease'
+      }"
+    >
+      <div class="request-card bg-white/50 p-4 rounded-lg">
+        <div class="text-xs font-bold mb-1">{{ animatingRequest.title }}</div>
+        <div class="text-xs">{{ animatingRequest.description }}</div>
       </div>
     </div>
   </div>
@@ -417,11 +497,17 @@ button:hover {
   transform: scale(1.1);
 }
 
+.request-card.animating {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 .roadmap-item {
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .roadmap-item:hover {
   transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
