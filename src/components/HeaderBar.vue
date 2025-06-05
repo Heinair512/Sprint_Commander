@@ -74,8 +74,9 @@ const wmtClass = computed(() => {
         </button>
       </div>
       
-      <div class="mission-title text-xs md:text-sm">
-        {{ missionTitle }}
+      <div class="mission-title text-xs md:text-sm flex flex-col items-start">
+        <span>Mission:</span>
+        <span>{{ missionTitle }}</span>
       </div>
     </div>
     
@@ -83,19 +84,17 @@ const wmtClass = computed(() => {
       SPRINT COMMANDER
     </div>
     
-    <div class="stats flex items-center gap-4 text-xs md:text-sm">
-      <div class="flex items-center gap-2">
-        <span>Woche 1</span>
-        <span class="px-2 border-l border-r border-crt-darkbrown">{{ score }}p</span>
-      </div>
+    <div class="stats flex flex-col items-end text-xs md:text-sm gap-2">
+      <div class="score transition-colors duration-500">Score: {{ score }}</div>
+      <div>Level: {{ level }}</div>
       
-      <div class="metrics flex gap-2">
+      <div class="metrics flex flex-col gap-1 mt-1">
         <div class="metric-bar">
           <div class="flex justify-between mb-1">
             <span>🎯 Outcome</span>
             <span>{{ scoreStore.getCurrentOutcome }}%</span>
           </div>
-          <div class="w-24 h-2 bg-gray-200 rounded">
+          <div class="w-32 h-2 bg-gray-200 rounded">
             <div 
               class="h-full rounded transition-all duration-300"
               :style="{ width: `${scoreStore.getCurrentOutcome}%` }"
@@ -113,7 +112,7 @@ const wmtClass = computed(() => {
             <span>⚡️ Burden</span>
             <span>{{ scoreStore.getCurrentBurden }}%</span>
           </div>
-          <div class="w-24 h-2 bg-gray-200 rounded">
+          <div class="w-32 h-2 bg-gray-200 rounded">
             <div 
               class="h-full rounded transition-all duration-300"
               :style="{ width: `${scoreStore.getCurrentBurden}%` }"
@@ -131,7 +130,7 @@ const wmtClass = computed(() => {
             <span>⏰ WMT</span>
             <span>{{ wmt }}%</span>
           </div>
-          <div class="w-24 h-2 bg-gray-200 rounded">
+          <div class="w-32 h-2 bg-gray-200 rounded">
             <div 
               class="h-full rounded transition-all duration-300"
               :style="{ width: `${wmt}%` }"
@@ -179,6 +178,10 @@ const wmtClass = computed(() => {
 
 .burger-menu:hover {
   transform: scale(1.1);
+}
+
+.stats {
+  min-width: 160px;
 }
 
 .metric-bar {
